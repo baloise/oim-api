@@ -2,3 +2,5 @@ venv/
 *.pyc
 *.pyo
 .vscode/
+old/
+.DS_Store

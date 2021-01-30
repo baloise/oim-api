@@ -1,0 +1,22 @@
+openapi: "3.0.0"
+
+info:
+  title: OpenAPI Demo
+  version: "0.9"
+servers:
+  - url: /v0.9
+
+paths:
+  /hello:
+    get:
+      summary: Greet ye old worlde
+      description: Greets the world with a predefined message.
+      operationId: api.demo.hello_world
+      responses:
+        200:
+          description: greeting response
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Hello World! (example)"
