@@ -1,0 +1,22 @@
+openapi: "3.0.0"
+
+info:
+  title: {{ title }}
+  version: "0.2"
+servers:
+  - url: /oim/v0.2
+
+paths:
+  /test/gettoken:
+    get:
+      summary: get an auth token from ocBackend
+      description: Retrieves a token either from cache or from the live ocBackend
+      operationId: orderitems.demo.tokendemo
+      responses:
+        200:
+          description: token response
+          content:
+            text/plain:
+              schema:
+                type: string
+

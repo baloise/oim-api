@@ -4,3 +4,4 @@ venv/
 .vscode/
 old/
 .DS_Store
+.env

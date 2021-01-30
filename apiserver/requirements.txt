@@ -1,1 +1,3 @@
 connexion[swagger-ui]
+python-dotenv
+diskcache
