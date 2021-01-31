@@ -56,3 +56,43 @@ paths:
           schema:
             type: string
             example: "dave"
+  /secret/usingapikey:
+    get:
+      summary: Return secret string protected by a token
+      operationId: api.demo.get_secret
+      responses:
+        '200':
+          description: secret response
+          content:
+            '*/*':
+              schema:
+                type: string
+      security:
+        - api_key: []
+  /secret/usingbasicauth:
+    get:
+      summary: Return secret string protected by a token
+      description: |
+        This secret is protected by username/password. Use admin/secret for the correct creds. 
+        Alternatively foo/bar can be used as a user without the correct permissions for the "secrets" scope.
+      operationId: api.demo.get_secret_basicauth
+      responses:
+        '200':
+          description: secret response
+          content:
+            '*/*':
+              schema:
+                type: string
+      security:
+        - basic: ['secrets']
+components:
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: X-Auth
+      in: header
+      x-apikeyInfoFunc: api.demo.apikey_auth
+    basic:
+      type: http
+      scheme: basic
+      x-basicInfoFunc: api.demo.basic_auth
