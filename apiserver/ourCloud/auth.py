@@ -5,15 +5,16 @@ from diskcache import Cache
 
 
 class TokenAuthHandler(object):
-    def __init__(self, parent, expiration_safety=60):
+    def __init__(self, parent, expiration_safety=60, url_suffix='/token'):
         if not parent:
             raise ValueError("No parent object given")
-        parent.auth = self
-        self.parent = parent
-        self._cache = Cache()
+        parent.auth = self  # We add ourselves into the parent object
+        self.parent = parent  # For future use we add a reference to our parent object
+        self._cache = Cache()  # Create a cache instance for ourselves
+        # Initialize internal variables
         self._token = ''
         self._expirytime = 0
-        self._url_gettoken = '/token'
+        self._url_suffix_token = url_suffix
         self._base_url = parent.base_url
         # Safety timespan in seconds to reduce expiry time by
         self._expiration_safety = expiration_safety
@@ -21,7 +22,6 @@ class TokenAuthHandler(object):
     def tokenIsExpired(self):
         if not self._expirytime:
             return True
-
         if self._expirytime > int(time()):
             return False
         else:
@@ -52,7 +52,8 @@ class TokenAuthHandler(object):
         # First we try to retrieve from cache if it exists
         self._getFromCache()
 
-        url = self._base_url + self._url_gettoken
+        # Now we start building the request to the backend
+        url = self._base_url + self._url_suffix_token
         payload = 'grant_type=password&username={usern}&password={passw}'.format(
             usern=quote(self.parent.auth_user),
             passw=quote(self.parent.auth_pass)
@@ -60,7 +61,9 @@ class TokenAuthHandler(object):
         headers = {
             'Content-Type': 'application/x-www-form-urlencoded'
         }
+        # Send the request to the backend
         response = requests.request("GET", url, headers=headers, data=payload)
+
         # Ensure response looks valid
         if not response.status_code == 200:
             return False
@@ -80,7 +83,7 @@ class TokenAuthHandler(object):
 
     def getToken(self, flush_existing=False):
         if flush_existing:
-            self.flush()
+            self.flush()  # Explicit flush requested. Useful for debugging
         if not self._token or self.tokenIsExpired():
             if not self._retrieveToken():
                 return False
