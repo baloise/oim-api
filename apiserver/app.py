@@ -1,7 +1,7 @@
 import connexion
 import os
 from dotenv import load_dotenv
- 
+
 # Load non-yet-set envvars from .env file if it exists
 load_dotenv()
 
@@ -12,7 +12,7 @@ app = connexion.FlaskApp(__name__, port=server_port, specification_dir='openapi/
 # Next we tell it to load our API specs
 app.add_api('olddemo.yaml')
 app.add_api('demoapi.yaml')
-# add_api() pipes the yaml spec thru the Jinja2 template engine before loading, 
+# add_api() pipes the yaml spec thru the Jinja2 template engine before loading,
 # you can specify variables to be filled as shown with the arguments parameter below
 app.add_api('oimtest.yaml', arguments={'title': 'OIM API!'})
 
