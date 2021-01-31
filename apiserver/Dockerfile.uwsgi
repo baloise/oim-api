@@ -13,6 +13,13 @@ WORKDIR /code
 # While building, install python dependencies
 RUN pip install -r requirements.txt && pip install -r requirements.uwsgi.txt
 
+# Next we set defaults for some of the envvars
+# NOTE: You MUST set more than these! See .env.sample file for a list.
+ENV SERVER_PORT=9090
+
+# Give a hint to docker where the service exposes
+EXPOSE ${SERVER_PORT}
+
 # Define the user to be used inside when running the container
 USER apiserver:apiserver
 
