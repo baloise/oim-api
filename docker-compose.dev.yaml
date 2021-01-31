@@ -1,0 +1,10 @@
+version: "3.9"  # optional since v1.27.0
+services:
+  apiserver:
+    env_file:
+      - "apiserver/.env"
+    build: 
+      context: "apiserver/"
+      dockerfile: "Dockerfile"
+    ports:
+      - "9090:9090"
