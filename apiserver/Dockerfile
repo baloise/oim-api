@@ -4,7 +4,7 @@
 FROM python:3.8-alpine
 
 # Create a user and group to use within the container
-RUN groupadd -r apiserver && useradd --no-log-init -r -g apiserver apiserver
+RUN addgroup -S apiserver && adduser -S apiserver -G apiserver
 # Copy all of the current (and sub) dir into the container during build
 ADD . /code
 # Define the starting working directory within the container
