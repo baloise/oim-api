@@ -1,3 +1,5 @@
+# This file only contains random hello-world-grade functions so
+# that the demo api endpoints actually do something.
 
 def hello_world():
     return 'Hello World'
@@ -14,8 +16,10 @@ class PeristanceDemo(object):
     def showcount(self):
         return self.count
 
+# Create an instance of this class that lives within the memory of the app
 persistance_demo = PeristanceDemo()
 
 def persistance_get():
+    # Method called by the api endpoint. See the .yaml files in the openapi/ folder
     persistance_demo.increase()
     return persistance_demo.showcount()

@@ -5,8 +5,9 @@ import logging
 from .auth import TokenAuthHandler
 
 def required_envvar(envvar):
+    # This function ensures that a requested envvar is exists and hard terminates if it isn't
     if not os.getenv(envvar):
-        logging.critical('Envvar {varname} not set. Aborting execution!'.format(varname=envvar))
+        logging.critical('Envvar {varname} not set. Aborting execution!'.format(varname=str(envvar)))
         sys.exit(50)
     return os.getenv(envvar)
 
