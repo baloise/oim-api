@@ -32,7 +32,7 @@ paths:
           content:
             text/plain:
               schema:
-                type: int
+                type: integer
                 example: 42
 
   /greeting/{name}:
