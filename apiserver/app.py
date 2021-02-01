@@ -10,11 +10,13 @@ server_port = os.getenv('SERVER_PORT') or 9090
 app = connexion.FlaskApp(__name__, port=server_port, specification_dir='openapi/')
 
 # Next we tell it to load our API specs
-app.add_api('olddemo.yaml')
 app.add_api('demoapi.yaml')
+
 # add_api() pipes the yaml spec thru the Jinja2 template engine before loading,
 # you can specify variables to be filled as shown with the arguments parameter below
-app.add_api('oimtest.yaml', arguments={'title': 'OIM API!'})
+app.add_api('olddemo.yaml', arguments={'title': 'OpenAPI Demo of an older API version'})
+
+app.add_api('oimtest.yaml')
 
 # Next we create an object called application that points to our webapp
 # This is only needed when the webapp is loaded by a production-ready application server
