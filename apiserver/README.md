@@ -39,7 +39,7 @@ This is intended to give an easier start but is in no way a complete and detaile
     * Docker (if you have docker running locally)
     * GitLens (optional)
     * Rewrap (optional)
-    * _For VSCode on Windows/DPW only: Remote - SSH_
+    * _For VSCode on Windows/DWP only: Remote - SSH_
 
 * Optional: [Docker](https://www.docker.com/get-started)
   
