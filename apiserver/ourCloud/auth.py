@@ -15,7 +15,7 @@ class TokenAuthHandler(object):
         self._token = ''
         self._expirytime = 0
         self._url_suffix_token = url_suffix
-        self._base_url = parent.base_url
+        self._base_url = parent.get_base_url()
         # Safety timespan in seconds to reduce expiry time by
         self._expiration_safety = expiration_safety
 
@@ -53,10 +53,10 @@ class TokenAuthHandler(object):
         self._getFromCache()
 
         # Now we start building the request to the backend
-        url = self._base_url + self._url_suffix_token
+        url = self.parent.get_base_url() + self._url_suffix_token
         payload = 'grant_type=password&username={usern}&password={passw}'.format(
-            usern=quote(self.parent.auth_user),
-            passw=quote(self.parent.auth_pass)
+            usern=quote(self.parent.get_auth_user()),
+            passw=quote(self.parent.get_auth_pass())
         )
         headers = {
             'Content-Type': 'application/x-www-form-urlencoded'
