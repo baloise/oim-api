@@ -1,7 +1,7 @@
 openapi: "3.0.0"
 
 info:
-  title: OpenAPI Demo of an older API version
+  title: "{{ title|default('Default Title') }}"
   version: "0.9"
 servers:
   - url: /v0.9
