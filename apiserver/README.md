@@ -36,6 +36,7 @@ This is intended to give an easier start but is in no way a complete and detaile
     * openapi-lint
     * gitignore
     * DotENV
+    * Python Test Explorer for Visual Studio Code
     * Docker (if you have docker running locally)
     * GitLens (optional)
     * Rewrap (optional)
