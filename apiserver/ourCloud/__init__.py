@@ -1,11 +1,6 @@
 import os
 import logging
-from dotenv import load_dotenv
 from .auth import TokenAuthHandler
-
-
-# Load non-yet-set envvars from .env file if it exists
-load_dotenv()
 
 
 def required_envvar(envvar):
