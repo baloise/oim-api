@@ -16,12 +16,12 @@ This is intended to give an easier start but is in no way a complete and detaile
 
 ### Tools recommended for a local development environment
 * A local [python](https://python.org) installation. Python 3.8 or newer recommended but 3.6+ is required currently.
-  * Create a local virtualenv to work inside the apiserver folder: `python3 -m venv venv`
+  * To work inside the `apiserver` folder, create a local virtualenv: `python3 -m venv venv`
   * Activate the venv: *Depends on OS and shell*, for Bash and zsh: `. ./venv/bin/activate`
   * Verify that the venv has been activated: either `which python` spitting out a path inside your repo or check the command line for indications like a "(venv)" tag.
-  * Install the dependencies into it:
-    * `pip install -r dependencies.txt`
-    * If you intend to run the production-grade server, also do `pip install -r dependencies.uwsgi.txt` (This may need a C compiler!)
+  * Install the dependencies into it (might require correct proxy settings):
+    * `pip install -r requirements.txt`
+    * If you intend to run the production-grade server, also do `pip install -r requirements.uwsgi.txt` (This may need a C compiler!)
 
 * A Git client of your choice
   * Any git client that you prefer goes.
@@ -39,6 +39,7 @@ This is intended to give an easier start but is in no way a complete and detaile
     * Docker (if you have docker running locally)
     * GitLens (optional)
     * Rewrap (optional)
+    * _For VSCode on Windows/DPW only: Remote - SSH_
 
 * Optional: [Docker](https://www.docker.com/get-started)
   
