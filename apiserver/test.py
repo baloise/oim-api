@@ -1,3 +1,4 @@
+import unittest
 import flask_unittest
 from app import app
 import re
@@ -37,4 +38,4 @@ class DemoTests(flask_unittest.ClientTestCase):
 
 
 if __name__ == '__main__':
-    flask_unittest.main()
+    unittest.main()
