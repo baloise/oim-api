@@ -11,8 +11,10 @@ def hello_world():
 def post_greeting(name: str) -> str:
     return 'Hello {name}!'.format(name=name)
 
+def post_teamgreeting(name: str) -> str:
+    return 'Hello {name}'.format(name=name)
 
-class PeristanceDemo(object):
+class PersistanceDemo(object):
     count = 0
 
     def increase(self):
@@ -23,7 +25,7 @@ class PeristanceDemo(object):
 
 
 # Create an instance of this class that lives within the memory of the app
-persistance_demo = PeristanceDemo()
+persistance_demo = PersistanceDemo()
 
 
 def persistance_get():
