@@ -56,6 +56,27 @@ paths:
           schema:
             type: string
             example: "dave"
+
+  /greetteammember/{name}:
+    get:
+      summary: Greet team member.
+      description: Generates a greeting message to predefined member.
+      operationId: api.demo.post_teamgreeting
+      responses:
+        200:
+          description: greeting response
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "hello mat!"
+      parameters:
+        - name: name
+          in: path
+          required: true
+          description: Name of the person to greet.
+          schema:
+            $ref: "#components/schemas/teammember"
   /secret/usingapikey:
     get:
       summary: Return secret string protected by a token
@@ -85,6 +106,7 @@ paths:
                 type: string
       security:
         - basic: ['secrets']
+
 components:
   securitySchemes:
     api_key:
@@ -96,3 +118,14 @@ components:
       type: http
       scheme: basic
       x-basicInfoFunc: api.demo.basic_auth
+  schemas:
+    teammember:
+      type: string
+      enum: 
+        - "zjel"
+        - "jj"
+        - "sam"
+        - "mat"
+        - "manu"
+        - "george"
+      example: sam
