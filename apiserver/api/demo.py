@@ -9,10 +9,12 @@ def hello_world():
 
 
 def post_greeting(name: str) -> str:
-    return 'Hello {name}'.format(name=name)
+    return 'Hello {name}!'.format(name=name)
+
 
 def post_teamgreeting(name: str) -> str:
     return 'Hello {name}'.format(name=name)
+
 
 class PersistanceDemo(object):
     count = 0
