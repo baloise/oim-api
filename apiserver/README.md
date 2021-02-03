@@ -1,5 +1,7 @@
 # apiserver
 
+![apiserverCI](https://github.com/vangual/oimapi/workflows/apiserverCI/badge.svg)
+
 - [apiserver](#apiserver)
   - [Development environment](#development-environment)
     - [Tools recommended for a local development environment](#tools-recommended-for-a-local-development-environment)
