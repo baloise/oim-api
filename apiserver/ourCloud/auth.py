@@ -62,7 +62,8 @@ class TokenAuthHandler(object):
             'Content-Type': 'application/x-www-form-urlencoded'
         }
         # Send the request to the backend
-        response = requests.request("GET", url, headers=headers, data=payload)
+        # response = requests.request("GET", url, headers=headers, data=payload)
+        response = requests.get(url, headers=headers, data=payload)
 
         # Ensure response looks valid
         if not response.status_code == 200:
