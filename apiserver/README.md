@@ -28,7 +28,7 @@ This is intended to give an easier start but is in no way a complete and detaile
   * If you don't know any, check [this list](https://git-scm.com/downloads/guis/) or ask your colleagues
 
 * [Visual Studio Code](https://code.visualstudio.com) (or another IDE of your choice)
-  * Recommended extensions:
+  * Recommended vscode extensions:
     * Python
     * Markdown All in One
     * YAML
@@ -39,7 +39,7 @@ This is intended to give an easier start but is in no way a complete and detaile
     * Docker (if you have docker running locally)
     * GitLens (optional)
     * Rewrap (optional)
-    * _For VSCode on Windows/DPW only: Remote - SSH_
+    * _For VSCode on Windows/DWP only: Remote - SSH_
 
 * Optional: [Docker](https://www.docker.com/get-started)
   
@@ -65,7 +65,7 @@ To run the development or production versions of this api server see the followi
 
 * The development server has limited auto-reload functionality that reloads the server on code changes. However this does NOT seem to work on openapi/ yaml files and other code at the moment. It is recommended to restart the server manually on code changes. 
 
-* To increase debugging even more: set this envvar: **FLASK_ENV=development**  But keep in mind that this may break some API output as it can result in Human-friendly colorful HTML exception display rather than expected JSON returns.
+* To increase debugging even more: set this envvar: **FLASK_ENV=development**  But keep in mind that this may break some API output as it can result in human-friendly colorful HTML exception display rather than expected JSON returns.
 
 * To stop the development server, hit CTRL+C
 
