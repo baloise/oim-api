@@ -1,12 +1,12 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: apiserver CI
 
 # Controls when the action will run. 
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
-    branches: [ master ]
+
   pull_request:
     branches: [ master ]
 
@@ -29,3 +29,4 @@ jobs:
         uses: TrueBrain/actions-flake8@v1.4.1
         with:
           path: apiserver
+          max_line_length: 120
