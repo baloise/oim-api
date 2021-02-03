@@ -7,7 +7,8 @@
     - [Scenario: Local installation (no containers)](#scenario-local-installation-no-containers)
     - [Scenario: Containers (docker-compose)](#scenario-containers-docker-compose)
     - [Scenario: Kubernetes](#scenario-kubernetes)
-  - [Additional notes:](#additional-notes)
+  - [Additional notes](#additional-notes)
+  - [Testing](#testing)
 
 ## Development environment
 
@@ -90,10 +91,18 @@ This scenario is not yet fully documented. There are only some general notes for
 *No instructions available at this time.*
 
 
-## Additional notes:
+## Additional notes
 * The server currently has no index handler. Don't freak out when you get an error message on accessing `/`, you need to connect to the actual endpoints as defined in the .yaml files in the openapi/ folder.
 * You can access the Swagger UI to debug the endpoints by adding a /ui at the end of each API's base url
 * Examples:
   * http://0.0.0.0:9090/v1.0/ui
   * http://0.0.0.0:9090/oim/v0.2/ui
 * The webserver runs on unencrypted HTTP locally to avoid added complexity of SSL/TLS. Generally the apiserver is expected to be run behind a reverse-proxy like nginx. More on that in the docker-compose chapter.
+
+## Testing
+
+Test-cases are defined in in test.py for now. 
+
+You can manually run the test suite by calling `python test.py`
+
+The recommended IDE (vscode) and mentioned extensions provide better test integration however.
