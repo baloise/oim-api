@@ -47,7 +47,7 @@ paths:
             text/plain:
               schema:
                 type: string
-                example: "hello dave!"
+                example: "Hello dave!"
       parameters:
         - name: name
           in: path
