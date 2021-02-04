@@ -11,8 +11,11 @@ def hello_world():
 def post_greeting(name: str) -> str:
     return 'Hello {name}'.format(name=name)
 
-def post_teamgreeting(name: str) -> str:
-    return 'Hello {name}'.format(name=name)
+def post_teamgreeting(name):
+    return 'Team member {name}'.format(name=name)
+
+def add_order(body):
+    return 'Order received: {}'.format(body), 201
 
 class PersistanceDemo(object):
     count = 0
