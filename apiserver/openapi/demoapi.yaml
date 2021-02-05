@@ -95,9 +95,7 @@ paths:
         content:
           application/json:
             schema:
-              oneOf:
-                - $ref: "#components/schemas/vmitem"
-                - $ref: "#components/schemas/dbitem"
+              $ref: "#components/schemas/order"
   /secret/usingapikey:
     get:
       summary: Return secret string protected by a token
@@ -150,6 +148,32 @@ components:
         - "manu"
         - "george"
       example: sam
+    order:
+      type: object
+      properties:
+        requester-id:
+          $ref: "#components/schemas/od.id"
+        requester-mail:
+          $ref: "#components/schemas/od.mail"
+        items:
+          $ref: "#components/schemas/ordercommon"
+    ordercommon:
+      type: object
+      properties:
+        allOf:
+          oneOf:
+            - $ref: "#components/schemas/vmitem"
+            - $ref: "#components/schemas/dbitem"
+        owner-id:
+          $ref: "#components/schemas/od.id"
+        owner-mail:
+          $ref: "#components/schemas/od.mail"
+        deputy-id:
+          $ref: "#components/schemas/od.id"
+        deputy-mail:
+          $ref: "#components/schemas/od.mail"
+        sbu:
+          $ref: "#components/schemas/od.sbu"
     dbitem:
       type: object
       properties:
@@ -219,6 +243,23 @@ components:
         - L2
         - X1
       example: "{ \"size\": \"S1\" }"
+    od.id:
+      type: string
+      pattern: "^[bB][0-9]{6}$"
+    od.mail:
+      type: string
+      pattern: "[^@ \t\r\n]+@[^@ \t\r\n]+\\.[^@ \t\r\n]+"
+    od.sbu:
+      type: string
+      enum: 
+        - BE
+        - CH-BCH
+        - CH-SOB
+        - DE
+        - LI
+        - LU-RED
+        - LU-YELLOW
+        - SHARED
     db.pg.catalog-reference:
       type: string
       enum:
