@@ -115,18 +115,20 @@ The recommended IDE (vscode) and mentioned extensions provide better test integr
 ### DB Order Request Body
 ```json
 {
-  "items": {
-    "deputy-id": "b123456",
-    "deputy-mail": "b123456@js.on",
-    "owner-id": "b123456",
-    "owner-mail": "b123456@js.on",
-    "sbu": "BE",
-    "catalog-reference": "PGSQL01",
-    "size": "S1",
-    "metal-category": "B",
-    "environment": "Test",
-    "security-zone": "_Z1"
-  },
+  "items": [
+    {
+      "deputy-id": "b123456",
+      "deputy-mail": "b123456@js.on",
+      "owner-id": "b123456",
+      "owner-mail": "b123456@js.on",
+      "sbu": "BE",
+      "catalog-reference": "PGSQL01",
+      "size": "S1",
+      "metal-category": "B",
+      "environment": "Test",
+      "security-zone": "_Z1"
+    }
+  ],
   "requester-id": "b123456",
   "requester-mail": "b123456@js.on"
 }

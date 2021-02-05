@@ -156,7 +156,9 @@ components:
         requester-mail:
           $ref: "#components/schemas/od.mail"
         items:
-          $ref: "#components/schemas/ordercommon"
+          type: array
+          items:
+            $ref: "#components/schemas/ordercommon"
     ordercommon:
       type: object
       properties:
