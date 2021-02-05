@@ -77,6 +77,25 @@ paths:
           description: Name of the person to greet.
           schema:
             $ref: "#components/schemas/teammember"
+  /order:
+    post:
+      summary: Order an item.
+      description: Generates an order.
+      operationId: api.demo.add_order
+      responses:
+        201:
+          description: order response
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Order placed."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#components/schemas/order"
   /secret/usingapikey:
     get:
       summary: Return secret string protected by a token
@@ -129,3 +148,186 @@ components:
         - "manu"
         - "george"
       example: sam
+    order:
+      type: object
+      properties:
+        requester-id:
+          $ref: "#components/schemas/od.id"
+        requester-mail:
+          $ref: "#components/schemas/od.mail"
+        items:
+          type: array
+          items:
+            $ref: "#components/schemas/ordercommon"
+    ordercommon:
+      type: object
+      properties:
+        allOf:
+          oneOf:
+            - $ref: "#components/schemas/vmitem"
+            - $ref: "#components/schemas/dbitem"
+        owner-id:
+          $ref: "#components/schemas/od.id"
+        owner-mail:
+          $ref: "#components/schemas/od.mail"
+        deputy-id:
+          $ref: "#components/schemas/od.id"
+        deputy-mail:
+          $ref: "#components/schemas/od.mail"
+        sbu:
+          $ref: "#components/schemas/od.sbu"
+    dbitem:
+      type: object
+      properties:
+        catalog-reference:
+          oneOf:
+            - $ref: "#components/schemas/db.pg.catalog-reference"
+        size:
+          $ref: "#components/schemas/size"
+        metal-category:
+          $ref: "#components/schemas/metal-category"
+        environment:
+          $ref: "#components/schemas/environment"
+        security-zone:
+          $ref: "#components/schemas/security-zone"
+      example: >
+        {
+          "catalog-reference": "PGSQL01",
+          "size": "S1",
+          "metal-category": "B",
+          "environment": "Test",
+          "security-zone": "_Z1"
+        }
+    vmitem:
+      type: object
+      properties:
+        catalog-reference:
+          oneOf:
+            - $ref: "#components/schemas/vm.lin.catalog-reference"
+            - $ref: "#components/schemas/vm.win.catalog-reference"
+        size:
+          $ref: "#components/schemas/size"
+        role:
+          $ref: "#components/schemas/role"
+        metal-category:
+          $ref: "#components/schemas/metal-category"
+        environment:
+          $ref: "#components/schemas/environment"
+        application-id:
+          $ref: "#components/schemas/application-id"
+        security-zone:
+          $ref: "#components/schemas/security-zone"
+        group-permissions:
+          $ref: "#components/schemas/group-permissions"
+      example: >
+        {
+          "catalog-reference": "L01",
+          "size": "S1",
+          "role": "APP",
+          "metal-category": "B",
+          "environment": "Test",
+          "application-id": "_A01",
+          "security-zone": "_Z1",
+          "group-permissions": [
+            { 
+              "ad-group-name": "f_adm",
+              "local-group-name": "Power User"
+            }
+          ]
+        }
+    size:
+      type: string
+      enum:
+        - S1
+        - M1
+        - M2
+        - L1
+        - L2
+        - X1
+      example: "{ \"size\": \"S1\" }"
+    od.id:
+      type: string
+      pattern: "^[bB][0-9]{6}$"
+    od.mail:
+      type: string
+      pattern: "[^@ \t\r\n]+@[^@ \t\r\n]+\\.[^@ \t\r\n]+"
+    od.sbu:
+      type: string
+      enum: 
+        - BE
+        - CH-BCH
+        - CH-SOB
+        - DE
+        - LI
+        - LU-RED
+        - LU-YELLOW
+        - SHARED
+    db.pg.catalog-reference:
+      type: string
+      enum:
+        - PGSQL01
+        - PGSQL02
+        - PGSQL03
+        - PGSQL04
+      example: "{ \"catalog-reference\": \"PGSQL01\" }"
+    vm.lin.catalog-reference:
+      type: string
+      enum:
+        - L01
+        - L02
+      example: "{ \"catalog-reference\": \"L01\" }"
+    vm.win.catalog-reference:
+      type: string
+      enum:
+        - W01
+        - W02
+      example: "{ \"catalog-reference\": \"W01\" }"
+    role:
+      type: string
+      enum:
+        - APP
+        - WEB
+        - DB
+      example: "{ \"role\": \"APP\" }"
+    metal-category:
+        type: string
+        enum:
+          - B
+          - S
+          - G
+          - GP
+        example: "{ \"metal-category\": \"B\" }"
+    environment:
+        type: string
+        enum:
+          - Dev
+          - Test
+          - Int
+          - Acc
+          - Prod
+        example: "{ \"environment\": \"Test\" }"
+    application-id:
+      type: string
+      enum:
+        - _A01
+        - _A02
+        - _A03
+    security-zone:
+      type: string
+      enum:
+        - _Z1
+        - _Z2
+    group-permissions:
+      type: array
+      items:
+        $ref: "#components/schemas/group-permission"
+    group-permission:
+      type: object
+      required:
+        - ad-group-name
+        - local-group-name
+      properties:
+        ad-group-name:
+          type: string
+        local-group-name:
+          type: string  
