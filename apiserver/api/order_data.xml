@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<data>
+    <order nr="1">
+        <status>in progress</status>
+    </order>
+    <order nr="2">
+        <status>completed</status>
+    </order>
+    <order nr="3">
+        <status>completed</status>
+    </order>
+</data>
