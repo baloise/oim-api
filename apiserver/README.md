@@ -126,10 +126,19 @@ The recommended IDE (vscode) and mentioned extensions provide better test integr
       "size": "S1",
       "metal-category": "B",
       "environment": "Test",
-      "security-zone": "_Z1"
+      "security-zone": "_Z1",
+      "group-permissions": [
+        {
+          "ad-group-name": "f_adm",
+          "local-group-name": "wheel"
+        }
+      ],
+      "data-disk": {
+        "filesystem": "/data",
+        "size-gb": 1
+      }
     }
   ],
-  "requester-id": "b123456",
-  "requester-mail": "b123456@js.on"
+  "requester-id": "b123456"
 }
 ```

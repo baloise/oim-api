@@ -89,13 +89,12 @@ paths:
             text/plain:
               schema:
                 type: string
-                example: "Order placed."
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#components/schemas/order"
+              $ref: "#components/schemas/Order"
   /secret/usingapikey:
     get:
       summary: Return secret string protected by a token
@@ -146,96 +145,130 @@ components:
         - "sam"
         - "mat"
         - "manu"
-        - "george"
+        - "georges"
       example: sam
-    order:
+    Order:
       type: object
       properties:
         requester-id:
-          $ref: "#components/schemas/od.id"
-        requester-mail:
-          $ref: "#components/schemas/od.mail"
+          $ref: "#components/schemas/User ID"
         items:
           type: array
           items:
-            $ref: "#components/schemas/ordercommon"
-    ordercommon:
+            $ref: "#components/schemas/Order Header"
+    Order Header:
       type: object
       properties:
         allOf:
           oneOf:
-            - $ref: "#components/schemas/vmitem"
-            - $ref: "#components/schemas/dbitem"
+            - $ref: "#components/schemas/VM Order Item"
+            - $ref: "#components/schemas/DB Order Item"
         owner-id:
-          $ref: "#components/schemas/od.id"
+          $ref: "#components/schemas/User ID"
         owner-mail:
-          $ref: "#components/schemas/od.mail"
+          $ref: "#components/schemas/User Mail"
         deputy-id:
-          $ref: "#components/schemas/od.id"
+          $ref: "#components/schemas/User ID"
         deputy-mail:
-          $ref: "#components/schemas/od.mail"
+          $ref: "#components/schemas/User Mail"
         sbu:
-          $ref: "#components/schemas/od.sbu"
-    dbitem:
+          $ref: "#components/schemas/SBU"
+    DB Order Item:
       type: object
       properties:
         catalog-reference:
           oneOf:
-            - $ref: "#components/schemas/db.pg.catalog-reference"
+            - $ref: "#components/schemas/DB PG Catalog Reference"
         size:
-          $ref: "#components/schemas/size"
+          $ref: "#components/schemas/DB Size"
         metal-category:
-          $ref: "#components/schemas/metal-category"
+          $ref: "#components/schemas/DB Metal Category"
         environment:
-          $ref: "#components/schemas/environment"
+          $ref: "#components/schemas/Environment"
         security-zone:
-          $ref: "#components/schemas/security-zone"
+          $ref: "#components/schemas/Security Zone"
       example: >
         {
-          "catalog-reference": "PGSQL01",
-          "size": "S1",
-          "metal-category": "B",
-          "environment": "Test",
-          "security-zone": "_Z1"
-        }
-    vmitem:
-      type: object
-      properties:
-        catalog-reference:
-          oneOf:
-            - $ref: "#components/schemas/vm.lin.catalog-reference"
-            - $ref: "#components/schemas/vm.win.catalog-reference"
-        size:
-          $ref: "#components/schemas/size"
-        role:
-          $ref: "#components/schemas/role"
-        metal-category:
-          $ref: "#components/schemas/metal-category"
-        environment:
-          $ref: "#components/schemas/environment"
-        application-id:
-          $ref: "#components/schemas/application-id"
-        security-zone:
-          $ref: "#components/schemas/security-zone"
-        group-permissions:
-          $ref: "#components/schemas/group-permissions"
-      example: >
-        {
-          "catalog-reference": "L01",
-          "size": "S1",
-          "role": "APP",
-          "metal-category": "B",
-          "environment": "Test",
-          "application-id": "_A01",
-          "security-zone": "_Z1",
-          "group-permissions": [
-            { 
-              "ad-group-name": "f_adm",
-              "local-group-name": "Power User"
+          "items": [
+            {
+              "deputy-id": "b123456",
+              "deputy-mail": "b123456@js.on",
+              "owner-id": "b123456",
+              "owner-mail": "b123456@js.on",
+              "sbu": "CH",
+              "catalog-reference": "PGSQL01",
+              "size": "S1",
+              "metal-category": "B",
+              "environment": "Test",
+              "security-zone": "_Z1",
+              "group-permissions": [
+                {
+                  "ad-group-name": "f_adm",
+                  "local-group-name": "wheel"
+                }
+              ],
+              "data-disk": {
+                "filesystem": "/data",
+                "size-gb": 1
+              }
             }
-          ]
+          ],
+          "requester-id": "b123456"
         }
-    size:
+    VM Order Item:
+      type: object
+      properties:
+        catalog-reference:
+          oneOf:
+            - $ref: "#components/schemas/VM Lin Catalog Reference"
+            - $ref: "#components/schemas/VM Win Catalog Reference"
+        size:
+          $ref: "#components/schemas/VM Size"
+        role:
+          $ref: "#components/schemas/VM Role"
+        metal-category:
+          $ref: "#components/schemas/VM Metal Category"
+        environment:
+          $ref: "#components/schemas/Environment"
+        application-id:
+          $ref: "#components/schemas/Application ID"
+        security-zone:
+          $ref: "#components/schemas/Security Zone"
+        group-permissions:
+          type: array
+          items:
+            $ref: "#components/schemas/Permission Map"
+        data-disk:
+          $ref: "#components/schemas/VM Data Disk"
+      example: >
+        {
+          "items": [
+            {
+              "deputy-id": "b123456",
+              "deputy-mail": "b123456@js.on",
+              "owner-id": "b123456",
+              "owner-mail": "b123456@js.on",
+              "sbu": "BE",
+              "catalog-reference": "L01",
+              "size": "S1",
+              "metal-category": "B",
+              "environment": "Test",
+              "security-zone": "_Z1",
+              "group-permissions": [
+                {
+                  "ad-group-name": "f_adm",
+                  "local-group-name": "wheel"
+                }
+              ],
+              "data-disk": {
+                "filesystem": "/data",
+                "size-gb": 1
+              }
+            }
+          ],
+          "requester-id": "b123456"
+        }
+    VM Size:
       type: string
       enum:
         - S1
@@ -245,13 +278,13 @@ components:
         - L2
         - X1
       example: "{ \"size\": \"S1\" }"
-    od.id:
+    User ID:
       type: string
       pattern: "^[bB][0-9]{6}$"
-    od.mail:
+    User Mail:
       type: string
       pattern: "[^@ \t\r\n]+@[^@ \t\r\n]+\\.[^@ \t\r\n]+"
-    od.sbu:
+    SBU:
       type: string
       enum: 
         - BE
@@ -262,42 +295,65 @@ components:
         - LU-RED
         - LU-YELLOW
         - SHARED
-    db.pg.catalog-reference:
+    DB PG Catalog Reference:
       type: string
       enum:
         - PGSQL01
         - PGSQL02
         - PGSQL03
         - PGSQL04
-      example: "{ \"catalog-reference\": \"PGSQL01\" }"
-    vm.lin.catalog-reference:
+    VM Lin Catalog Reference:
       type: string
       enum:
         - L01
         - L02
-      example: "{ \"catalog-reference\": \"L01\" }"
-    vm.win.catalog-reference:
+    VM Win Catalog Reference:
       type: string
       enum:
         - W01
         - W02
-      example: "{ \"catalog-reference\": \"W01\" }"
-    role:
+    VM Role:
       type: string
       enum:
         - APP
         - WEB
         - DB
-      example: "{ \"role\": \"APP\" }"
-    metal-category:
+    VM Metal Category:
         type: string
         enum:
           - B
           - S
           - G
           - GP
-        example: "{ \"metal-category\": \"B\" }"
-    environment:
+    VM Data Disk:
+      type: object
+      required:
+        - filesystem
+        - size-gb
+      properties:
+        filesystem:
+          type: string
+          pattern: "^(?!/boot|/dev|/dev/.*|/run$)/.*$"
+        size-gb:
+          type: integer
+          minimum: 1
+    DB Metal Category:
+        type: string
+        enum:
+          - B
+          - S
+          - G
+          - GP
+    DB Size:
+      type: string
+      enum:
+        - S1
+        - M1
+        - M2
+        - L1
+        - L2
+        - X1
+    Environment:
         type: string
         enum:
           - Dev
@@ -305,23 +361,18 @@ components:
           - Int
           - Acc
           - Prod
-        example: "{ \"environment\": \"Test\" }"
-    application-id:
+    Application ID:
       type: string
       enum:
-        - _A01
-        - _A02
-        - _A03
-    security-zone:
+        - APP
+        - DB
+        - WEB
+    Security Zone:
       type: string
       enum:
         - _Z1
         - _Z2
-    group-permissions:
-      type: array
-      items:
-        $ref: "#components/schemas/group-permission"
-    group-permission:
+    Permission Map:
       type: object
       required:
         - ad-group-name
@@ -330,4 +381,4 @@ components:
         ad-group-name:
           type: string
         local-group-name:
-          type: string  
+          type: stringG
