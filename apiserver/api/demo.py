@@ -17,7 +17,7 @@ def post_teamgreeting(name):
 
 
 def add_order(body):
-    return 'Order received: {}'.format(body), 201
+    return 'Order has be received: {}'.format(body), 201
 
 
 class PersistanceDemo(object):
