@@ -45,7 +45,7 @@ class OrderHandler:
         root = self.tree.getroot()
         res = filter(lambda x: orderno in x.get('nr'), root.findall('.//order[@nr]'))
         for i in res:
-            for c in i.getchildren():  # sollte 'status' finden, nicht jede Kinder
+            for c in i.getchildren():  # perfect this code
                 return c.text
 
     # def update_status(self,status):

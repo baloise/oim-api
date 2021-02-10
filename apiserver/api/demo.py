@@ -24,7 +24,7 @@ TOKEN_DB = {
 persistance_demo = PersistanceDemo()
 
 
-def add_order():
+def add_order():                                # Add new order entry
     order = OrderHandler('api/order_data.xml')
     orderno = order.add()
     return 'Order '+orderno+'has been added'
