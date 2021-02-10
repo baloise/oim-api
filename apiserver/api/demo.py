@@ -19,6 +19,8 @@ def post_teamgreeting(name):
 def add_order(body):
     return 'Order received: {}'.format(body), 201
 
+def add_jboss(body):
+    return 'JBoss order received: {}'.format(body), 201
 
 class PersistanceDemo(object):
     count = 0
