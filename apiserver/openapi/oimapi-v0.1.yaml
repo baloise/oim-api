@@ -72,7 +72,7 @@ paths:
                 type: string
                 example: "Update of the ... was failed"
       parameters:
-        - name: id
+        - name: vmname
           in: path
           description: "give the name of the VM"
           required: true
@@ -228,7 +228,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#components/schema/orderdatabase"
+              $ref: "#components/schemas/orderdatabase"
 
   # /db/list:
   #   get:
@@ -322,7 +322,23 @@ components:
         items:
           type: array
           items:
-            $ref: "#components/schemas/ordercommon"   
+            $ref: "#components/schemas/ordercommon"
+      example: >
+        {
+          "catalog-reference": "L01",
+          "size": "S1",
+          "role": "APP",
+          "metal-category": "B",
+          "environment": "Test",
+          "application-id": "_A01",
+          "security-zone": "_Z1",
+          "group-permissions": [
+            { 
+              "ad-group-name": "f_adm",
+              "local-group-name": "Power User"
+            }
+          ]
+        }
     order:
       type: object
       properties:
