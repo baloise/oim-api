@@ -1,0 +1,508 @@
+openapi: "3.0.0"
+
+info:
+  title: Baloise OIM API
+  version: "0.1"
+servers:
+  - url: /v0.1
+
+paths:
+  /orderid/status/{id}:
+    get:
+      summary: "show the order status"
+      description: "is made to display the order status"
+      operationId: api.demo.orderStatus
+      responses:
+        200:
+          description: "order status"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Order status is: pending/done"
+      parameters:
+        - name: id
+          in: path
+          description: "the orderid from the original order"
+          required: true
+          schema:
+            type: string
+            example: "order123"
+
+  /orderid/details/{id}:
+    get:
+      summary: "show the order details"
+      description: "is made to display the order details"
+      operationId: api.demo.orderDetails
+      responses:
+        200:
+          description: "order details"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Order details are: ..."
+      parameters:
+        - name: id
+          in: path
+          description: "the orderid from the original order"
+          required: true
+          schema:
+            type: string
+            example: "order123"
+
+  /vm/modify/{vmname}:
+    patch:
+      summary: "Allows the modification of SOME modifiable parameter"
+      description: "todo"
+      operationId: api.demo.modifyVM
+      responses:
+        200:
+          description: "update sucessfully"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Update of the VM-CH-BAL-PGSQL01 was sucessfully"
+        404:
+          description: "update failed"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Update of the ... was failed"
+      parameters:
+        - name: id
+          in: path
+          description: "give the name of the VM"
+          required: true
+          schema:
+            type: string
+            example: "vmbal2021"
+
+  /vm/remove/{ressourcename}:
+    delete:
+      summary: "requests removal of specified resource"
+      description: "todo"
+      operationId: api.demo.removeResource
+      responses:
+        200:
+          description: "remove sucessfully"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "todo"
+      parameters:
+        - name: ressourcename
+          in: path
+          description: "given ressourcename to remove"
+          required: true
+          schema:
+            type: string
+            example: "todo"
+
+  /vm/new:
+    post:
+      summary: "Requests new vm"
+      description: "returns orderit, optionally accepts customer-reference"
+      operationId: api.demo.add_order
+      responses:
+        201:
+          description: "order response"
+          content:
+            text/plain:
+              schema:
+                type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#components/schemas/order"
+
+  # /vm/list:
+  #   get:
+  #     summary: Lists all known vm's
+  #     description: todo
+  #     responses:
+  #       200:
+  #         description: todo
+  #         content:
+  #           text/plain:
+  #             schema: 
+  #               type: string
+  #     parameters:
+  #     -name: filter
+  #       description: Allows limitation of list result
+  #       required: false
+  #       default: *.
+  #       schema:
+  #         type: application/json
+  #       requestBody:
+  #         content:
+  #           application/x-www-form-urlencoded":
+  #             schema:
+  #               type: object
+  #               properties:
+  #                 filter:
+  #                   description: "todo"
+  #                   type: string
+  #                 stutus:
+  #                   description: "todo"
+  #                   type: string
+  #               required: 
+  #       - name: limit
+  #         in: body
+  #         description: "todo"
+  #         required: false
+  #         default: <10
+  #         schema:
+  #           type: string
+  #           example: todo
+  #     responses:
+  #       200:
+  #         description: todo
+  #         content:
+  #           text/plain:
+  #             schema:
+  #               type: string
+  #       405:
+  #         description: todo
+  #         content:
+  #           text/plain:
+  #             schema:
+  #               type: string
+
+  # /vm/get/{name}:
+  #   get:
+  #     summary: Request info about one specific existing machine
+  #     parameters:
+  #       - name: name
+  #         in: path
+  #         required: true
+  #         schema:
+  #           type: string
+  #           example: "svw-myserverp123.balgroupit.com"
+
+  # /db/modify/{name}:
+  #   patch:
+  #     summary: Allows the modification of parameter
+
+  /db/remove/{dbname}:
+    delete:
+      summary: "requests removal of specified resource"
+      description: "todo"
+      operationId: api.demo.removeDB
+      responses:
+        200:
+          description: "remove sucessfully"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "todo"
+      parameters:
+        - name: dbname
+          in: path
+          description: "given dbname to remove"
+          required: true
+          schema:
+            type: string
+            example: "todo"
+
+  /db/new:
+    post:
+      summary: "Requests new database"
+      description: "returns orderid, optionally accepts customer-reference"
+      operationId: api.demo.orderDatabase
+      responses:
+        201:
+          description: "orderid response"
+          content:
+            text/plain:
+              schema:
+                type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#components/schema/orderdatabase"
+
+  # /db/list:
+  #   get:
+  #     summary: Lists all known databases
+  #     description: return a list of databases based on given filter
+  #     operationId: api.demo.listDatabase
+  #     parameters:
+  #       - name: filter
+  #         in: body
+  #         description: Allows limitation of list result
+  #         required: false
+  #         default: .*
+  #         schema:
+  #           type: string
+  #           example: "TODO"
+  #       - name: limit
+         
+  /db/get/{name}:
+    get:
+      summary: "Request information on a specific database"
+      description: "todo"
+      operationId: api.demo.infoDB
+      responses:
+        200:
+          description: "todo"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Request details for: ..."
+      parameters:
+        - name: name
+          in: path
+          description: "todo"
+          required: true
+          schema:
+            type: string
+            example: "database identifier"
+
+  # /jb/modify/{name}:
+  #   patch:
+  #     summary: Allows the modification of parameter
+
+  # /jb/remove/{name}:
+  #   delete:
+  #     summary: requests removal of specified resource
+  #     parameters:
+  #       - name: name
+
+  # /jb/new:
+  #   post:
+  #     summary: Requests new vm
+  #     description: returns orderit, optionally accepts customer-reference
+
+  # /jb/list:
+  #   get:
+  #     summary: Lists all known vm's
+  #     parameters:
+  #       - name: filter
+  #         in: body
+  #         description: Allows limitation of list result
+  #         required: false
+  #         default: .*
+  #         schema:
+  #           type: string
+  #           example: "TODO"
+  #       - name: limit
+         
+  # /jb/get/{name}:
+  #   get:
+  #     summary: Request info about one specific existing machine
+  #     parameters:
+  #       - name: name
+  #         in: path
+  #         required: true
+  #         schema:
+  #           type: string
+  #           example: "svw-myserverp123.balgroupit.com"
+
+components:
+  schemas:
+    orderdatabase:
+      type: object
+      properties:
+        requester-id:
+          $ref: "#components/schemas/od.id"
+        requester-mail:
+          $ref: "#components/schemas/od.mail"
+        database-stuff:
+          $ref: "#components/schemas/dbitem"
+        items:
+          type: array
+          items:
+            $ref: "#components/schemas/ordercommon"   
+    order:
+      type: object
+      properties:
+        requester-id:
+          $ref: "#components/schemas/od.id"
+        requester-mail:
+          $ref: "#components/schemas/od.mail"
+        items:
+          type: array
+          items:
+            $ref: "#components/schemas/ordercommon"
+    ordercommon:
+      type: object
+      properties:
+        allOf:
+          oneOf:
+            - $ref: "#components/schemas/vmitem"
+#            - $ref: "#components/schemas/dbitem"
+        owner-id:
+          $ref: "#components/schemas/od.id"
+        owner-mail:
+          $ref: "#components/schemas/od.mail"
+        deputy-id:
+          $ref: "#components/schemas/od.id"
+        deputy-mail:
+          $ref: "#components/schemas/od.mail"
+        sbu:
+          $ref: "#components/schemas/od.sbu"
+    dbitem:
+      type: object
+      properties:
+        catalog-reference:
+          oneOf:
+            - $ref: "#components/schemas/db.pg.catalog-reference"
+        size:
+          $ref: "#components/schemas/size"
+        metal-category:
+          $ref: "#components/schemas/metal-category"
+        environment:
+          $ref: "#components/schemas/environment"
+        security-zone:
+          $ref: "#components/schemas/security-zone"
+      example: >
+        {
+          "catalog-reference": "PGSQL01",
+          "size": "S1",
+          "metal-category": "B",
+          "environment": "Test",
+          "security-zone": "_Z1"
+        }
+    vmitem:
+      type: object
+      properties:
+        catalog-reference:
+          oneOf:
+            - $ref: "#components/schemas/vm.lin.catalog-reference"
+            - $ref: "#components/schemas/vm.win.catalog-reference"
+        size:
+          $ref: "#components/schemas/size"
+        role:
+          $ref: "#components/schemas/role"
+        metal-category:
+          $ref: "#components/schemas/metal-category"
+        environment:
+          $ref: "#components/schemas/environment"
+        application-id:
+          $ref: "#components/schemas/application-id"
+        security-zone:
+          $ref: "#components/schemas/security-zone"
+        group-permissions:
+          $ref: "#components/schemas/group-permissions"
+      example: >
+        {
+          "catalog-reference": "L01",
+          "size": "S1",
+          "role": "APP",
+          "metal-category": "B",
+          "environment": "Test",
+          "application-id": "_A01",
+          "security-zone": "_Z1",
+          "group-permissions": [
+            { 
+              "ad-group-name": "f_adm",
+              "local-group-name": "Power User"
+            }
+          ]
+        }
+    size:
+      type: string
+      enum:
+        - S1
+        - M1
+        - M2
+        - L1
+        - L2
+        - X1
+      example: "{ \"size\": \"S1\" }"
+    od.id:
+      type: string
+      pattern: "^[bB][0-9]{6}$"
+    od.mail:
+      type: string
+      pattern: "[^@ \t\r\n]+@[^@ \t\r\n]+\\.[^@ \t\r\n]+"
+    od.sbu:
+      type: string
+      enum: 
+        - BE
+        - CH-BCH
+        - CH-SOB
+        - DE
+        - LI
+        - LU-RED
+        - LU-YELLOW
+        - SHARED
+    db.pg.catalog-reference:
+      type: string
+      enum:
+        - PGSQL01
+        - PGSQL02
+        - PGSQL03
+        - PGSQL04
+      example: "{ \"catalog-reference\": \"PGSQL01\" }"
+    vm.lin.catalog-reference:
+      type: string
+      enum:
+        - L01
+        - L02
+      example: "{ \"catalog-reference\": \"L01\" }"
+    vm.win.catalog-reference:
+      type: string
+      enum:
+        - W01
+        - W02
+      example: "{ \"catalog-reference\": \"W01\" }"
+    role:
+      type: string
+      enum:
+        - APP
+        - WEB
+        - DB
+      example: "{ \"role\": \"APP\" }"
+    metal-category:
+        type: string
+        enum:
+          - B
+          - S
+          - G
+          - GP
+        example: "{ \"metal-category\": \"B\" }"
+    environment:
+        type: string
+        enum:
+          - Dev
+          - Test
+          - Int
+          - Acc
+          - Prod
+        example: "{ \"environment\": \"Test\" }"
+    application-id:
+      type: string
+      enum:
+        - _A01
+        - _A02
+        - _A03
+    security-zone:
+      type: string
+      enum:
+        - _Z1
+        - _Z2
+    group-permissions:
+      type: array
+      items:
+        $ref: "#components/schemas/group-permission"
+    group-permission:
+      type: object
+      required:
+        - ad-group-name
+        - local-group-name
+      properties:
+        ad-group-name:
+          type: string
+        local-group-name:
+          type: string  
