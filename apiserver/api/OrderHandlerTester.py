@@ -37,19 +37,19 @@ class OrderHandler:
         root = self.tree.getroot()                  # Insert new child to structure
         root.append(order)
         newdata = ET.tostring(root, encoding='unicode')
-        xmlfile = open(self.filename, "w")    # Mutex to prevent concurrent reads/writes on the same file from multiple instances
+        xmlfile = open(self.filename, "w")    # Mutex ?
         xmlfile.write(newdata)              # Save the file
         return orderno
 
-    def get_status(self,orderno):
+    def get_status(self, orderno):
         root = self.tree.getroot()
-        res=filter(lambda x: orderno in x.get('nr'), root.findall('.//order[@nr]'))
+        res = filter(lambda x: orderno in x.get('nr'), root.findall('.//order[@nr]'))
         for i in res:
-            for c in i.getchildren():  #  sollte 'status' finden, nicht jede Kinder
+            for c in i.getchildren():  # sollte 'status' finden, nicht jede Kinder
                 return c.text
 
-    #def update_status(self,status):
-        #with self.filemutex:
+    # def update_status(self,status):
+        # with self.filemutex:
 
 
 if __name__ == '__main__':
