@@ -1,11 +1,12 @@
 import xml.etree.ElementTree as ET
 from datetime import datetime
 
+
 class OrderHandler:
 
     def __init__(self, filename):
         self.filename = filename
-        self.tree=ET.parse(self.filename)
+        self.tree = ET.parse(self.filename)
 
     def parse_file(self):
         root = self.tree.getroot()
@@ -27,16 +28,16 @@ class OrderHandler:
             print("Orderno: {0}, Status: {1}".format(elem.get('nr'), status))
 
     def add(self):
-        orderno=datetime.utcnow().strftime("%s%f")  # Generate unique ID
-        order=ET.Element('order')
-        status=ET.SubElement(order,'status')
-        order.set('nr',orderno)
-        status.text='open'
+        orderno = datetime.utcnow().strftime("%s%f")  # Generate unique ID
+        order = ET.Element('order')
+        status = ET.SubElement(order, 'status')
+        order.set('nr', orderno)
+        status.text = 'open'
         print(orderno)
         root = self.tree.getroot()                  # Insert new child to structure
         root.append(order)
-        newdata = ET.tostring(root,encoding='unicode')
-        xmlfile=open(self.filename, "w")    # Mutex to prevent concurrent reads/writes on the same file from multiple instances
+        newdata = ET.tostring(root, encoding='unicode')
+        xmlfile = open(self.filename, "w")    # Mutex to prevent concurrent reads/writes on the same file from multiple instances
         xmlfile.write(newdata)              # Save the file
         return orderno
 

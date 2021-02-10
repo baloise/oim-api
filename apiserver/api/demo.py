@@ -1,5 +1,4 @@
 from api.OrderHandlerTester import OrderHandler
-
 from connexion.exceptions import OAuthProblem, OAuthScopeProblem
 from connexion.decorators.security import validate_scope
 
