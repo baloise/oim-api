@@ -3,9 +3,6 @@ from api.OrderHandlerTester import OrderHandler
 from connexion.exceptions import OAuthProblem, OAuthScopeProblem
 from connexion.decorators.security import validate_scope
 
-#_______________________________________________________________
-# CLASSES
-#_______________________________________________________________
 
 class PersistanceDemo(object):
     count = 0
@@ -16,9 +13,6 @@ class PersistanceDemo(object):
     def showcount(self):
         return self.count
 
-#_______________________________________________________________
-# VARS
-#_______________________________________________________________
 
 TOKEN_DB = {
     'asdf1234567890': {
@@ -26,13 +20,10 @@ TOKEN_DB = {
     }
 }
 
+
 # Create an instance of this class that lives within the memory of the app
 persistance_demo = PersistanceDemo()
 
-
-#_______________________________________________________________
-# FUNCTIONS
-#_______________________________________________________________
 
 def add_order():
     order=OrderHandler('api/order_data.xml')
