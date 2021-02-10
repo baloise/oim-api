@@ -1,7 +1,49 @@
-# This file only contains random hello-world-grade functions so
-# that the demo api endpoints actually do something.
+from api.OrderHandlerTester import OrderHandler
+
 from connexion.exceptions import OAuthProblem, OAuthScopeProblem
 from connexion.decorators.security import validate_scope
+
+#_______________________________________________________________
+# CLASSES
+#_______________________________________________________________
+
+class PersistanceDemo(object):
+    count = 0
+
+    def increase(self):
+        self.count += 1
+
+    def showcount(self):
+        return self.count
+
+#_______________________________________________________________
+# VARS
+#_______________________________________________________________
+
+TOKEN_DB = {
+    'asdf1234567890': {
+        'uid': 100
+    }
+}
+
+# Create an instance of this class that lives within the memory of the app
+persistance_demo = PersistanceDemo()
+
+
+#_______________________________________________________________
+# FUNCTIONS
+#_______________________________________________________________
+
+def add_order():
+    order=OrderHandler('api/order_data.xml')
+    orderno=order.add()
+    return 'Order '+orderno+'has been added'
+
+
+def get_order_status(id) -> str:
+    order = OrderHandler('api/order_data.xml')
+    status = order.get_status(id)
+    return 'Order {id} has the status: {status}'.format(id = id , status = status)
 
 
 def hello_world():
@@ -16,39 +58,11 @@ def post_teamgreeting(name):
     return 'Team member: {name}'.format(name=name)
 
 
-def add_order(body):
-    return 'Order received: {}'.format(body), 201
-
-
-class PersistanceDemo(object):
-    count = 0
-
-    def increase(self):
-        self.count += 1
-
-    def showcount(self):
-        return self.count
-
-
-# Create an instance of this class that lives within the memory of the app
-persistance_demo = PersistanceDemo()
-
-
 def persistance_get():
     # Method called by the api endpoint. See the .yaml files in
     # the openapi/ folder
     persistance_demo.increase()
     return persistance_demo.showcount()
-
-
-########
-# Below are the functions that show the auth possibilities
-
-TOKEN_DB = {
-    'asdf1234567890': {
-        'uid': 100
-    }
-}
 
 
 def apikey_auth(token, required_scopes):
