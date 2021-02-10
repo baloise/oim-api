@@ -26,15 +26,15 @@ persistance_demo = PersistanceDemo()
 
 
 def add_order():
-    order=OrderHandler('api/order_data.xml')
-    orderno=order.add()
+    order = OrderHandler('api/order_data.xml')
+    orderno = order.add()
     return 'Order '+orderno+'has been added'
 
 
 def get_order_status(id) -> str:
     order = OrderHandler('api/order_data.xml')
     status = order.get_status(id)
-    return 'Order {id} has the status: {status}'.format(id = id , status = status)
+    return 'Order {id} has the status: {status}'.format(id=id, status=status)
 
 
 def hello_world():

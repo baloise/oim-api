@@ -56,4 +56,3 @@ if __name__ == '__main__':
     writer.list_orders()
     print(writer.add())
     print(writer.get_status('3'))
-
