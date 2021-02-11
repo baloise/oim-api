@@ -51,6 +51,8 @@ def removeDB(body):
 def infoDB(body):
     return 'Request information for DB: {}'.format(body), 200
 
+def add_jboss(body):
+    return 'JBoss order received: {}'.format(body), 201
 
 class PersistanceDemo(object):
     count = 0
