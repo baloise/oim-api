@@ -17,7 +17,39 @@ def post_teamgreeting(name):
 
 
 def add_order(body):
-    return 'Order received: {}'.format(body), 201
+    return 'Order has be received: {}'.format(body), 201
+
+
+def orderStatus(body):
+    return 'Display order status: {}'.format(body), 200
+
+
+def orderDetails(body):
+    return 'Display order details: {}'.format(body), 200
+
+
+def orderDatabase(body):
+    return 'Database order has be received: {}'.format(body), 201
+
+
+def listDatabase(body):
+    return 'List is requested: {}'.format(body), 200
+
+
+def modifyVM(body):
+    return 'Modify request: {}'.format(body), 200
+
+
+def removeResource(body):
+    return 'Request remove resource: {}'.format(body), 200
+
+
+def removeDB(body):
+    return 'Request remove DB: {}'.format(body), 200
+
+
+def infoDB(body):
+    return 'Request information for DB: {}'.format(body), 200
 
 
 class PersistanceDemo(object):
@@ -71,7 +103,8 @@ def basic_auth(username, password, required_scopes=None):
         return None
 
     # optional
-    if required_scopes is not None and not validate_scope(required_scopes, info['scope']):
+    if required_scopes is not None and not validate_scope(
+            required_scopes, info['scope']):
         raise OAuthScopeProblem(
                 description='Provided user doesn\'t have the required access rights',
                 required_scopes=required_scopes,

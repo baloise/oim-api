@@ -372,6 +372,11 @@ components:
       enum:
         - _Z1
         - _Z2
+    Platform Architectur:
+      type: string
+      enum:
+        - Shared
+        - Dedicated
     Permission Map:
       type: object
       required:
