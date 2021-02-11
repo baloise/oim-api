@@ -417,7 +417,6 @@ components:
         allOf:
           oneOf:
             - $ref: "#components/schemas/vmitem"
-            - $ref: "#components/schemas/dbitem"
         owner-id:
           $ref: "#components/schemas/od.id"
         owner-mail:
