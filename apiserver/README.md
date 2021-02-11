@@ -14,6 +14,8 @@
   - [Examples](#examples)
     - [DB Order Request Body](#db-order-request-body)
     - [JBoss Order Request Body](#jboss-order-request-body)
+    - [Linux Order Request Body](#linux-order-request-body)
+    - [Windows Order Request Body](#windows-order-request-body)
 
 ## Development environment
 
@@ -150,16 +152,44 @@ The recommended IDE (vscode) and mentioned extensions provide better test integr
 {
   "items": [
     {
-      "deputy-id": "b123456",
-      "deputy-mail": "b123456@js.on",
-      "owner-id": "b123456",
-      "owner-mail": "b123456@js.on",
-      "sbu": "BE",
       "catalog-reference": "MP03",
-      "size": "S1",
+      "data-disk": {
+        "filesystem": "/data",
+        "size-gb": 1
+      },
+      "deputy-id": "b123456",
+      "environment": "Dev",
+      "group-permissions": [
+        {
+          "ad-group-name": "f_adm",
+          "local-group-name": "wheel"
+        }
+      ],
       "metal-category": "B",
+      "owner-id": "b123456",
+      "security-zone": "PROD",
+      "size": "S1",
+      "version": 7.1
+    }
+  ],
+  "requester-id": "b123456",
+  "sbu": "BE"
+}
+```
+
+### Linux Order Request Body
+```json
+{
+  "items": [
+    {
+      "catalog-reference": "L01",
+      "metal-class": "B",
       "environment": "Test",
-      "security-zone": "_Z1",
+      "security-zone": "PROD",
+      "role": "APP",
+      "size": "S1",
+      "owner-id": "b123456",
+      "deputiy-id": "b123456",
       "group-permissions": [
         {
           "ad-group-name": "f_adm",
@@ -167,11 +197,42 @@ The recommended IDE (vscode) and mentioned extensions provide better test integr
         }
       ],
       "data-disk": {
-        "filesystem": "/data",
+        "filesystem": "/opt",
         "size-gb": 1
       }
     }
   ],
-  "requester-id": "b123456"
+  "requester-id": "b123456",
+  "sbu": "BE"
+}
+```
+
+### Windows Order Request Body
+```json
+{
+  "items": [
+    {
+      "catalog-reference": "W01",
+      "metal-class": "B",
+      "environment": "Test",
+      "security-zone": "PROD",
+      "role": "APP",
+      "size": "S1",
+      "owner-id": "b123456",
+      "deputiy-id": "b123456",
+      "group-permissions": [
+        {
+          "ad-group-name": "f_adm",
+          "local-group-name": "Users"
+        }
+      ],
+      "data-disk": {
+        "filesystem": "D",
+        "size-gb": 1
+      }
+    }
+  ],
+  "requester-id": "b123456",
+  "sbu": "BE"
 }
 ```
