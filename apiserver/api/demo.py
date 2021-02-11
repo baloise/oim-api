@@ -2,6 +2,40 @@
 # that the demo api endpoints actually do something.
 from connexion.exceptions import OAuthProblem, OAuthScopeProblem
 from connexion.decorators.security import validate_scope
+from api.OrderHandlerTester import OrderHandler
+
+
+class PersistanceDemo(object):
+    count = 0
+
+    def increase(self):
+        self.count += 1
+
+    def showcount(self):
+        return self.count
+
+
+TOKEN_DB = {
+    'asdf1234567890': {
+        'uid': 100
+    }
+}
+
+
+# Create an instance of this class that lives within the memory of the app
+persistance_demo = PersistanceDemo()
+
+
+def add_order():                                # Add new order entry
+    order = OrderHandler('api/order_data.xml')
+    orderno = order.add()
+    return 'Order '+orderno+'has been added'
+
+
+def get_order_status(id) -> str:
+    order = OrderHandler('api/order_data.xml')
+    status = order.get_status(id)
+    return 'Order {id} has the status: {status}'.format(id=id, status=status)
 
 
 def hello_world():
@@ -16,73 +50,11 @@ def post_teamgreeting(name):
     return 'Team member: {name}'.format(name=name)
 
 
-def add_order(body):
-    return 'Order has be received: {}'.format(body), 201
-
-
-def orderStatus(body):
-    return 'Display order status: {}'.format(body), 200
-
-
-def orderDetails(body):
-    return 'Display order details: {}'.format(body), 200
-
-
-def orderDatabase(body):
-    return 'Database order has be received: {}'.format(body), 201
-
-
-def listDatabase(body):
-    return 'List is requested: {}'.format(body), 200
-
-
-def modifyVM(body):
-    return 'Modify request: {}'.format(body), 200
-
-
-def removeResource(body):
-    return 'Request remove resource: {}'.format(body), 200
-
-
-def removeDB(body):
-    return 'Request remove DB: {}'.format(body), 200
-
-
-def infoDB(body):
-    return 'Request information for DB: {}'.format(body), 200
-
-def add_jboss(body):
-    return 'JBoss order received: {}'.format(body), 201
-
-class PersistanceDemo(object):
-    count = 0
-
-    def increase(self):
-        self.count += 1
-
-    def showcount(self):
-        return self.count
-
-
-# Create an instance of this class that lives within the memory of the app
-persistance_demo = PersistanceDemo()
-
-
 def persistance_get():
     # Method called by the api endpoint. See the .yaml files in
     # the openapi/ folder
     persistance_demo.increase()
     return persistance_demo.showcount()
-
-
-########
-# Below are the functions that show the auth possibilities
-
-TOKEN_DB = {
-    'asdf1234567890': {
-        'uid': 100
-    }
-}
 
 
 def apikey_auth(token, required_scopes):
@@ -105,8 +77,7 @@ def basic_auth(username, password, required_scopes=None):
         return None
 
     # optional
-    if required_scopes is not None and not validate_scope(
-            required_scopes, info['scope']):
+    if required_scopes is not None and not validate_scope(required_scopes, info['scope']):
         raise OAuthScopeProblem(
                 description='Provided user doesn\'t have the required access rights',
                 required_scopes=required_scopes,
