@@ -22,7 +22,7 @@ app.add_api('olddemo.yaml', arguments={'title': 'OpenAPI Demo of an older API ve
 app.add_api('oimtest.yaml')
 
 # Add the Baloise OIM API specs
-app.add_api('oimapi-v0.1.yaml')
+# app.add_api('oimapi-v0.1.yaml')
 
 # Next we create an object called application that points to our webapp
 # This is only needed when the webapp is loaded by a production-ready application server
