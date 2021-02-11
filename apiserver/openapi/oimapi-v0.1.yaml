@@ -144,7 +144,7 @@ paths:
             text/plain:
               schema:
                 type: string
-                example: 'Creation request accepted'
+                example: 'Creation request denied'
       requestBody:
         required: true
         content:
@@ -186,7 +186,6 @@ paths:
             type: string
             example: 100
 
-
   /vm/get/{name}:
     get:
       summary: "Request information on a specific VM"
@@ -219,11 +218,10 @@ paths:
   #   patch:
   #     summary: Allows the modification of parameter
 
-  /dbpg/remove/{dbname}:
+  /dbpg/remove/{dbid}:
     delete:
       summary: "Requests removal of specified resource"
-      description: "todo"
-      operationId: api.demo.removeDB
+      description: "Remove a database identified by database identifier"
       responses:
         202:
           description: "Removal request accepted"
@@ -240,13 +238,13 @@ paths:
                 type: string
                 example: "Resource not found"
       parameters:
-        - name: dbname
+        - name: dbid
           in: path
-          description: "given dbname to remove"
+          description: "given database identifier to remove"
           required: true
           schema:
             type: string
-            example: "todo"
+            example: "DB1"
 
   /dbpg/new:
     post:
@@ -259,7 +257,14 @@ paths:
             text/plain:
               schema:
                 type: string
-                example: 'Resource creation requested successfully'
+                example: 'Resource creation request accepted'
+        400:
+          description: "Bad request parameters."
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'Creation request denied'
       requestBody:
         required: true
         content:
@@ -269,15 +274,16 @@ paths:
 
   /dbpg/list:
     get:
-      summary: Lists all known vm's
-      description: todo
+      summary: "Lists all known databases"
+      description: "Return a list of databases based on given filter"
       responses:
         200:
-          description: TODO
+          description: "List filtered databases"
           content:
             text/plain:
               schema:
                 type: string
+                example: "Request list of databases by filter (TODO: make this a json repsone)"
         404:
           description: "Response for unknown resource"
           content:
@@ -285,34 +291,25 @@ paths:
               schema:
                 type: string
                 example: "Resource not found"
-      parameters:
-        - name: filter
-          description: Allows limitation of list result
-          required: false
-          default: "*."
-          schema:
-            type: string
-        - name: limit
-          in: body
-          description: "todo"
-          required: false
-          default: 25
-          schema:
-            type: string
-            example: 100
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#components/schemas/listdatabase"
          
-  /dbpg/get/{name}:
+  /dbpg/get/{dbid}:
     get:
       summary: "Request information on a specific database"
-      description: "todo"
+      description: "List details on a given database item"
       responses:
         200:
-          description: "todo"
+          description: "List details for a database item"
           content:
             text/plain:
               schema:
                 type: string
-                example: "Request details for: ..."
+                example: "Request information for DB -> database identifier[{dbid}]"
         404:
           description: "Response for unknown resource"
           content:
@@ -321,13 +318,13 @@ paths:
                 type: string
                 example: "Resource not found"
       parameters:
-        - name: name
+        - name: dbid
           in: path
-          description: "todo"
+          description: "database identifier"
           required: true
           schema:
             type: string
-            example: "database identifier"
+            example: "DB1"
 
   # /jb/modify/{name}:
   #   patch:
@@ -374,6 +371,21 @@ components:
     orderdatabase:
       type: object
       properties:
+        database-name:
+          type: string
+          example: "DB01"
+        database-user:
+          type: string
+          example: "L000001"
+        database-rolls:
+          type: string
+          example: "baloise-devops"
+        database-platform:
+          type: string
+          enum:
+            - shared
+            - dedicated
+          example: "shared"
         requester-id:
           $ref: "#components/schemas/od.id"
         requester-mail:
@@ -386,6 +398,57 @@ components:
             $ref: "#components/schemas/ordercommon"
       example: >
         {
+          "items": [
+            {
+              "database-name": "DB01",
+              "database-user": "L000001",
+              "database-rolls": "baloise-devops",
+              "database-platform": "shared",
+              "deputy-id": "b123456",
+              "deputy-mail": "b123456@js.on",
+              "owner-id": "b123456",
+              "owner-mail": "b123456@js.on",
+              "sbu": "CH-BCH",
+              "catalog-reference": "PGSQL01",
+              "size": "S1",
+              "role": "APP",
+              "metal-category": "B",
+              "environment": "Test",
+              "application-id": "_A01",
+              "security-zone": "_Z1",
+              "group-permissions": [
+                { 
+                  "ad-group-name": "f_adm",
+                  "local-group-name": "Power User"
+                }
+              ],
+                "data-disk": {
+                "filesystem": "/data",
+                "size-gb": 1
+              }
+            }
+          ],
+          "requester-id": "b123456"
+        }
+    listdatabase:
+      type: object
+      properties:
+        filter:
+          type: string
+          description: "Allows limitation of list result"
+          default: ".*"
+          example: "todo"
+        limit:
+          type: integer
+          description: "Limit the list of elements"
+          default: 10
+          example: "50"
+      example: >
+        {
+          "items": [
+            {
+              "filter": "DB*",
+              "limit": 5
           "catalog-reference": "L01",
           "size": "S1",
           "role": "APP",
