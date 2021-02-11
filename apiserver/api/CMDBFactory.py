@@ -5,7 +5,6 @@ from datetime import datetime
 
 
 class CMDBFactory:
-
     def __init__(self, filename):
         self.filename = filename
         if not Path(self.filename).exists():
@@ -15,7 +14,6 @@ class CMDBFactory:
             xmlfile.write(newdata)
             xmlfile.close()
         self.tree = ET.parse(self.filename)
-
 
     def generate_item(self, name, itype, requester_id='b0123456', description=None):
         item = ET.Element('item')
@@ -38,7 +36,12 @@ class CMDBFactory:
         root = self.tree.getroot()
         root.append(item)
         newdata = ET.tostring(root, encoding='unicode')
-        make_pretty = lambda data: '\n'.join([line for line in minidom.parseString(data).toprettyxml(indent=' '*2).split('\n') if line.strip()])
+
+        def make_pretty(data):
+            return '\n'.join([
+                line for line in minidom.parseString(data).toprettyxml(indent=' '*2).split('\n') if line.strip()
+                ])
+
         xmlfile = open(self.filename, "w")
         xmlfile.write(make_pretty(newdata))
         return itemid
@@ -48,9 +51,8 @@ class CMDBFactory:
         answer = '\n'
         for elem in root.iter('item'):
             name = elem.find('name').text
-            answer += "Item id: " + elem.get('id') + " name: "+ name + '\n'
+            answer += "Item id: {id} name: {name}\n".format(id=str(elem.get('id')), name=str(name))
         return answer
-
 
     def get_info(self, itemid):
         item = self.tree.find('.//item[@id="'+itemid+'"]')
@@ -65,7 +67,10 @@ class CMDBFactory:
 
 if __name__ == '__main__':
     factory = CMDBFactory('cmdb_data.xml')
-    itemid=factory.generate_item('svw-blablat003', 'VM', requester_id='b088881', description='This is my blabla VM')
+    itemid = factory.generate_item('svw-blablat003',
+                                   'VM',
+                                   requester_id='b088881',
+                                   description='This is my blabla VM')
     print("New item", itemid)
     print(factory.list_items())
     print(factory.get_info('1613044439027152'))
