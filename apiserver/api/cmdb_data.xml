@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+<data>
+  <item id="1613044439027152">
+    <name>svw-blablat001</name>
+    <type>VM</type>
+    <parentid>0</parentid>
+    <requester_id>b039214</requester_id>
+    <created>Thu Feb 11 12:53:59 2021</created>
+    <orderid>1613044439027132</orderid>
+    <description>This is my blabla VM</description>
+  </item>
+  <item id="1613044501925342">
+    <name>svw-blablat002</name>
+    <type>VM</type>
+    <parentid>0</parentid>
+    <requester_id>b08888</requester_id>
+    <created>Thu Feb 11 12:55:01 2021</created>
+    <orderid>1613044501925318</orderid>
+    <description>This is my blabla VM</description>
+  </item>
+  <item id="1613044573836985">
+    <name>svw-blablat003</name>
+    <type>VM</type>
+    <parentid>0</parentid>
+    <requester_id>b088881</requester_id>
+    <created>Thu Feb 11 12:56:13 2021</created>
+    <orderid>1613044573836967</orderid>
+    <description>This is my blabla VM</description>
+  </item>
+</data>
