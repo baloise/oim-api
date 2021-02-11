@@ -7,11 +7,10 @@ servers:
   - url: /v0.1
 
 paths:
-  /orderid/status/{id}:
+  /order/status/{id}:
     get:
       summary: "show the order status"
       description: "is made to display the order status"
-      operationId: api.demo.orderStatus
       responses:
         200:
           description: "order status"
@@ -20,6 +19,13 @@ paths:
               schema:
                 type: string
                 example: "Order status is: pending/done"
+        404:
+          description: "Specified order not found"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Order not found"
       parameters:
         - name: id
           in: path
@@ -29,11 +35,10 @@ paths:
             type: string
             example: "order123"
 
-  /orderid/details/{id}:
+  /order/details/{id}:
     get:
       summary: "show the order details"
       description: "is made to display the order details"
-      operationId: api.demo.orderDetails
       responses:
         200:
           description: "order details"
@@ -42,6 +47,13 @@ paths:
               schema:
                 type: string
                 example: "Order details are: ..."
+        404:
+          description: "Specified order not found"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Order not found"
       parameters:
         - name: id
           in: path
@@ -55,7 +67,6 @@ paths:
     patch:
       summary: "Allows the modification of SOME modifiable parameter"
       description: "todo"
-      operationId: api.demo.modifyVM
       responses:
         200:
           description: "update sucessfully"
@@ -65,6 +76,13 @@ paths:
                 type: string
                 example: "Update of the VM-CH-BAL-PGSQL01 was sucessfully"
         404:
+          description: "Response for unknown resource"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Resource not found"
+        409:
           description: "update failed"
           content:
             text/plain:
@@ -84,15 +102,21 @@ paths:
     delete:
       summary: "requests removal of specified resource"
       description: "todo"
-      operationId: api.demo.removeResource
       responses:
-        200:
-          description: "remove sucessfully"
+        202:
+          description: "Removal request accepted"
           content:
             text/plain:
               schema:
                 type: string
-                example: "todo"
+                example: 'Removal request accepted'
+        404:
+          description: "Response for unknown resource"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Resource not found"
       parameters:
         - name: ressourcename
           in: path
@@ -106,14 +130,21 @@ paths:
     post:
       summary: "Requests new vm"
       description: "returns orderit, optionally accepts customer-reference"
-      operationId: api.demo.add_order
       responses:
-        201:
-          description: "order response"
+        202:
+          description: "Creation request accepted"
           content:
             text/plain:
               schema:
                 type: string
+                example: 'Creation request accepted'
+        400:
+          description: "Bad request parameters. "
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'Creation request accepted'
       requestBody:
         required: true
         content:
@@ -121,87 +152,93 @@ paths:
             schema:
               $ref: "#components/schemas/order"
 
-  # /vm/list:
-  #   get:
-  #     summary: Lists all known vm's
-  #     description: todo
-  #     responses:
-  #       200:
-  #         description: todo
-  #         content:
-  #           text/plain:
-  #             schema: 
-  #               type: string
-  #     parameters:
-  #     -name: filter
-  #       description: Allows limitation of list result
-  #       required: false
-  #       default: *.
-  #       schema:
-  #         type: application/json
-  #       requestBody:
-  #         content:
-  #           application/x-www-form-urlencoded":
-  #             schema:
-  #               type: object
-  #               properties:
-  #                 filter:
-  #                   description: "todo"
-  #                   type: string
-  #                 stutus:
-  #                   description: "todo"
-  #                   type: string
-  #               required: 
-  #       - name: limit
-  #         in: body
-  #         description: "todo"
-  #         required: false
-  #         default: <10
-  #         schema:
-  #           type: string
-  #           example: todo
-  #     responses:
-  #       200:
-  #         description: todo
-  #         content:
-  #           text/plain:
-  #             schema:
-  #               type: string
-  #       405:
-  #         description: todo
-  #         content:
-  #           text/plain:
-  #             schema:
-  #               type: string
-
-  # /vm/get/{name}:
-  #   get:
-  #     summary: Request info about one specific existing machine
-  #     parameters:
-  #       - name: name
-  #         in: path
-  #         required: true
-  #         schema:
-  #           type: string
-  #           example: "svw-myserverp123.balgroupit.com"
-
-  # /db/modify/{name}:
-  #   patch:
-  #     summary: Allows the modification of parameter
-
-  /db/remove/{dbname}:
-    delete:
-      summary: "requests removal of specified resource"
-      description: "todo"
-      operationId: api.demo.removeDB
+  /vm/list:
+    get:
+      summary: Lists all known vm's
+      description: todo
       responses:
         200:
-          description: "remove sucessfully"
+          description: TODO
           content:
             text/plain:
               schema:
                 type: string
-                example: "todo"
+        404:
+          description: "Response for unknown resource"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Resource not found"
+      parameters:
+        - name: filter
+          description: Allows limitation of list result
+          required: false
+          default: "*."
+          schema:
+            type: string
+        - name: limit
+          in: body
+          description: "todo"
+          required: false
+          default: 25
+          schema:
+            type: string
+            example: 100
+
+
+  /vm/get/{name}:
+    get:
+      summary: "Request information on a specific VM"
+      description: "Request information on a specific VM"
+      responses:
+        200:
+          description: "todo"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: TODO
+        404:
+          description: "Response for unknown resource"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Resource not found"
+      parameters:
+        - name: name
+          in: path
+          description: "todo"
+          required: true
+          schema:
+            type: string
+            example: "vm identifier"
+
+  # /dbpg/modify/{name}:
+  #   patch:
+  #     summary: Allows the modification of parameter
+
+  /dbpg/remove/{dbname}:
+    delete:
+      summary: "Requests removal of specified resource"
+      description: "todo"
+      operationId: api.demo.removeDB
+      responses:
+        202:
+          description: "Removal request accepted"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'Removal request accepted'
+        404:
+          description: "Response for unknown resource"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Resource not found"
       parameters:
         - name: dbname
           in: path
@@ -211,18 +248,18 @@ paths:
             type: string
             example: "todo"
 
-  /db/new:
+  /dbpg/new:
     post:
       summary: "Requests new database"
       description: "returns orderid, optionally accepts customer-reference"
-      operationId: api.demo.orderDatabase
       responses:
-        201:
-          description: "orderid response"
+        202:
+          description: "Resource creation request accepted"
           content:
             text/plain:
               schema:
                 type: string
+                example: 'Resource creation requested successfully'
       requestBody:
         required: true
         content:
@@ -230,27 +267,44 @@ paths:
             schema:
               $ref: "#components/schemas/orderdatabase"
 
-  # /db/list:
-  #   get:
-  #     summary: Lists all known databases
-  #     description: return a list of databases based on given filter
-  #     operationId: api.demo.listDatabase
-  #     parameters:
-  #       - name: filter
-  #         in: body
-  #         description: Allows limitation of list result
-  #         required: false
-  #         default: .*
-  #         schema:
-  #           type: string
-  #           example: "TODO"
-  #       - name: limit
+  /dbpg/list:
+    get:
+      summary: Lists all known vm's
+      description: todo
+      responses:
+        200:
+          description: TODO
+          content:
+            text/plain:
+              schema:
+                type: string
+        404:
+          description: "Response for unknown resource"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Resource not found"
+      parameters:
+        - name: filter
+          description: Allows limitation of list result
+          required: false
+          default: "*."
+          schema:
+            type: string
+        - name: limit
+          in: body
+          description: "todo"
+          required: false
+          default: 25
+          schema:
+            type: string
+            example: 100
          
-  /db/get/{name}:
+  /dbpg/get/{name}:
     get:
       summary: "Request information on a specific database"
       description: "todo"
-      operationId: api.demo.infoDB
       responses:
         200:
           description: "todo"
@@ -259,6 +313,13 @@ paths:
               schema:
                 type: string
                 example: "Request details for: ..."
+        404:
+          description: "Response for unknown resource"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Resource not found"
       parameters:
         - name: name
           in: path
@@ -356,7 +417,7 @@ components:
         allOf:
           oneOf:
             - $ref: "#components/schemas/vmitem"
-#            - $ref: "#components/schemas/dbitem"
+            - $ref: "#components/schemas/dbitem"
         owner-id:
           $ref: "#components/schemas/od.id"
         owner-mail:
