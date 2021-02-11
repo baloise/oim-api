@@ -182,18 +182,20 @@ paths:
           in: query
           description: "Filter to apply to results"
           required: false
-          default: "*."
           schema:
             type: string
             example: "TODO: What pattern can we use?"
+            default: ".*"
         - name: limit
           in: query
           description: "The number of items to return"
           required: false
-          default: 25
           schema:
-            type: string
+            type: integer
             example: 100
+            default: 25
+            maximum: 999
+            minimum: 1
 
   /vm/get/{name}:
     get:
