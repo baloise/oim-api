@@ -179,14 +179,16 @@ paths:
                 example: "Resource not found"
       parameters:
         - name: filter
-          description: Allows limitation of list result
+          in: query
+          description: "Filter to apply to results"
           required: false
           default: "*."
           schema:
             type: string
+            example: "TODO: What pattern can we use?"
         - name: limit
-          in: body
-          description: "todo"
+          in: query
+          description: "The number of items to return"
           required: false
           default: 25
           schema:
@@ -474,6 +476,7 @@ components:
           ],
           "requester-id": "b123456"
         }
+
     listdatabase:
       type: object
       properties:
