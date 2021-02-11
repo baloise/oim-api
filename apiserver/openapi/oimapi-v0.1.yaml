@@ -18,7 +18,7 @@ paths:
             text/plain:
               schema:
                 type: string
-                example: "Order status is: pending/done"
+                example: "Order status is: pending/done TODO: Convert this response to a json object"
         404:
           description: "Specified order not found"
           content:
@@ -46,7 +46,7 @@ paths:
             text/plain:
               schema:
                 type: string
-                example: "Order details are: ..."
+                example: "Order details are: ... TODO: Convert this response to a json object"
         404:
           description: "Specified order not found"
           content:
@@ -68,13 +68,20 @@ paths:
       summary: "Allows the modification of SOME modifiable parameter"
       description: "todo"
       responses:
-        200:
-          description: "update sucessfully"
+        202:
+          description: "Update request accepted"
           content:
             text/plain:
               schema:
                 type: string
-                example: "Update of the VM-CH-BAL-PGSQL01 was sucessfully"
+                example: "Update requested successfully"
+        400:
+          description: "Bad request"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Bad request"
         404:
           description: "Response for unknown resource"
           content:
@@ -109,7 +116,7 @@ paths:
             text/plain:
               schema:
                 type: string
-                example: 'Removal request accepted'
+                example: "Removal request accepted"
         404:
           description: "Response for unknown resource"
           content:
@@ -139,7 +146,7 @@ paths:
                 type: string
                 example: 'Creation request accepted'
         400:
-          description: "Bad request parameters. "
+          description: "Bad request parameters."
           content:
             text/plain:
               schema:
@@ -214,9 +221,46 @@ paths:
             type: string
             example: "vm identifier"
 
-  # /dbpg/modify/{name}:
-  #   patch:
-  #     summary: Allows the modification of parameter
+  /dbpg/modify/{dbid}:
+    patch:
+      summary: "Allows the modification SOME modifiable parameter for a database"
+      description: "Possibility to change specific parameters for a database"
+      responses:
+        202:
+          description: "Update request accepted"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Update requested successfully"
+        400:
+          description: "Bad request"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Bad request"
+        404:
+          description: "Response for unknown resource"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Resource not found"
+        409:
+          description: "Conflicting information"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Conflict"
+      parameters:
+        - name: dbid
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "DB1"
 
   /dbpg/remove/{dbid}:
     delete:
