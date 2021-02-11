@@ -460,8 +460,6 @@ components:
   schemas:
     orderdatabase:
       type: object
-      tags:
-        - DB
       properties:
         database-name:
           type: string
@@ -524,8 +522,6 @@ components:
         }
 
     listdatabase:
-      tags:
-        - DB
       type: object
       properties:
         filter:
@@ -550,8 +546,6 @@ components:
 
     order:
       type: object
-      tags:
-        - orders
       properties:
         requester-id:
           $ref: "#components/schemas/od.id"
@@ -563,8 +557,6 @@ components:
             $ref: "#components/schemas/ordercommon"
     ordercommon:
       type: object
-      tags:
-        - orders
       properties:
         allOf:
           oneOf:
@@ -581,8 +573,6 @@ components:
           $ref: "#components/schemas/od.sbu"
     dbitem:
       type: object
-      tags:
-        - DB
       properties:
         catalog-reference:
           oneOf:
@@ -605,8 +595,6 @@ components:
         }
     vmitem:
       type: object
-      tags:
-        - DB
       properties:
         catalog-reference:
           oneOf:
@@ -740,8 +728,6 @@ components:
           type: string  
 
     JBoss Order:
-      tags:
-        - JBoss
       type: object
       properties:
         requester-id:
@@ -753,8 +739,6 @@ components:
           items:
             $ref: "#components/schemas/JBoss Order Item"
     JBoss Order Item:
-      tags:
-        - JBoss
       type: object
       properties:
         catalog-reference:
@@ -781,22 +765,16 @@ components:
           $ref: "#components/schemas/Linux Data Disk"
     JBoss Catalog Reference:
       type: string
-      tags:
-        - JBoss
       enum:
         - MP03
     JBoss Version:
       type: number
-      tags:
-        - JBoss
       enum:
         - 7.1
         - 7.2
         - 7.3
     JBoss Size:
       type: string
-      tags:
-        - JBoss
       enum:
         - S1
         - M1
@@ -807,8 +785,6 @@ components:
 
     VM Order:
       type: object
-      tags:
-        - VMs
       properties:
         requester-id:
           $ref: "#components/schemas/User ID"
@@ -819,8 +795,6 @@ components:
           items:
             $ref: "#components/schemas/VM Order Item"
     VM Order Item:
-      tags:
-        - VMs
       oneOf:
         - $ref: "#components/schemas/VM Lin Specifics"
         - $ref: "#components/schemas/VM Win Specifics"
@@ -845,8 +819,6 @@ components:
           items:
             $ref: "#components/schemas/Permission Map"
     VM Role:
-      tags:
-        - VMs
       type: string
       enum:
         - APP
@@ -854,9 +826,6 @@ components:
         - DB
     VM Lin Specifics:
       type: object
-      tags:
-        - VMs
-        - Linux
       properties:
         data-disk:
           $ref: "#components/schemas/Linux Data Disk"
@@ -867,9 +836,6 @@ components:
             - L02
     VM Win Specifics:
       type: object
-      tags:
-        - VMs
-        - Windows
       properties:
         data-disk:
           $ref: "#components/schemas/Windows Data Disk"
@@ -879,8 +845,6 @@ components:
             - W01
             - W02
     VM Size:
-      tags:
-        - VMs
       type: string
       enum:
         - S1
@@ -890,8 +854,6 @@ components:
         - L2
         - X1
     VM Metal Category:
-      tags:
-        - VMs
       type: string
       enum:
         - B
@@ -899,8 +861,6 @@ components:
         - G
         - GP
     Linux Data Disk:
-      tags:
-        - Linux
       type: object
       required:
         - filesystem
@@ -913,8 +873,6 @@ components:
           type: integer
           minimum: 1
     Windows Data Disk:
-      tags:
-        - Windows
       type: object
       required:
         - filesystem
@@ -927,10 +885,6 @@ components:
           type: integer
           minimum: 1
     Permission Map:
-      tags:
-        - VMs
-        - Windows
-        - Linux
       type: object
       required:
         - ad-group-name
