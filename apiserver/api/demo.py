@@ -35,7 +35,7 @@ def add_order(requester_id, bu, order_type, description):
 def get_order_status(id) -> str:
     order = OrderHandler()
     status = order.get_order_status(id)
-    if len(status)>0:
+    if len(status) > 0:
         return 'Order {id} has the status: {status}'.format(id=id, status=status)
     else:
         return 'The specified order id is invalid'
@@ -44,7 +44,7 @@ def get_order_status(id) -> str:
 def get_order_details(id) -> str:
     order = OrderHandler()
     info = order.get_order_details(id)
-    if len(info)>0:
+    if len(info) > 0:
         return 'Order {id} infos: {info}'.format(id=id, info=info)
     else:
         return 'The specified order id is invalid'
