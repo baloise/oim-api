@@ -50,22 +50,22 @@ class OrderFactory:
         answer = '\n'
         for elem in root.iter('order'):
             status = elem.find('status').text
-            answer += "Order id: " + elem.get('id') + "status: "+ status + '\n' # noqa
+            answer += "Order id: " + elem.get('id') + "status: " + status + '\n' # noqa
         return answer
 
     def get_status(self, orderid):
-        status = self.tree.find('.//order[@id="'+orderid+'"]/status')
+        status = self.tree.find('.//order[@id="' + orderid + '"]/status')
         try:
             return status.text
         except Exception:
             return ''
 
     def get_details(self, orderid):
-        order = self.tree.find('.//order[@id="'+orderid+'"]')
+        order = self.tree.find('.//order[@id="' + orderid + '"]')
         if order:
             answer = '\n'
             for item in list(order):
-                answer += item.tag+' : '+item.text+'\n'
+                answer += item.tag+' : ' + item.text + '\n'
             return answer
         else:
             return ''

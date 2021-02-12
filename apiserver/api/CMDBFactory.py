@@ -52,7 +52,7 @@ class CMDBFactory:
         answer = '\n'
         for elem in root.iter('item'):
             name = elem.find('name').text
-            answer += "Item id: " + elem.get('id') + " name: "+ name + '\n' # noqa
+            answer += "Item id: " + elem.get('id') + " name: " + name + '\n' # noqa
         return answer
 
     def get_id(self, iname):
@@ -61,15 +61,15 @@ class CMDBFactory:
         for elem in root.iter('item'):
             name = elem.find('name').text
             if name.__contains__(iname):
-                answer += "Item id: " + elem.get('id') + " name: "+ name + '\n' # noqa
+                answer += "Item id: " + elem.get('id') + " name: " + name + '\n' # noqa
         return answer
 
     def get_info(self, itemid):
-        item = self.tree.find('.//item[@id="'+itemid+'"]')
+        item = self.tree.find('.//item[@id="' + itemid + '"]')
         if item:
             answer = '\n'
             for attrib in list(item):
-                answer += attrib.tag+' : '+attrib.text+'\n'
+                answer += attrib.tag + ' : ' + attrib.text + '\n'
             return answer
         else:
             return ''
