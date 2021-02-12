@@ -2,6 +2,8 @@ venv/
 *.pyc
 *.pyo
 .vscode/
+*.code-workspace
 old/
 .DS_Store
 .env
+*_data.xml
