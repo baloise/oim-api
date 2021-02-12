@@ -5,6 +5,7 @@ from datetime import datetime
 
 
 class CMDBFactory:
+
     def __init__(self, filename):
         self.filename = filename
         if not Path(self.filename).exists():
@@ -15,7 +16,7 @@ class CMDBFactory:
             xmlfile.close()
         self.tree = ET.parse(self.filename)
 
-    def generate_item(self, name, itype, requester_id='b0123456', description=None):
+    def generate_item(self, name, itype, requester_id='b0123456', description=None):    # noqa
         item = ET.Element('item')
         ename = ET.SubElement(item, 'name')
         ename.text = name
@@ -40,7 +41,7 @@ class CMDBFactory:
         def make_pretty(data):
             return '\n'.join([
                 line for line in minidom.parseString(data).toprettyxml(indent=' '*2).split('\n') if line.strip()
-                ])
+                ])    # noqa
 
         xmlfile = open(self.filename, "w")
         xmlfile.write(make_pretty(newdata))
@@ -51,7 +52,16 @@ class CMDBFactory:
         answer = '\n'
         for elem in root.iter('item'):
             name = elem.find('name').text
-            answer += "Item id: {id} name: {name}\n".format(id=str(elem.get('id')), name=str(name))
+            answer += "Item id: " + elem.get('id') + " name: "+ name + '\n' # noqa
+        return answer
+
+    def get_id(self, iname):
+        root = self.tree.getroot()
+        answer = '\n'
+        for elem in root.iter('item'):
+            name = elem.find('name').text
+            if name.__contains__(iname):
+                answer += "Item id: " + elem.get('id') + " name: "+ name + '\n' # noqa
         return answer
 
     def get_info(self, itemid):
@@ -67,10 +77,7 @@ class CMDBFactory:
 
 if __name__ == '__main__':
     factory = CMDBFactory('cmdb_data.xml')
-    itemid = factory.generate_item('svw-blablat003',
-                                   'VM',
-                                   requester_id='b088881',
-                                   description='This is my blabla VM')
+    itemid = factory.generate_item('svw-blablat003', 'VM', requester_id='b088881', description='This is my blabla VM')  # noqa
     print("New item", itemid)
     print(factory.list_items())
     print(factory.get_info('1613044439027152'))

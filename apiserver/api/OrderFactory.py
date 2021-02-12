@@ -5,6 +5,7 @@ from datetime import datetime
 
 
 class OrderFactory:
+
     def __init__(self, filename):
         self.filename = filename
         if not Path(self.filename).exists():
@@ -15,7 +16,7 @@ class OrderFactory:
             xmlfile.close()
         self.tree = ET.parse(self.filename)
 
-    def generate_order(self, requester_id='b0123456', bu='BU 401', order_type='VM', description=None):
+    def generate_order(self, requester_id='b0123456', bu='BU 401', order_type='VM', description=None):      # noqa
         order = ET.Element('order')
         erequester_id = ET.SubElement(order, 'requester_id')
         erequester_id.text = requester_id
@@ -38,7 +39,7 @@ class OrderFactory:
         def make_pretty(data):
             return '\n'.join([
                 line for line in minidom.parseString(data).toprettyxml(indent=' '*2).split('\n') if line.strip()
-                ])
+                ])  # noqa
 
         xmlfile = open(self.filename, "w")
         xmlfile.write(make_pretty(newdata))
@@ -49,22 +50,22 @@ class OrderFactory:
         answer = '\n'
         for elem in root.iter('order'):
             status = elem.find('status').text
-            answer += "Order id: " + elem.get('id') + "status: " + status + '\n'
+            answer += "Order id: " + elem.get('id') + "status: "+ status + '\n' # noqa
         return answer
 
     def get_status(self, orderid):
-        status = self.tree.find('.//order[@id="' + orderid + '"]/status')
+        status = self.tree.find('.//order[@id="'+orderid+'"]/status')
         try:
             return status.text
-        except AttributeError:
+        except Exception:
             return ''
 
     def get_details(self, orderid):
-        order = self.tree.find('.//order[@id="' + orderid + '"]')
+        order = self.tree.find('.//order[@id="'+orderid+'"]')
         if order:
             answer = '\n'
             for item in list(order):
-                answer += item.tag + ' : ' + item.text + '\n'
+                answer += item.tag+' : '+item.text+'\n'
             return answer
         else:
             return ''
@@ -72,7 +73,7 @@ class OrderFactory:
 
 if __name__ == '__main__':
     factory = OrderFactory('orders_data.xml')
-    #  factory.generate_order(requester_id='b039214', description='This is my order')
+    #  factory.generate_order(requester_id='b039214', description='This is my order')   # noqa
     print(factory.get_status('1613028463047852'))
     print(factory.get_details('1613039330628156'))
     print(factory.list_orders())
