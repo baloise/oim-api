@@ -243,7 +243,8 @@ paths:
       summary: "Allows the modification SOME modifiable parameter for a database"
       description: "Possibility to change specific parameters for a database"
       tags:
-        - VMs
+        - DB
+        - pgsql
       responses:
         202:
           description: "Update request accepted"
