@@ -1,0 +1,129 @@
+openapi: "3.0.0"
+
+info:
+  title: "OIMAPI tests - SIAM-SID"
+  version: "0.11"
+servers:
+  - url: /oimtest/v0.11
+
+paths:
+
+  /order/status/{id}:
+    get:
+      tags:
+        - orders
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      operationId: api.calls_order.get_order_status
+      responses:
+        200:
+          description: Get order status
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Get order status"
+  /order/details/{id}:
+    get:
+      tags:
+        - orders
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      operationId: api.calls_order.get_order_details
+      responses:
+        200:
+          description: Get order details
+          content:
+            text/plain:
+              schema:
+                type: string
+  /order/add:
+    get:
+      tags:
+        - orders
+      parameters:
+        - name: requester_id
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: bu
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: order_type
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [VM,DB,JB]
+        - name: description
+          in: query
+          required: true
+          schema:
+            type: string
+      operationId: api.calls_order.add_order
+      responses:
+        200:
+          description: Add a new order
+          content:
+            text/plain:
+              schema:
+                type: string
+  /cmdb/list_items:
+    get:
+      tags:
+        - cmdb
+      operationId: api.calls_cmdb.get_cmdb_items
+      responses:
+        200:
+          description: Get CMDB Items
+          content:
+            text/plain:
+              schema:
+                type: string
+  /cmdb/getid/{name}:
+    get:
+      tags:
+        - cmdb
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      operationId: api.calls_cmdb.get_cmdb_id
+      responses:
+        200:
+          description: Get id from item
+          content:
+            text/plain:
+              schema:
+                type: string
+  /cmdb/getitem_info/{id}:
+    get:
+      tags:
+        - cmdb
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      operationId: api.calls_cmdb.get_cmdb_item_info
+      responses:
+        200:
+          description: Get Item info
+          content:
+            text/plain:
+              schema:
+                type: string

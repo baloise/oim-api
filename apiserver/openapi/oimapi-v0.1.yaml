@@ -1,0 +1,928 @@
+openapi: "3.0.0"
+
+info:
+  title: Baloise OIM API
+  version: "0.1"
+servers:
+  - url: /v0.1
+
+paths:
+  /order/status/{id}:
+    get:
+      summary: "show the order status"
+      description: "is made to display the order status"
+      tags:
+        - orders
+      responses:
+        200:
+          description: "order status"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Order status is: pending/done TODO: Convert this response to a json object"
+        404:
+          description: "Specified order not found"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Order not found"
+      parameters:
+        - name: id
+          in: path
+          description: "the orderid from the original order"
+          required: true
+          schema:
+            type: string
+            example: "order123"
+
+  /order/details/{id}:
+    get:
+      summary: "show the order details"
+      description: "is made to display the order details"
+      tags:
+        - orders
+      responses:
+        200:
+          description: "order details"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Order details are: ... TODO: Convert this response to a json object"
+        404:
+          description: "Specified order not found"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Order not found"
+      parameters:
+        - name: id
+          in: path
+          description: "the orderid from the original order"
+          required: true
+          schema:
+            type: string
+            example: "order123"
+
+  /vm/modify/{vmname}:
+    patch:
+      summary: "Allows the modification of SOME modifiable parameter"
+      description: "todo"
+      tags:
+        - VMs
+      responses:
+        202:
+          description: "Update request accepted"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Update requested successfully"
+        400:
+          description: "Bad request"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Bad request"
+        404:
+          description: "Response for unknown resource"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Resource not found"
+        409:
+          description: "update failed"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Update of the ... was failed"
+      parameters:
+        - name: vmname
+          in: path
+          description: "give the name of the VM"
+          required: true
+          schema:
+            type: string
+            example: "vmbal2021"
+
+  /vm/remove/{ressourcename}:
+    delete:
+      summary: "requests removal of specified resource"
+      description: "todo"
+      tags:
+        - VMs
+      responses:
+        202:
+          description: "Removal request accepted"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Removal request accepted"
+        404:
+          description: "Response for unknown resource"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Resource not found"
+      parameters:
+        - name: ressourcename
+          in: path
+          description: "given ressourcename to remove"
+          required: true
+          schema:
+            type: string
+            example: "todo"
+
+  /vm/new:
+    post:
+      summary: "Requests new vm"
+      description: "returns orderid, optionally accepts customer-reference"
+      tags:
+        - VMs
+      responses:
+        202:
+          description: "Creation request accepted"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'Creation request accepted. OrderID: e310b997-0a63-4d28-bfbc-638672491f63'
+        400:
+          description: "Bad request parameters."
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'Creation request denied'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#components/schemas/VM Order"
+
+  /vm/list:
+    get:
+      summary: Lists all known vm's
+      description: Lists all known vm's
+      tags:
+        - VMs
+      responses:
+        200:
+          description: TODO
+          content:
+            text/plain:
+              schema:
+                type: string
+        404:
+          description: "Response for unknown resource"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Resource not found"
+      parameters:
+        - name: filter
+          in: query
+          description: "Filter to apply to results"
+          required: false
+          schema:
+            type: string
+            example: "TODO: What pattern can we use?"
+            default: ".*"
+        - name: limit
+          in: query
+          description: "The number of items to return"
+          required: false
+          schema:
+            type: integer
+            example: 100
+            default: 25
+            maximum: 999
+            minimum: 1
+
+  /vm/get/{name}:
+    get:
+      summary: "Request information on a specific VM"
+      description: "Request information on a specific VM"
+      tags:
+        - VMs
+      responses:
+        200:
+          description: "todo"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: TODO
+        404:
+          description: "Response for unknown resource"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Resource not found"
+      parameters:
+        - name: name
+          in: path
+          description: "todo"
+          required: true
+          schema:
+            type: string
+            example: "vm identifier"
+
+  /dbpg/modify/{dbid}:
+    patch:
+      summary: "Allows the modification SOME modifiable parameter for a database"
+      description: "Possibility to change specific parameters for a database"
+      tags:
+        - DB
+        - pgsql
+      responses:
+        202:
+          description: "Update request accepted"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Update requested successfully"
+        400:
+          description: "Bad request"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Bad request"
+        404:
+          description: "Response for unknown resource"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Resource not found"
+        409:
+          description: "Conflicting information"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Conflict"
+      parameters:
+        - name: dbid
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "DB1"
+
+  /dbpg/remove/{dbid}:
+    delete:
+      summary: "Requests removal of specified resource"
+      description: "Remove a database identified by database identifier"
+      tags:
+        - DB
+        - pgsql
+      responses:
+        202:
+          description: "Removal request accepted"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'Removal request accepted'
+        404:
+          description: "Response for unknown resource"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Resource not found"
+      parameters:
+        - name: dbid
+          in: path
+          description: "given database identifier to remove"
+          required: true
+          schema:
+            type: string
+            example: "DB1"
+
+  /dbpg/new:
+    post:
+      summary: "Requests new database"
+      description: "returns orderid, optionally accepts customer-reference"
+      tags:
+        - DB
+        - pgsql
+      responses:
+        202:
+          description: "Resource creation request accepted"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'Resource creation request accepted'
+        400:
+          description: "Bad request parameters."
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'Creation request denied'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#components/schemas/orderdatabase"
+
+  /dbpg/list:
+    get:
+      summary: "Lists all known databases"
+      description: "Return a list of databases based on given filter"
+      tags:
+        - DB
+        - pgsql
+      responses:
+        200:
+          description: "List filtered databases"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Request list of databases by filter (TODO: make this a json repsone)"
+        404:
+          description: "Response for unknown resource"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Resource not found"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#components/schemas/listdatabase"
+         
+  /dbpg/get/{dbid}:
+    get:
+      summary: "Request information on a specific database"
+      description: "List details on a given database item"
+      tags:
+        - DB
+        - pgsql
+      responses:
+        200:
+          description: "List details for a database item"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Request information for DB -> database identifier[{dbid}]"
+        404:
+          description: "Response for unknown resource"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Resource not found"
+      parameters:
+        - name: dbid
+          in: path
+          description: "database identifier"
+          required: true
+          schema:
+            type: string
+            example: "DB1"
+
+  # /jb/modify/{name}:
+  #   patch:
+  #     summary: Allows the modification of parameter
+
+  # /jb/remove/{name}:
+  #   delete:
+  #     summary: requests removal of specified resource
+  #     parameters:
+  #       - name: name
+
+  /jb/new:
+    post:
+      summary: Requests new jboss server
+      description: returns order id, optionally accepts customer-reference
+      tags:
+        - Middlewares
+        - JBoss
+      responses:
+        201:
+          description: order response
+          content:
+            text/plain:
+              schema:
+                type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#components/schemas/JBoss Order"
+
+  # /jb/list:
+  #   get:
+  #     summary: Lists all known vm's
+  #     parameters:
+  #       - name: filter
+  #         in: body
+  #         description: Allows limitation of list result
+  #         required: false
+  #         default: .*
+  #         schema:
+  #           type: string
+  #           example: "TODO"
+  #       - name: limit
+         
+  # /jb/get/{name}:
+  #   get:
+  #     summary: Request info about one specific existing machine
+  #     parameters:
+  #       - name: name
+  #         in: path
+  #         required: true
+  #         schema:
+  #           type: string
+  #           example: "svw-myserverp123.balgroupit.com"
+
+components:
+  schemas:
+    orderdatabase:
+      type: object
+      properties:
+        database-name:
+          type: string
+          example: "DB01"
+        database-user:
+          type: string
+          example: "L000001"
+        database-rolls:
+          type: string
+          example: "baloise-devops"
+        database-platform:
+          type: string
+          enum:
+            - shared
+            - dedicated
+          example: "shared"
+        requester-id:
+          $ref: "#components/schemas/od.id"
+        requester-mail:
+          $ref: "#components/schemas/od.mail"
+        database-stuff:
+          $ref: "#components/schemas/dbitem"
+        items:
+          type: array
+          items:
+            $ref: "#components/schemas/ordercommon"
+      example: >
+        {
+          "items": [
+            {
+              "database-name": "DB01",
+              "database-user": "L000001",
+              "database-rolls": "baloise-devops",
+              "database-platform": "shared",
+              "deputy-id": "b123456",
+              "deputy-mail": "b123456@js.on",
+              "owner-id": "b123456",
+              "owner-mail": "b123456@js.on",
+              "sbu": "CH-BCH",
+              "catalog-reference": "PGSQL01",
+              "size": "S1",
+              "role": "APP",
+              "metal-category": "B",
+              "environment": "Test",
+              "application-id": "_A01",
+              "security-zone": "_Z1",
+              "group-permissions": [
+                { 
+                  "ad-group-name": "f_adm",
+                  "local-group-name": "Power User"
+                }
+              ],
+                "data-disk": {
+                "filesystem": "/data",
+                "size-gb": 1
+              }
+            }
+          ],
+          "requester-id": "b123456"
+        }
+
+    listdatabase:
+      type: object
+      properties:
+        filter:
+          type: string
+          description: "Allows limitation of list result"
+          default: ".*"
+          example: "todo"
+        limit:
+          type: integer
+          description: "Limit the list of elements"
+          default: 10
+          example: "50"
+      example: >
+        {
+          "items": [
+            {
+              "filter": "DB*",
+              "limit": 5
+            }
+          ]
+        }
+
+    order:
+      type: object
+      properties:
+        requester-id:
+          $ref: "#components/schemas/od.id"
+        requester-mail:
+          $ref: "#components/schemas/od.mail"
+        items:
+          type: array
+          items:
+            $ref: "#components/schemas/ordercommon"
+    ordercommon:
+      type: object
+      properties:
+        allOf:
+          oneOf:
+            - $ref: "#components/schemas/vmitem"
+        owner-id:
+          $ref: "#components/schemas/od.id"
+        owner-mail:
+          $ref: "#components/schemas/od.mail"
+        deputy-id:
+          $ref: "#components/schemas/od.id"
+        deputy-mail:
+          $ref: "#components/schemas/od.mail"
+        sbu:
+          $ref: "#components/schemas/od.sbu"
+    dbitem:
+      type: object
+      properties:
+        catalog-reference:
+          oneOf:
+            - $ref: "#components/schemas/db.pg.catalog-reference"
+        size:
+          $ref: "#components/schemas/size"
+        metal-category:
+          $ref: "#components/schemas/metal-category"
+        environment:
+          $ref: "#components/schemas/environment"
+        security-zone:
+          $ref: "#components/schemas/security-zone"
+      example: >
+        {
+          "catalog-reference": "PGSQL01",
+          "size": "S1",
+          "metal-category": "B",
+          "environment": "Test",
+          "security-zone": "_Z1"
+        }
+    vmitem:
+      type: object
+      properties:
+        catalog-reference:
+          oneOf:
+            - $ref: "#components/schemas/vm.lin.catalog-reference"
+            - $ref: "#components/schemas/vm.win.catalog-reference"
+        size:
+          $ref: "#components/schemas/size"
+        role:
+          $ref: "#components/schemas/role"
+        metal-category:
+          $ref: "#components/schemas/metal-category"
+        environment:
+          $ref: "#components/schemas/environment"
+        application-id:
+          $ref: "#components/schemas/application-id"
+        security-zone:
+          $ref: "#components/schemas/security-zone"
+        group-permissions:
+          $ref: "#components/schemas/group-permissions"
+      example: >
+        {
+          "catalog-reference": "L01",
+          "size": "S1",
+          "role": "APP",
+          "metal-category": "B",
+          "environment": "Test",
+          "application-id": "_A01",
+          "security-zone": "_Z1",
+          "group-permissions": [
+            { 
+              "ad-group-name": "f_adm",
+              "local-group-name": "Power User"
+            }
+          ]
+        }
+    size:
+      type: string
+      enum:
+        - S1
+        - M1
+        - M2
+        - L1
+        - L2
+        - X1
+      example: "{ \"size\": \"S1\" }"
+    od.id:
+      type: string
+      pattern: "^[bB][0-9]{6}$"
+    od.mail:
+      type: string
+      pattern: "[^@ \t\r\n]+@[^@ \t\r\n]+\\.[^@ \t\r\n]+"
+    od.sbu:
+      type: string
+      enum: 
+        - BE
+        - CH-BCH
+        - CH-SOB
+        - DE
+        - LI
+        - LU-RED
+        - LU-YELLOW
+        - SHARED
+    db.pg.catalog-reference:
+      type: string
+      enum:
+        - PGSQL01
+        - PGSQL02
+        - PGSQL03
+        - PGSQL04
+      example: "{ \"catalog-reference\": \"PGSQL01\" }"
+    vm.lin.catalog-reference:
+      type: string
+      enum:
+        - L01
+        - L02
+      example: "{ \"catalog-reference\": \"L01\" }"
+    vm.win.catalog-reference:
+      type: string
+      enum:
+        - W01
+        - W02
+      example: "{ \"catalog-reference\": \"W01\" }"
+    role:
+      type: string
+      enum:
+        - APP
+        - WEB
+        - DB
+      example: "{ \"role\": \"APP\" }"
+    metal-category:
+        type: string
+        enum:
+          - B
+          - S
+          - G
+          - GP
+        example: "{ \"metal-category\": \"B\" }"
+    environment:
+        type: string
+        enum:
+          - Dev
+          - Test
+          - Int
+          - Acc
+          - Prod
+        example: "{ \"environment\": \"Test\" }"
+    application-id:
+      type: string
+      enum:
+        - _A01
+        - _A02
+        - _A03
+    security-zone:
+      type: string
+      enum:
+        - _Z1
+        - _Z2
+    group-permissions:
+      type: array
+      items:
+        $ref: "#components/schemas/group-permission"
+    group-permission:
+      type: object
+      required:
+        - ad-group-name
+        - local-group-name
+      properties:
+        ad-group-name:
+          type: string
+        local-group-name:
+          type: string  
+
+    JBoss Order:
+      type: object
+      properties:
+        requester-id:
+          $ref: "#components/schemas/User ID"
+        sbu:
+          $ref: "#components/schemas/SBU"
+        items:
+          type: array
+          items:
+            $ref: "#components/schemas/JBoss Order Item"
+    JBoss Order Item:
+      type: object
+      properties:
+        catalog-reference:
+          $ref: "#components/schemas/JBoss Catalog Reference"
+        version:
+          $ref: "#components/schemas/JBoss Version"
+        size:
+          $ref: "#components/schemas/JBoss Size"
+        metal-category:
+          $ref: "#components/schemas/VM Metal Category"
+        environment:
+          $ref: "#components/schemas/Environment"
+        security-zone:
+          $ref: "#components/schemas/Security Zone"
+        owner-id:
+          $ref: "#components/schemas/User ID"
+        deputy-id:
+          $ref: "#components/schemas/User ID"
+        group-permissions:
+          type: array
+          items:
+            $ref: "#components/schemas/Permission Map"
+        data-disk:
+          $ref: "#components/schemas/Linux Data Disk"
+    JBoss Catalog Reference:
+      type: string
+      enum:
+        - MP03
+    JBoss Version:
+      type: number
+      enum:
+        - 7.1
+        - 7.2
+        - 7.3
+    JBoss Size:
+      type: string
+      enum:
+        - S1
+        - M1
+        - M2
+        - L1
+        - L2
+        - X1
+
+    VM Order:
+      type: object
+      properties:
+        requester-id:
+          $ref: "#components/schemas/User ID"
+        sbu:
+          $ref: "#components/schemas/SBU"
+        items:
+          type: array
+          items:
+            $ref: "#components/schemas/VM Order Item"
+    VM Order Item:
+      oneOf:
+        - $ref: "#components/schemas/VM Lin Specifics"
+        - $ref: "#components/schemas/VM Win Specifics"
+      type: object
+      properties:
+        role:
+          $ref: "#components/schemas/VM Role"
+        size:
+          $ref: "#components/schemas/VM Size"
+        metal-category:
+          $ref: "#components/schemas/VM Metal Category"
+        environment:
+          $ref: "#components/schemas/Environment"
+        security-zone:
+          $ref: "#components/schemas/Security Zone"
+        owner-id:
+          $ref: "#components/schemas/User ID"
+        deputy-id:
+          $ref: "#components/schemas/User ID"
+        group-permissions:
+          type: array
+          items:
+            $ref: "#components/schemas/Permission Map"
+    VM Role:
+      type: string
+      enum:
+        - APP
+        - WEB
+        - DB
+    VM Lin Specifics:
+      type: object
+      properties:
+        data-disk:
+          $ref: "#components/schemas/Linux Data Disk"
+        catalog-reference:
+          type: string
+          enum:
+            - L01
+            - L02
+    VM Win Specifics:
+      type: object
+      properties:
+        data-disk:
+          $ref: "#components/schemas/Windows Data Disk"
+        catalog-reference:
+          type: string
+          enum:
+            - W01
+            - W02
+    VM Size:
+      type: string
+      enum:
+        - S1
+        - M1
+        - M2
+        - L1
+        - L2
+        - X1
+    VM Metal Category:
+      type: string
+      enum:
+        - B
+        - S
+        - G
+        - GP
+    Linux Data Disk:
+      type: object
+      required:
+        - filesystem
+        - size-gb
+      properties:
+        filesystem:
+          type: string
+          pattern: "^(?!/boot|/dev|/dev/.*|/run$)/.*$"
+        size-gb:
+          type: integer
+          minimum: 1
+    Windows Data Disk:
+      type: object
+      required:
+        - filesystem
+        - size-gb
+      properties:
+        filesystem:
+          type: string
+          pattern: "^[d-zD-Z]:$"
+        size-gb:
+          type: integer
+          minimum: 1
+    Permission Map:
+      type: object
+      required:
+        - ad-group-name
+        - local-group-name
+      properties:
+        ad-group-name:
+          type: string
+        local-group-name:
+          type: string
+
+          
+    User ID:
+      type: string
+      pattern: "^[bB][0-9]{6}$"
+    SBU:
+      type: string
+      enum: 
+        - BE
+        - CH-BCH
+        - CH-SOB
+        - DE
+        - LI
+        - LU-RED
+        - LU-YELLOW
+        - SHARED
+    Environment:
+        type: string
+        enum:
+          - Dev
+          - Test
+          - Int
+          - Acc
+          - Prod
+    Security Zone:
+      type: string
+      enum:
+        - PROD
+        - PRODR
+        - NPROD
+        - NPRODR
