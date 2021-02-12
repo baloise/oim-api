@@ -10,6 +10,8 @@ paths:
 
   /order/status/{id}:
     get:
+      tags:
+        - orders
       parameters:
         - name: id
           in: path
@@ -27,6 +29,8 @@ paths:
                 example: "Get order status"
   /order/details/{id}:
     get:
+      tags:
+        - orders
       parameters:
         - name: id
           in: path
@@ -43,6 +47,8 @@ paths:
                 type: string
   /order/add:
     get:
+      tags:
+        - orders
       parameters:
         - name: requester_id
           in: query
@@ -75,6 +81,8 @@ paths:
                 type: string
   /cmdb/list_items:
     get:
+      tags:
+        - cmdb
       operationId: api.calls_cmdb.get_cmdb_items
       responses:
         200:
@@ -85,6 +93,8 @@ paths:
                 type: string
   /cmdb/getid/{name}:
     get:
+      tags:
+        - cmdb
       parameters:
         - name: name
           in: path
@@ -101,6 +111,8 @@ paths:
                 type: string
   /cmdb/getitem_info/{id}:
     get:
+      tags:
+        - cmdb
       parameters:
         - name: id
           in: path

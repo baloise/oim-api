@@ -24,6 +24,9 @@ app.add_api('oimtest.yaml')
 # Add the Baloise OIM API specs
 # app.add_api('oimapi-v0.1.yaml')
 
+# API spec used for testing the order and cmdb classes
+app.add_api('oimtest_manu.yaml')
+
 # Next we create an object called application that points to our webapp
 # This is only needed when the webapp is loaded by a production-ready application server
 # application is the default name that these servers look by WSGI specification
