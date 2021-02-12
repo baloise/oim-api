@@ -5,17 +5,15 @@ from datetime import datetime
 
 
 class OrderFactory:
-
     def __init__(self, filename):
         self.filename = filename
         if not Path(self.filename).exists():
-            tree=ET.Element('data')
+            tree = ET.Element('data')
             newdata = ET.tostring(tree, encoding='unicode', method='xml')
             xmlfile = open(self.filename, "w")
             xmlfile.write(newdata)
             xmlfile.close()
         self.tree = ET.parse(self.filename)
-
 
     def generate_order(self, requester_id='b0123456', bu='BU 401', order_type='VM', description=None):
         order = ET.Element('order')
@@ -36,40 +34,42 @@ class OrderFactory:
         root = self.tree.getroot()
         root.append(order)
         newdata = ET.tostring(root, encoding='unicode')
-        make_pretty = lambda data: '\n'.join([line for line in minidom.parseString(data).toprettyxml(indent=' '*2).split('\n') if line.strip()])
+
+        def make_pretty(data):
+            return '\n'.join([
+                line for line in minidom.parseString(data).toprettyxml(indent=' '*2).split('\n') if line.strip()
+                ])
+
         xmlfile = open(self.filename, "w")
         xmlfile.write(make_pretty(newdata))
         return orderid
-
 
     def list_orders(self):
         root = self.tree.getroot()
         answer = '\n'
         for elem in root.iter('order'):
             status = elem.find('status').text
-            answer += "Order id: " + elem.get('id') + "status: "+ status + '\n'
+            answer += "Order id: " + elem.get('id') + "status: " + status + '\n'
         return answer
 
-
     def get_status(self, orderid):
-        status = self.tree.find('.//order[@id="'+orderid+'"]/status')
+        status = self.tree.find('.//order[@id="' + orderid + '"]/status')
         try:
             return status.text
-        except:
+        except AttributeError:
             return ''
 
-
     def get_details(self, orderid):
-        order = self.tree.find('.//order[@id="'+orderid+'"]')
+        order = self.tree.find('.//order[@id="' + orderid + '"]')
         if order:
             answer = '\n'
             for item in list(order):
-                answer += item.tag+' : '+item.text+'\n'
+                answer += item.tag + ' : ' + item.text + '\n'
             return answer
         else:
             return ''
 
-    
+
 if __name__ == '__main__':
     factory = OrderFactory('orders_data.xml')
     #  factory.generate_order(requester_id='b039214', description='This is my order')
