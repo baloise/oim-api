@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from zeep import Client
-from zeep.transports import Transport
-from requests import Session
-from requests.auth import HTTPBasicAuth
+# from zeep.transports import Transport
+# from requests import Session
+# from requests.auth import HTTPBasicAuth
 
 orchestra_cmdb_webservice = 'http://x10066984.balgroupit.com:8819/get_cmdb_item?wsdl'
 
@@ -12,7 +12,7 @@ orchestra_cmdb_webservice = 'http://x10066984.balgroupit.com:8819/get_cmdb_item?
 
 class OrchestraRequestHandler():
     def __init__(self, url):
-        self.soap_client=Client(url)
+        self.soap_client = Client(url)
 
     def list_operations(self):
         print('Namespace: ', self.soap_client.namespaces)
@@ -27,8 +27,7 @@ class GenericCmdbHandler(ABC):
     def get_item(self, id): pass
 
 
-
-class OrchestraCmdbHandler(GenericCmdbHandler):     #  This class has no idea of SOAP
+class OrchestraCmdbHandler(GenericCmdbHandler):     # This class has no idea of SOAP
     def __init__(self):
         self.orchestra = OrchestraRequestHandler(orchestra_cmdb_webservice)
 
