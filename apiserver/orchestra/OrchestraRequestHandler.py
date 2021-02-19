@@ -31,12 +31,15 @@ class OrchestraCmdbHandler(GenericCmdbHandler):     # This class has no idea of 
     def __init__(self):
         self.orchestra = OrchestraRequestHandler(orchestra_cmdb_webservice)
 
-    def get_item(self, id):
+    def get_item_by_id(self, id):
+        return self.orchestra.get_item(id)
+
+    def get_item(self, field, pattern):
         return self.orchestra.get_item(id)
 
 
 if __name__ == '__main__':
     cmdb_h = OrchestraCmdbHandler()
     cmdb_h.orchestra.list_operations()
-    for item in cmdb_h.get_item('instance@svw-blablat001.balgroupit.com'):
+    for item in cmdb_h.get_item_by_id('instance@svw-blablat001.balgroupit.com'):
         print(item)
