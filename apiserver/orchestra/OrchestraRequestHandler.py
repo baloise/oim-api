@@ -43,7 +43,7 @@ class OrchestraCmdbHandler(GenericCmdbHandler):     # This class has no idea of 
         return self.orchestra.get_item_by_id(id)
 
     def get_item(self, field, pattern):
-        xml_filter = {'field':field, 'pattern':pattern}
+        xml_filter = {'field': field, 'pattern': pattern}
         print(xml_filter['field'])
         return self.orchestra.get_item(xml_filter)
 
@@ -53,5 +53,5 @@ if __name__ == '__main__':
     cmdb_h.orchestra.list_operations()
     for item in cmdb_h.get_item_by_id('instance@svw-blablat001.balgroupit.com'):
         print(item)
-    for item in cmdb_h.get_item('type','system'):
+    for item in cmdb_h.get_item('type', 'system'):
         print(item)
