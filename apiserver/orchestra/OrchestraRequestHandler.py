@@ -1,3 +1,4 @@
+# Version 0.14
 from abc import ABC, abstractmethod
 from zeep import Client
 from datetime import datetime
@@ -16,6 +17,9 @@ class OrchestraRequestHandler():        # This class knows SOAP
         print('Namespace: ', self.soap_client.namespaces)
         print('Operations: ', self.soap_client.service._operations)
 
+    def get_asset_by_id(self, filter):
+        return self.soap_client.service.get_asset_by_id(**filter)
+
     def get_item_by_id(self, id):
         return self.soap_client.service.get_item_by_id(id)
 
@@ -28,8 +32,16 @@ class OrchestraRequestHandler():        # This class knows SOAP
     def update_item(self, query):  # update one or dict of values
         return self.soap_client.service.update_item(**query)
 
+    def update_active(self, id):
+        return self.soap_client.service.update_asset_active_until(id)
+
 
 class GenericCmdbHandler(ABC):
+
+    def get_asset_by_id(self, filter): pass
+
+    def update_active(self, id): pass
+
     @abstractmethod
     def get_item_by_id(self, id): pass
 
@@ -47,6 +59,10 @@ class OrchestraCmdbHandler(GenericCmdbHandler):     # has no idea of SOAP
     def __init__(self):
         self.url = 'http://x10066984.balgroupit.com:8819/cmdb_request?wsdl'
         self.orchestra = OrchestraRequestHandler(self.url)
+
+    def get_asset_by_id(self, field, pattern):
+        xml_filter = {'field': field, 'pattern': pattern}
+        return self.orchestra.get_asset_by_id(xml_filter)
 
     def get_item_by_id(self, id):
         return self.orchestra.get_item_by_id(id)
@@ -78,6 +94,9 @@ class OrchestraCmdbHandler(GenericCmdbHandler):     # has no idea of SOAP
     def update_item(self, query):  # query must be a dictionnary
         return self.orchestra.update_item(query)
 
+    def update_active(self, id):
+        return self.orchestra.update_active(id)
+
     def inactivate_item(self):
         query = {'id': '1',
                  'field': 'active_until',
@@ -89,8 +108,15 @@ class OrchestraCmdbHandler(GenericCmdbHandler):     # has no idea of SOAP
 if __name__ == '__main__':
     cmdb_h = OrchestraCmdbHandler()
     cmdb_h.orchestra.list_operations()
-    for item in cmdb_h.get_item_by_id(
+
+    for item in cmdb_h.get_item_by_id(      # With XML File
             'instance@svw-blablat001.balgroupit.com'):
         print(item)
     for item in cmdb_h.get_item('type', 'system'):
         print(item)
+
+    print('_____________________')          # With DB
+    for asset in cmdb_h.get_asset_by_id('id', '%'):
+        print(asset)
+    print('_____________________')
+    cmdb_h.update_active(3)
