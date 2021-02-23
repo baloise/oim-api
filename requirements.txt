@@ -1,1 +1,1 @@
-jsmepath==0.10.0
+jmespath==0.10.0
