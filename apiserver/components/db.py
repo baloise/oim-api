@@ -17,10 +17,9 @@ def setup_db(db_to_setup):
             logging.exception('Error creating database structure. Msg: {msg}'.format(msg=str(e)))
 
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI') or 'sqlite://:memory:'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI') or 'sqlite:///:memory:'
 db = SQLAlchemy(app)
 
-db.ap
 
 # Setup basic structure if it isn't there already in the db.
 setup_db(db)

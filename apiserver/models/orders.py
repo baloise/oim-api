@@ -5,12 +5,12 @@ import enum
 
 class SbuType(enum.Enum):
     BE = 'BE'
-    CHBCH = 'CH-BCH'
-    CHSOB = 'CH-SOB'
+    CHB_CH = 'CH-BCH'  # Enum elements can't contain minus in the key
+    CH_SOB = 'CH-SOB'
     DE = 'DE'
     LI = 'LI'
     LURED = 'LU-RED'
-    LUYELLOW = 'LU-YELLOW'
+    LU_YELLOW = 'LU-YELLOW'
     SHARED = 'SHARED'
 
 
@@ -64,7 +64,7 @@ class OrderItem(db.Model):
     id = db.Column(db.BigInteger, primary_key=True)
     reference = db.Column(db.String(80), nullable=False)
     item_type = db.Column(db.Enum(OrderItemType), nullable=False)
-    order = db.Column(db.BigInteger, db.ForeignKey('order.id'))
+    order_id = db.Column(db.BigInteger, db.ForeignKey('order.id'))
 
 
 # class OrderItemSchema(Schema):
@@ -78,7 +78,8 @@ class OrderStatus(db.Model):
     state = db.Column(db.Enum(OrderStateType), nullable=False)
     since = db.Column(db.DateTime)
     system = db.Column(db.Enum(BackendType))
-    order = db.Column(db.BigInteger, db.ForeignKey('order.id'))
+    # This attribute might actually be a dupe of the dbrel parent_order
+    order_id = db.Column(db.BigInteger, db.ForeignKey('order.id'))
 
     def __repr__(self):
         return f"<OrderStatus {self.id!r} for Order {self.order.id!r}>"
