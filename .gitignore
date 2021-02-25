@@ -5,5 +5,5 @@ venv/
 *.code-workspace
 old/
 .DS_Store
-.env
 *_data.xml
+apiserver/oim_error.log
