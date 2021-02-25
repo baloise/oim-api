@@ -24,7 +24,7 @@ class OurCloudRequestHandler:
             self.auth = TokenAuthHandler(self)
             urllib3.disable_warnings()
 
-    def get_extended_request_parameters(self, requestno, parameters: list):
+    def get_extended_request_parameters(self, requestno, parameters: list) -> dict:
         # 3.4.5
         if not requestno:
             raise ValueError("No request number provided")
