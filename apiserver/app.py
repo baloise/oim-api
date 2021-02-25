@@ -12,8 +12,11 @@ load_dotenv()
 
 # start logging, get parameters from config file and load oim logging spec
 logger_config_file = os.environ.get("LOGGING_CONFIGFILE")
+logging.warning('LOGGING_CONFIGFILE:{}'.format(logger_config_file))
 logger_log_file = os.environ.get("LOGGING_LOGFILE")
+logging.warning('LOGGING_LOGFILE:{}'.format(logger_log_file))
 logger_mailhost = os.environ.get("LOGGING_MAILHOST")
+logging.warning('LOGGING_MAILHOST:{}'.format(logger_mailhost))
 logging.config.fileConfig(logger_config_file,
                           defaults={'logfilename': logger_log_file,
                                     'mailhost': logger_mailhost,
