@@ -1,6 +1,7 @@
 # from marshmallow import Schema, fields, validate
 from app import db
 import enum
+from datetime import datetime
 
 
 class SbuType(enum.Enum):
@@ -82,7 +83,7 @@ class OrderStatus(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     state = db.Column(db.Enum(OrderStateType), nullable=False)
-    since = db.Column(db.DateTime)
+    since = db.Column(db.DateTime, index=True, default=datetime.now)
     system = db.Column(db.Enum(BackendType))
     # This attribute might actually be a dupe of the dbrel parent_order
     order_id = db.Column(db.Integer, db.ForeignKey('orders.id'))
