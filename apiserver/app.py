@@ -55,16 +55,6 @@ def create_flask_app(**kwargs):
     return capp.app
 
 
-# Load non-yet-set envvars from .env file if it exists
-# load_dotenv()
-
-
-# Next we create an object called application that points to our webapp
-# This is only needed when the webapp is loaded by a production-ready application server
-# application is the default name that these servers look by WSGI specification
-# application = connexion_app.app
-# TODO: Fix the uwsgi production scenario now that we have an app factory function
-
 # When this file is directly executed on the command line (to get a development server)
 # the following if-block runs. It does not run when the file is included by a WSGI application-server
 if __name__ == '__main__':

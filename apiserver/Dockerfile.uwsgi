@@ -24,4 +24,4 @@ EXPOSE ${SERVER_PORT}
 USER apiserver:apiserver
 
 # This defines the command that will run the actual starting process within the container
-CMD ["uwsgi", "app.ini"]
+CMD ["uwsgi", "uwsgi.ini"]
