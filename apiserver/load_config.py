@@ -4,9 +4,9 @@
 # real env, .env but stronges is the real env
 import os
 from dotenv import dotenv_values
-global oim_config
 
-def loadConfig():
+
+def load_config():
 
     oim_config = {
         **dotenv_values(".env.oim"),     # load project oim shared variables
@@ -21,8 +21,4 @@ def loadConfig():
     # place the validation for required parameters
     # pissible set defaults if not set
     # return oim_config
-    return
-
-
-if __name__ == '__main__':
-    loadConfig()
+    return oim_config

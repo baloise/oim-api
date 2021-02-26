@@ -2,26 +2,27 @@
 # will initialize the oim_loggin
 import logging
 import logging.config
-from load_config import oim_config
+import os
 
-def initLogging():
-    print("Exists:", "oim_config" in globals())
-    if oim_config.get('LOGGING_CONFIGFILE') != None:
-            print("The [{}] is present.\n".format("LOGGING_CONFIGFILE")) 
+
+def init_logging(config=os.environ):  # TODO: Rework this function. A lot of testing code leftover
+    if config.get('DEBUG', False):
+        root_logger = logging.getLogger()
+        root_logger.setLevel(logging.DEBUG)
+
+    logging.debug("Exists:", "config" in globals())
+
+    if config.get('LOGGING_CONFIGFILE') is not None:
+        logging.debug("The [{}] is present.\n".format("LOGGING_CONFIGFILE"))
     else:
-            print("The [{}] does not exist in the dictionary.".format("LOGGING_CONFIGFILE")) 
-
-    logger_config_file = oim_config.get("LOGGING_CONFIGFILE")
-    logging.warning('LOGGING_CONFIGFILE:{}'.format(logger_config_file))
-    logger_log_file = oim_config.get("LOGGING_LOGFILE")
-    logging.warning('LOGGING_LOGFILE:{}'.format(logger_log_file))
-    logger_mailhost = oim_config.get("LOGGING_MAILHOST")
-    logging.warning('LOGGING_MAILHOST:{}'.format(logger_mailhost))
+        logging.debug("The [{}] does not exist in the dictionary.".format("LOGGING_CONFIGFILE"))
+    logger_config_file = config.get("LOGGING_CONFIGFILE")
+    logging.debug('LOGGING_CONFIGFILE:{}'.format(logger_config_file))
+    logger_log_file = config.get("LOGGING_LOGFILE")
+    logging.debug('LOGGING_LOGFILE:{}'.format(logger_log_file))
+    logger_mailhost = config.get("LOGGING_MAILHOST")
+    logging.debug('LOGGING_MAILHOST:{}'.format(logger_mailhost))
     logging.config.fileConfig(logger_config_file,
                               defaults={'logfilename': logger_log_file,
                                         'mailhost': logger_mailhost,
                                         'toaddrs': 'foo@foo.ch'})
-    return
-
-if __name__ == '__main__':
-    initLogging()

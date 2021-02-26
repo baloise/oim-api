@@ -2,4 +2,5 @@ connexion[swagger-ui]
 python-dotenv
 diskcache
 flask_unittest
+flask-sqlalchemy
 jmespath
