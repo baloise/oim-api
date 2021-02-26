@@ -14,18 +14,18 @@ logging.basicConfig(
 
 logger.setLevel(logging.DEBUG)
 
-reqno = 93
+reqno = 135
 handler = OurCloudRequestHandler.getInstance()
+if False:
+    ocstatus = handler.get_request_status(reqno)
+    logging.info("Request {reqno} has status: {ocstatus}".format(ocstatus=ocstatus, reqno=reqno))
 
-ocstatus = handler.get_request_status(reqno)
-logging.info("Request {reqno} has status: {ocstatus}".format(ocstatus=ocstatus, reqno=reqno))
+    ocParamList = handler.list_extended_request_parameters(reqno)
+    logging.info("Request {reqno} has extended parameters: {params}".format(params=ocParamList, reqno=reqno))
 
-ocParamList = handler.list_extended_request_parameters(reqno)
-logging.info("Request {reqno} has extended parameters: {ocstatus}".format(ocstatus=ocstatus, reqno=reqno))
+    extendedParams = ocParamList[1:]  # ["RequestDetailID", "InstanceSize", "hdnOSType"]
+    ocKeyVal = handler.get_extended_request_parameters(reqno, extendedParams)
+    logging.info("Request {reqno} extended parameters values: {ocstatus}".format(ocstatus=ocKeyVal, reqno=reqno))
 
-extendedParams = ocParamList[1:5]  # ["RequestDetailID", "InstanceSize", "hdnOSType"]
-ocKeyVal = handler.get_extended_request_parameters(reqno, extendedParams)
-logging.info("Request {reqno} extended parameters values: {ocstatus}".format(ocstatus=ocKeyVal, reqno=reqno))
-
-producer = OurCloudStatusProducer(extendedParams, finalStatus="Fulfilment Completed")
+producer = OurCloudStatusProducer(["RequestDetailID", "InstanceSize", "hdnOSType"], finalStatus="Fulfilment Completed")
 producer.pollStatus(reqno)

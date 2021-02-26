@@ -1,0 +1,173 @@
+openapi: "3.0.0"
+
+info:
+  title: "OIMAPI cloud call tests - SIAM-SID"
+  version: "0.1"
+servers:
+  - url: /oc/v0.1
+
+paths:
+  /test/gettoken:
+    get:
+      summary: get an auth token from ocBackend
+      description: Retrieves a token either from cache or from the live ocBackend
+      operationId: orderitems.demo.tokendemo
+      responses:
+        200:
+          description: token response
+          content:
+            text/plain:
+              schema:
+                type: string
+  
+  /oc/request/{requestno}:
+    get:
+      summary: get request status
+      description: Retrieves status of a request
+      operationId: api.calls_ocrequests.get_request_status
+      parameters:
+        - name: requestno
+          in: path
+          description: Request No.
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: request response
+          content:
+            text/plain:
+              schema:
+                type: string
+
+  /oc/vm:
+    post:
+      summary: send a request to create default VM
+      description: send request
+      operationId: api.calls_ocrequests.createvm
+      responses:
+        200:
+          description: request response
+          content:
+            text/plain:
+              schema:
+                type: string
+  
+  /oc/vm/{hostname}:
+    parameters:
+      - name: hostname
+        in: path
+        schema:
+          type: string
+        required: true
+        description: The hostname to be deleted
+    delete:
+      summary: send a request to deletecreate default VM
+      description: send request
+      operationId: api.calls_ocrequests.deletevm
+      responses:
+        204:
+          description: request response
+          content:
+            text/plain:
+              schema:
+                type: string
+  
+  /oc/request/details:
+    post:
+      summary: receive request details
+      description: Retrieves details of a request and logs them
+      operationId: api.calls_ocrequests.feedback_request_details
+      responses:
+          201:
+            description: "Request details received"
+            content:
+              text/plain:
+                schema:
+                  type: string
+          204:
+            description: "Empty body"
+            content:
+              text/plain:
+                schema:
+                  type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#components/schemas/request_details"
+
+  /oc/request/details/{requestno}:
+    get:
+      summary: get request details
+      description: Retrieves details of a request
+      operationId: api.calls_ocrequests.get_request_details
+      parameters:
+        - name: requestno
+          in: path
+          description: Request No.
+          required: true
+          schema:
+            type: string
+        - name: attributes
+          in: query
+          description: details to be fetched
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#components/schemas/request_attribute"
+      responses:
+        200:
+          description: request details
+          content:
+            text/plain:
+              schema:
+                type: text
+
+components:
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: X-Auth
+      in: header
+      x-apikeyInfoFunc: api.demo.apikey_auth
+    basic:
+      type: http
+      scheme: basic
+      x-basicInfoFunc: api.demo.basic_auth
+  schemas:
+    request_details:
+      type: object
+      properties:
+        requestno:
+          type: string
+        details:
+          type: array
+          items:
+            $ref: "#components/schemas/request_detail"
+    request_detail:
+      type: object
+      properties:
+        attribute_name:
+          $ref: "#components/schemas/request_attribute"
+        attribute_value:
+          type: string
+      required:
+        - attribute_name
+        - attribute_value
+    request_attribute:
+      type: string
+      enum:
+        - "InstanceSize"
+        - "RequestDetailID"
+        - "hdnOSType"
+        - "hdnOSVersion"
+        - "hdnAdditionalDisk"
+        - "hdnOrgName"
+        - "hdnVMName"
+        - "hdnIPAddress"
+        - "Status"
+        - "hdnCPU"
+        - "hdnMemory"
+        - "DATAMAC"
