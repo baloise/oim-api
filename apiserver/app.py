@@ -1,26 +1,23 @@
 import connexion
 from flask import render_template
-import os
 import re
-from dotenv import load_dotenv
 import logging
 import logging.config
+import load_config
+from load_config import oim_config
 
 
 # Load non-yet-set envvars from .env file if it exists
-load_dotenv()
+# call config better, not here for unittesting
+# global oim_config
+
+# oim_config = load_config.loadConfig()
+load_config.loadConfig()
 
 # start logging, get parameters from config file and load oim logging spec
-logger_config_file = os.environ.get("LOGGING_CONFIGFILE")
-logging.warning('LOGGING_CONFIGFILE:{}'.format(logger_config_file))
-logger_log_file = os.environ.get("LOGGING_LOGFILE")
-logging.warning('LOGGING_LOGFILE:{}'.format(logger_log_file))
-logger_mailhost = os.environ.get("LOGGING_MAILHOST")
-logging.warning('LOGGING_MAILHOST:{}'.format(logger_mailhost))
-logging.config.fileConfig(logger_config_file,
-                          defaults={'logfilename': logger_log_file,
-                                    'mailhost': logger_mailhost,
-                                    'toaddrs': 'foo@foo.ch'})
+oim_logging.initLogging()
+
+
 logger = logging.getLogger('oimLogger')
 
 # start using our logger
@@ -34,8 +31,8 @@ logger.critical('This is a critical message')
 
 # Now we create the webapp object
 # server_port and spec_dir are now from .env file
-server_port = os.environ.get("SERVER_PORT")
-spec_dir = os.environ.get("SPECDIR")
+server_port = oim_config.get("SERVER_PORT")
+spec_dir = oim_config.get("SPECDIR")
 app = connexion.FlaskApp(__name__, port=server_port, specification_dir=spec_dir)
 
 # Next we tell it to load our API specs
@@ -77,4 +74,9 @@ def show_index():
 # When this file is directly executed on the command line (to get a development server)
 # the following if-block runs. It does not run when the file is included by a WSGI application-server
 if __name__ == '__main__':
+    # Not working really, why
+    # oim_config = load_config.loadConfig()
+    # oim_logging.initLogging()
+
+    # init_logging()
     app.run()
