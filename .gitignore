@@ -7,4 +7,5 @@ __pycache__
 old/
 .DS_Store
 .env
+*.log
 *_data.xml

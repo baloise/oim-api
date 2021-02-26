@@ -77,24 +77,6 @@ paths:
           description: Name of the person to greet.
           schema:
             $ref: "#components/schemas/teammember"
-  /order:
-    post:
-      summary: Order an item.
-      description: Generates an order.
-      operationId: api.demo.add_order
-      responses:
-        201:
-          description: order response
-          content:
-            text/plain:
-              schema:
-                type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#components/schemas/Order"
   /secret/usingapikey:
     get:
       summary: Return secret string protected by a token
@@ -147,32 +129,6 @@ components:
         - "manu"
         - "georges"
       example: sam
-    Order:
-      type: object
-      properties:
-        requester-id:
-          $ref: "#components/schemas/User ID"
-        items:
-          type: array
-          items:
-            $ref: "#components/schemas/Order Header"
-    Order Header:
-      type: object
-      properties:
-        allOf:
-          oneOf:
-            - $ref: "#components/schemas/VM Order Item"
-            - $ref: "#components/schemas/DB Order Item"
-        owner-id:
-          $ref: "#components/schemas/User ID"
-        owner-mail:
-          $ref: "#components/schemas/User Mail"
-        deputy-id:
-          $ref: "#components/schemas/User ID"
-        deputy-mail:
-          $ref: "#components/schemas/User Mail"
-        sbu:
-          $ref: "#components/schemas/SBU"
     DB Order Item:
       type: object
       properties:
