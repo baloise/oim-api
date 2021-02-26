@@ -2,7 +2,7 @@ import connexion
 from flask_sqlalchemy import SQLAlchemy
 import os
 from dotenv import load_dotenv
-# from components.db import db
+from oim_logging import init_logging
 
 db = SQLAlchemy()
 
@@ -32,6 +32,8 @@ def create_connexion_app(config_name=None, dotenv_path=None, dotenv_override=Fal
         dotenv_path = '.env'
     load_dotenv(dotenv_path=dotenv_path, override=dotenv_override)
     server_port = os.getenv('SERVER_PORT') or 9090
+
+    init_logging()
 
     connexion_app = connexion.FlaskApp(__name__, port=server_port, specification_dir='openapi/')
 
