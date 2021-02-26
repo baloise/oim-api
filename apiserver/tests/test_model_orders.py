@@ -2,7 +2,7 @@ import unittest
 import os
 # from inspect import getsourcefile
 # import sys
-# These lines work around importing troubles. __file__ is too unreliable
+# # These lines work around importing troubles. __file__ is too unreliable
 # current_dir = os.path.dirname(os.path.abspath(getsourcefile(lambda: 0)))
 # sys.path.insert(0, current_dir[:current_dir.rfind(os.path.sep)])
 from models.orders import Person, SbuType, OrderItemType, OrderStateType, OrderItem, OrderStatus, Order  # noqa: E402,F401,E501
@@ -39,5 +39,5 @@ class TestModelOrder(unittest.TestCase):
         assert user.count() == 0
 
 
-if __name__ == '__main__':
-    unittest.main()
+# if __name__ == '__main__':
+#     unittest.main()

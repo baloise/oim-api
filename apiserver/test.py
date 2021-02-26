@@ -1,9 +1,10 @@
 import unittest
 import flask_unittest
-from app import app
+from app import create_flask_app
 import re
 from unittest import mock
 from dotenv import load_dotenv
+from tests.test_model_orders import TestModelOrder  # noqa: F401
 
 # Force overwrite envvars with mock values from .env.unittests
 load_dotenv(dotenv_path='.env.unittests', override=True)
@@ -11,7 +12,7 @@ load_dotenv(dotenv_path='.env.unittests', override=True)
 
 class DemoTests(flask_unittest.ClientTestCase):
     url_base = '/v1.0'
-    app = app.app  # Required by the parent class
+    app = create_flask_app(config_name='unittests')  # Required by the parent class
 
     def test_1_hello(self, client):
         response = client.get(self.url_base + '/hello')
@@ -68,7 +69,7 @@ def mocked_requests_get(*args, **kwargs):
 
 class oimTests(flask_unittest.ClientTestCase):
     url_base = '/oim/v0.2'
-    app = app.app  # Required by the parent class
+    app = create_flask_app(config_name='unittests')  # Required by the parent class
 
     @mock.patch('requests.get', side_effect=mocked_requests_get)
     def test_1_get_token(self, client, blubb):
