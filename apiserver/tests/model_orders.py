@@ -1,12 +1,7 @@
 import unittest
 import os
-# from inspect import getsourcefile
-# import sys
-# # These lines work around importing troubles. __file__ is too unreliable
-# current_dir = os.path.dirname(os.path.abspath(getsourcefile(lambda: 0)))
-# sys.path.insert(0, current_dir[:current_dir.rfind(os.path.sep)])
-from models.orders import Person, SbuType, OrderItemType, OrderStateType, OrderItem, OrderStatus, Order  # noqa: E402,F401,E501
-from app import create_flask_app, db  # noqa: E402
+from models.orders import Person, SbuType, OrderItemType, OrderStateType, OrderItem, OrderStatus, Order  # noqa: F401,E501
+from app import create_flask_app, db
 
 
 class TestModelOrder(unittest.TestCase):
@@ -37,7 +32,3 @@ class TestModelOrder(unittest.TestCase):
     def test_2_user_doesnt_exist(self):
         user = Person.query.filter_by(username='b059485')
         assert user.count() == 0
-
-
-# if __name__ == '__main__':
-#     unittest.main()

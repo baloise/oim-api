@@ -4,7 +4,7 @@ from app import create_flask_app
 import re
 from unittest import mock
 from dotenv import load_dotenv
-from tests.test_model_orders import TestModelOrder  # noqa: F401
+from tests.model_orders import TestModelOrder  # noqa: F401
 
 # Force overwrite envvars with mock values from .env.unittests
 load_dotenv(dotenv_path='.env.unittests', override=True)
@@ -78,6 +78,9 @@ class oimTests(flask_unittest.ClientTestCase):
         self.assertIn('text/plain', response.content_type)
         self.assertGreater(len(response.data), 0, 'Response too small')
         self.assertInResponse(b'MOCK123roflcopter', response)
+
+
+test_model_order = TestModelOrder()
 
 
 if __name__ == '__main__':
