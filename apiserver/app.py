@@ -35,7 +35,7 @@ def create_connexion_app(config_name=None, dotenv_path=None, dotenv_override=Fal
 
     connexion_app = connexion.FlaskApp(__name__, port=server_port, specification_dir='openapi/')
 
-    connexion_app.app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI') or 'sqlite://:memory:'
+    connexion_app.app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI') or 'sqlite:///:memory:'
     connexion_app.app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # This reduces warnings
 
     db.init_app(connexion_app.app)
