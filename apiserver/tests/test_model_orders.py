@@ -1,37 +1,42 @@
 import unittest
-from inspect import getsourcefile
 import os
-import sys
+# from inspect import getsourcefile
+# import sys
 # These lines work around importing troubles. __file__ is too unreliable
-current_dir = os.path.dirname(os.path.abspath(getsourcefile(lambda: 0)))
-sys.path.insert(0, current_dir[:current_dir.rfind(os.path.sep)])
-from models.orders import Person, SbuType, OrderItemType, OrderStateType, OrderItem, OrderStatus, Order  # noqa: E402
-from components.db import db  # noqa: E402
+# current_dir = os.path.dirname(os.path.abspath(getsourcefile(lambda: 0)))
+# sys.path.insert(0, current_dir[:current_dir.rfind(os.path.sep)])
+from models.orders import Person, SbuType, OrderItemType, OrderStateType, OrderItem, OrderStatus, Order  # noqa: E402,F401,E501
+from app import create_flask_app, db  # noqa: E402
 
 
 class TestModelOrder(unittest.TestCase):
-    def __init__(self, methodName):
-        self.db = db
-        super().__init__(methodName)
-
     def setUp(self):
-        #db.init_app('sqlite://:memory:')
-        #db.create_all()
+        os.environ['SQLACHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
+        self.app = create_flask_app(config_name='unittests')
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        db.create_all()
+
         self.personPeter = Person(
             username='u12345',
             email='peter.parker@test.fake',
             sbu=SbuType.SHARED
         )
-        db.session.add(self.personPeter)
-        return super().setUp()
 
     def tearDown(self):
-        # No specific cleanup yet
-        return super().tearDown()
+        db.session.remove()
+        db.drop_all()
+        self.app_context.pop()
 
     def test_1_user_exists(self):
+        db.session.add(self.personPeter)
+        db.session.commit()
         user = Person.query.filter_by(username='b12345')
         assert user is not None
+
+    def test_2_user_doesnt_exist(self):
+        user = Person.query.filter_by(username='b059485')
+        assert user.count() == 0
 
 
 if __name__ == '__main__':

@@ -1,5 +1,5 @@
 # from marshmallow import Schema, fields, validate
-from components.db import db
+from app import db
 import enum
 
 
@@ -22,7 +22,7 @@ class OrderItemType(enum.Enum):
 class OrderStateType(enum.Enum):
     NEW = 'NEW'  # Order just created
     VERIFIED = 'VERIFIED'  # Order has completed verification
-    IN_PROGRESS = 'IN_PROGRESS'  # Accepted by backends, implementation in progress
+    BE_PROCESSING = 'BE_PROCESSING'  # Accepted by backends, implementation in progress
     BE_DONE = 'BE_DONE'  # Backend done, tests can start
     BE_FAIL = 'BE_FAIL'  # Backends reported failure
     TESTING = 'TESTING'  # Backends reported success, testing
@@ -38,7 +38,9 @@ class BackendType(enum.Enum):
 
 
 class Person(db.Model):
-    id = db.Column(db.BigInteger, primary_key=True)
+    __tablename__ = 'persons'
+
+    id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
     email = db.Column(db.String(100), nullable=False)
     sbu = db.Column(db.Enum(SbuType), nullable=False)
@@ -61,10 +63,12 @@ class Person(db.Model):
 
 
 class OrderItem(db.Model):
-    id = db.Column(db.BigInteger, primary_key=True)
+    __tablename__ = 'orderitems'
+
+    id = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
     reference = db.Column(db.String(80), nullable=False)
     item_type = db.Column(db.Enum(OrderItemType), nullable=False)
-    order_id = db.Column(db.BigInteger, db.ForeignKey('order.id'))
+    order_id = db.Column(db.Integer, db.ForeignKey('orders.id'))
 
 
 # class OrderItemSchema(Schema):
@@ -74,12 +78,14 @@ class OrderItem(db.Model):
 
 
 class OrderStatus(db.Model):
-    id = db.Column(db.BigInteger, primary_key=True)
+    __tablename__ = 'orderstati'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     state = db.Column(db.Enum(OrderStateType), nullable=False)
     since = db.Column(db.DateTime)
     system = db.Column(db.Enum(BackendType))
     # This attribute might actually be a dupe of the dbrel parent_order
-    order_id = db.Column(db.BigInteger, db.ForeignKey('order.id'))
+    order_id = db.Column(db.Integer, db.ForeignKey('orders.id'))
 
     def __repr__(self):
         return f"<OrderStatus {self.id!r} for Order {self.order.id!r}>"
@@ -92,10 +98,12 @@ class OrderStatus(db.Model):
 
 
 class Order(db.Model):
-    id = db.Column(db.BigInteger, primary_key=True)
+    __tablename__ = 'orders'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     create_date = db.Column(db.DateTime)
     history = db.relationship('OrderStatus', backref='order', lazy=True)
-    requestor = db.Column(db.BigInteger, db.ForeignKey('person.id'), nullable=False)
+    requestor = db.Column(db.Integer, db.ForeignKey('persons.id'), nullable=False)
     items = db.relationship('OrderItem', backref='order', lazy=True)
 
     def __repr__(self):
