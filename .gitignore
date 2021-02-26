@@ -6,4 +6,5 @@ venv/
 old/
 .DS_Store
 .env
+*.log
 *_data.xml
