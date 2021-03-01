@@ -264,7 +264,7 @@ class OurCloudRequestHandler:
 
         return extendedKeys
 
-    def get_request_status(self, requestno):
+    def get_request_status(self, requestno) -> str:
         # 3.4.4
         if not requestno:
             raise ValueError("No request number provided")
@@ -277,9 +277,7 @@ class OurCloudRequestHandler:
         headers = {
             'Authorization': 'Bearer ' + self.getCurrentToken()
         }
-
         responseRaw = requests.request("GET", method_url, headers=headers, data=payload, verify=False)
-
         method_json_query = "[?RequestNo == `{no}`].{attribute}|[0]".format(no=requestno, attribute='Status')
         return self.getResultJson(responseRaw, method_json_query)
 

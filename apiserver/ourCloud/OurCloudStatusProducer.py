@@ -1,5 +1,6 @@
 import queue
 from threading import Thread
+from threading import Event
 from ourCloud.OurCloudHandler import OurCloudRequestHandler
 import logging
 import time
@@ -20,7 +21,47 @@ class doubleQuoteDict(dict):
         return json.dumps(self)
 
 
-class OurCloudStatusProducer:
+class RunnerThread(Thread):
+    StopEvent = 0
+
+    def __init__(self, queue, event, finalStatus, queryParams):
+        Thread.__init__(self)
+        self.queue = queue
+        self.StopEvent = event
+        self.finalStatus = finalStatus
+        self.queryParams = queryParams
+
+    # The run method is overridden to define
+    # the thread body
+    def run(self):
+        reqno = self.queue.get()
+        handler = OurCloudRequestHandler.getInstance()
+        if self.finalStatus:
+            currentStatus = handler.get_request_status(reqno)
+            while currentStatus != self.finalStatus:
+                if(self.StopEvent.wait(0)):
+                    info = "Thread {} detected stop event, terminating gracefully...".format(self.name)
+                    logging.info(info)
+                    break
+
+                logging.info("Received status '{current}' of request {reqno} not equal to final status '{status}', waiting...".format(  # noqa: E501
+                    status=self.finalStatus, reqno=reqno, current=currentStatus))
+                time.sleep(5)
+                currentStatus = handler.get_request_status(reqno)
+            else:
+                logging.info("Received status '{current}' of request {reqno} is final status '{status}'".format(  # noqa: E501
+                    status=self.finalStatus, reqno=reqno, current=currentStatus))
+        try:
+            ocdetails = handler.get_extended_request_parameters(reqno, self.queryParams)
+            info = "Polled extended parameters values of request {reqno}: {ocstatus}".format(ocstatus=ocdetails,
+                                                                                             reqno=reqno)
+            logging.info(info)
+            self.send_request(reqno, ocdetails)
+        except Exception as e:
+            logging.error(e)
+        finally:
+            logging.info("Polling completed")
+            self.queue.task_done()
 
     def send_request(self, requestno, details: dict):
         # Now we start building the request to the backend
@@ -55,43 +96,32 @@ class OurCloudStatusProducer:
                 return ""
             logging.info("Details have been sent back successfully ({code})".format(code=response.status_code))
 
-    def do_poll(self, q):
-        while True:
-            reqno = q.get()
-            handler = OurCloudRequestHandler.getInstance()
-            if self.finalStatus:
-                currentStatus = handler.get_request_status(reqno)
-                while currentStatus != self.finalStatus:
-                    logging.debug("Received status '{current}' of request {reqno} not equal to final status '{status}', waiting...".format(  # noqa: E501
-                        status=self.finalStatus, reqno=reqno, current=currentStatus))
-                    time.sleep(20)
-                    currentStatus = handler.get_request_status(reqno)
-                else:
-                    logging.debug("Received status '{current}' of request {reqno} is final status '{status}'".format(  # noqa: E501
-                        status=self.finalStatus, reqno=reqno, current=currentStatus))
-            try:
-                ocdetails = handler.get_extended_request_parameters(reqno, self.queryParams)
-            except Exception as e:
-                logging.error(e)
-            else:
-                info = "Polled extended parameters values of request {reqno}: {ocstatus}".format(ocstatus=ocdetails,
-                                                                                                 reqno=reqno)
-                logging.info(info)
-                self.send_request(reqno, ocdetails)
-            finally:
-                logging.debug("Polling completed")
-                q.task_done()
+
+class OurCloudStatusProducer:
 
     def __init__(self, statusParameters: Param, *, finalStatus: str):
-        self.q = queue.Queue(maxsize=0)
+        self.queue = queue.Queue(maxsize=0)
         self.queryParams = statusParameters
         self.finalStatus = finalStatus
-        num_threads = 1
-        for i in range(num_threads):
-            worker = Thread(target=self.do_poll, args=(self.q,))
-            worker.setDaemon(True)
-            worker.start()
+        self.statusParameters = statusParameters
+        # worker = Thread(target=self.do_poll, args=(self.queue,))
+        # worker.setDaemon(True)
+        # worker.start()
 
     def pollStatus(self, reqno):
-        self.q.put(reqno)
-        self.q.join()
+        self.queue.put(reqno)
+        Stop = Event()
+        workerThread = RunnerThread(self.queue, Stop, self.finalStatus, self.statusParameters)
+        try:
+            workerThread.start()
+            while workerThread.is_alive():
+                # Try to join the child thread back to parent for 0.5 seconds
+                workerThread.join(0.5)
+        except KeyboardInterrupt:
+            # Set the stop event
+            Stop.set()
+            info = "Main thread asked child {} to stop".format(workerThread.name)
+            logging.info(info)
+            # Block until child thread is joined back to the parent
+            workerThread.join()
+        self.queue.join()
