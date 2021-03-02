@@ -2,27 +2,38 @@
 # will initialize the oim_loggin
 import logging
 import logging.config
-import os
+# import os
 
 
-def init_logging(config=os.environ):  # TODO: Rework this function. A lot of testing code leftover
-    if config.get('DEBUG', False):
-        root_logger = logging.getLogger()
-        root_logger.setLevel(logging.DEBUG)
-
-    logging.debug("Exists:", "config" in globals())
-
-    if config.get('LOGGING_CONFIGFILE') is not None:
-        logging.debug("The [{}] is present.\n".format("LOGGING_CONFIGFILE"))
-    else:
-        logging.debug("The [{}] does not exist in the dictionary.".format("LOGGING_CONFIGFILE"))
+def init_logging(config: dict):
+    # need validate check for the logging.conf
+    if config.get('LOGGING_CONFIGFILE') is None:
+        raise ValueError("No [logging.conf] is given by env...")
     logger_config_file = config.get("LOGGING_CONFIGFILE")
-    logging.debug('LOGGING_CONFIGFILE:{}'.format(logger_config_file))
-    logger_log_file = config.get("LOGGING_LOGFILE")
-    logging.debug('LOGGING_LOGFILE:{}'.format(logger_log_file))
+
+    if config.get('LOGGING_LOGFILE') is None:
+        root_logger = logging.getLogger()
+        root_logger.info('No [LOGGING_LOGFILE] is given by env, using [error.log] as default')
+
+    logger_log_file = config.get("LOGGING_LOGFILE", 'error.log')
+
     logger_mailhost = config.get("LOGGING_MAILHOST")
-    logging.debug('LOGGING_MAILHOST:{}'.format(logger_mailhost))
+
     logging.config.fileConfig(logger_config_file,
                               defaults={'logfilename': logger_log_file,
                                         'mailhost': logger_mailhost,
                                         'toaddrs': 'foo@foo.ch'})
+    current_logger = get_oim_logger()
+    running_logger = logging.getLogger(current_logger)
+
+    if config.get('DEBUG') == 'True':
+        # set DEBUG als level on all oim_logger LOGGING
+        running_logger.info('Found config DEBUG=True -> set log level DEBUG')
+        running_logger.setLevel('DEBUG')
+    else:
+        running_logger.info('Found config DEBUG=False -> set log level INFO')
+        running_logger.setLevel('INFO')
+
+
+def get_oim_logger() -> str:
+    return('oim_logger')

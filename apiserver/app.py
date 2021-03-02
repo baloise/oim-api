@@ -1,8 +1,11 @@
 import connexion
 from flask_sqlalchemy import SQLAlchemy
 import os
-from dotenv import load_dotenv
+import logging
+# from dotenv import load_dotenv
 from oim_logging import init_logging
+from oim_logging import get_oim_logger
+from load_config import load_config
 
 db = SQLAlchemy()
 
@@ -25,19 +28,35 @@ def load_openapis(connexion_app):
     connexion_app.add_api('oimtest_manu.yaml')
 
 
-def create_connexion_app(config_name=None, dotenv_path=None, dotenv_override=False):
-    if (config_name is not None) and (dotenv_path is None):
-        dotenv_path = '.env.{}'.format(str(config_name))
-    if (config_name is None) and (dotenv_path is None):
-        dotenv_path = '.env'
-    load_dotenv(dotenv_path=dotenv_path, override=dotenv_override)
-    server_port = os.getenv('SERVER_PORT') or 9090
+def create_connexion_app(config_name=None, dotenv_path=None,
+                         dotenv_override=False):
+    # if (config_name is not None) and (dotenv_path is None):
+    #    dotenv_path = '.env.{}'.format(str(config_name))
+    # if (config_name is None) and (dotenv_path is None):
+    #    dotenv_path = '.env'
 
-    init_logging()
+    # load_dotenv(dotenv_path=dotenv_path, override=dotenv_override)
+    config = load_config()
+    server_port = config.get('SERVER_PORT', '9090')
 
-    connexion_app = connexion.FlaskApp(__name__, port=server_port, specification_dir='openapi/')
+    init_logging(config)
 
-    connexion_app.app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI') or 'sqlite:///:memory:'
+    oim_logger = get_oim_logger()
+    running_logger = logging.getLogger(oim_logger)
+
+    # Generate test messages
+    running_logger.debug('Debug message')
+    running_logger.info('Info message')
+    running_logger.warning('Warning message')
+    running_logger.error('Error message')
+    running_logger.critical('Critical message')
+
+    specdir = config.get('SPECDIR', 'openapi/')
+    connexion_app = connexion.FlaskApp(__name__, port=server_port,
+                                       specification_dir=specdir)
+
+    connexion_app.app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(
+                             'SQLALCHEMY_DATABASE_URI') or 'sqlite:///:memory:'
     connexion_app.app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # This reduces warnings
 
     db.init_app(connexion_app.app)

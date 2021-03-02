@@ -1,12 +1,12 @@
 # config.py
 # load all config from .env and display
-# follow a hiracy of configs:
-# real env, .env but stronges is the real env
+# follow a hierarchy of configs:
+# real env, .env but strongest is the real env
 import os
 from dotenv import dotenv_values
 
 
-def load_config():
+def load_config() -> dict:
 
     oim_config = {
         **dotenv_values(".env.oim"),     # load project oim shared variables
@@ -19,6 +19,6 @@ def load_config():
                                          #  environment variables
     }
     # place the validation for required parameters
-    # pissible set defaults if not set
-    # return oim_config
+    # possible set defaults if not set
+
     return oim_config
