@@ -6,12 +6,12 @@ import os
 from dotenv import dotenv_values
 
 
-def load_config() -> dict:
+def load_config(main_config=".env") -> dict:
 
     oim_config = {
         **dotenv_values(".env.oim"),     # load project oim shared variables
                                          #  like URL's or other fix interfaces
-        **dotenv_values(".env"),         # load local development variables
+        **dotenv_values(main_config),    # load local development variables
                                          #  (excluded via gitignore)
         **dotenv_values(".env.secret"),  # load local sensitive variables
                                          #  (excluded via gitignore)

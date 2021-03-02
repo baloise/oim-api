@@ -45,11 +45,12 @@ def create_connexion_app(config_name=None, dotenv_path=None,
     running_logger = logging.getLogger(oim_logger)
 
     # Generate test messages
-    running_logger.debug('Debug message')
-    running_logger.info('Info message')
-    running_logger.warning('Warning message')
-    running_logger.error('Error message')
-    running_logger.critical('Critical message')
+    if config.get('DEBUG') == 'True':
+        running_logger.debug('Debug message')
+        running_logger.info('Info message')
+        running_logger.warning('Warning message')
+        running_logger.error('Error message')
+        running_logger.critical('Critical message')
 
     specdir = config.get('SPECDIR', 'openapi/')
     connexion_app = connexion.FlaskApp(__name__, port=server_port,
