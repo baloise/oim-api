@@ -65,6 +65,21 @@ To run the development or production versions of this api server see the followi
 * Create local configuration:
   * `cp .env.sample .env`
   * Edit `.env` and fill the variables in there with correct values.
+  * Current are the following:
+  
+    ```json
+    OC_AUTH_USER=changeme             # currently not used
+    OC_AUTH_PASS=changeme             # currently not used
+    # OIM specific parameters
+    BASEURL="https://localhost:9090/oimapi"
+    SERVER_NAME="http://localhost"
+    SERVER_PORT="9090"
+    SPECDIR="openapi/"
+    LOGGING_CONFIGFILE="logging.conf"
+    LOGGING_LOGFILE="oim_error.log"
+    LOGGING_MAILHOST=""
+    DEBUG=False
+    ```
   * You may need to ask your collegues for the correct values.
 
 * Run the development server:
