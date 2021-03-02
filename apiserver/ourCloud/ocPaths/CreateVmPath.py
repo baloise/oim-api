@@ -2,10 +2,10 @@ from . import AbstractOcPath
 from .AbstractOcPath import doubleQuoteDict
 import requests
 import json
-import logging
 
 
 class CreateVmPath(AbstractOcPath.AbstractOcPath):
+    # 3.4.80
 
     def get_url(self) -> str:
         return '{baseUrl}/Requests/Create'.format(baseUrl=self.get_base_url())
@@ -35,7 +35,7 @@ class CreateVmPath(AbstractOcPath.AbstractOcPath):
         bodyJson[self.OC_REQUESTFIELD.SERVICECATALOGID.value] = self.getCatalogueId()
         bodyJson[self.OC_REQUESTFIELD.CATALOGUEENTITYID.value] = self.getCatalogueEntityId()
         bodyJson[self.OC_REQUESTFIELD.ENVRIONMENTENTITYID.value] = self.getEnvironmentEntityId()
-        bodyJson[self.OC_REQUESTFIELD.CATALOGUENAME.value] = "RHEL7.X"
+        bodyJson[self.OC_REQUESTFIELD.CATALOGUENAME.value] = self.OC_CATALOGOFFERINGS.RHEL7.cataloguename
         bodyJson[self.OC_REQUESTFIELD.SERVICECATALOGID.value] = "0"
         bodyJson[self.OC_REQUESTFIELD.SUBSCRIPTIONID.value] = self.getSubscriptionId()
         bodyJson[self.OC_REQUESTFIELD.PLATFORMCODE.value] = self.getPlatformCode()
@@ -49,7 +49,7 @@ class CreateVmPath(AbstractOcPath.AbstractOcPath):
         payload = doubleQuoteDict(bodyJson)
         payloadStr = json.dumps(payload)
         payload = payloadStr
-        self.writeLog(payload)
+        self.logInfo(payload)
 
         return payload
 
@@ -60,16 +60,16 @@ class CreateVmPath(AbstractOcPath.AbstractOcPath):
 
         # Ensure response looks valid
         if not response.status_code == 200:
-            logging.error("An error occured while transmitting request ({code}): {txt}".format(
+            self.logError("An error occured while transmitting request ({code}): {txt}".format(
                 code=response.status_code,
                 txt=response.text))
             return ""
         responseJson = json.loads(response.text)
         if responseJson[self.OC_RESPONSEFIELD.STATUSCODE.value.value] == 200:
-            logging.info("New request has been created successfully: {code}".format(
+            self.logInfo("New request has been created successfully: {code}".format(
                 code=responseJson[self.OC_RESPONSEFIELD.REQUESTID.value]))
             return responseJson[self.OC_RESPONSEFIELD.MESSAGE.value]
         else:
-            logging.info("Failed to create request: {code}".format(
+            self.logInfo("Failed to create request: {code}".format(
                 code=response[self.OC_RESPONSEFIELD.ERRORMESSAGE.value]))
             return ""

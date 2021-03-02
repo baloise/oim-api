@@ -1,6 +1,6 @@
 from ourCloud.OurCloudHandler import OurCloudRequestHandler
 import logging
-import datetime
+from oim_logging import get_oim_logger
 
 # type alias
 Param = [str]
@@ -9,19 +9,10 @@ Param = [str]
 def feedback_request_details(body):
     if len(body) > 0:
         info = "Request {reqno} has details: {det}".format(det=body["details"], reqno=body["requestno"])
-        logging.info(info)
-        writeLog(info)
+        logging.getLogger(get_oim_logger()).info(info)
         return info
     else:
         return "Requestno {reqno} has no details".format(reqno=body["requestno"])
-
-
-def writeLog(msg: str):
-    filename = 'oclogging.log'
-    # Open the file in append mode and append the new content in file_object
-    with open(filename, 'a') as file_object:
-        now = datetime.datetime.now()
-        file_object.write("{t}: {m}\n".format(m=msg, t=now.strftime('%Y-%m-%d %H:%M:%S')))
 
 
 def deletevm(hostname: str):
@@ -30,7 +21,7 @@ def deletevm(hostname: str):
 
     if len(ocstatus) > 0:
         info = "Delete request : {ocstatus}".format(ocstatus=ocstatus)
-        logging.info(info)
+        logging.getLogger(get_oim_logger()).info(info)
         return info
     else:
         return 'Request failed'
@@ -42,7 +33,7 @@ def createvm():
 
     if len(ocstatus) > 0:
         info = "New request : {ocstatus}".format(ocstatus=ocstatus)
-        logging.info(info)
+        logging.getLogger(get_oim_logger()).info(info)
         return info
     else:
         return 'Request failed'
@@ -54,7 +45,7 @@ def get_request_status(requestno: int) -> str:
 
     if len(ocstatus) > 0:
         info = "Request {reqno} has status: {ocstatus}".format(ocstatus=ocstatus, reqno=requestno)
-        logging.info(info)
+        logging.getLogger(get_oim_logger()).info(info)
         return info
     else:
         return 'Requestno invalid'
@@ -67,7 +58,7 @@ def get_request_details(requestno: int, attributes: Param) -> str:
 
     if len(ocKeyVal) > 0:
         info = "Request {reqno} extended parameters values: {ocstatus}".format(ocstatus=ocKeyVal, reqno=requestno)
-        logging.info(info)
+        logging.getLogger(get_oim_logger()).info(info)
         return info
     else:
         return 'Requestno invalid'

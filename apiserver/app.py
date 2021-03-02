@@ -27,6 +27,9 @@ def load_openapis(connexion_app):
     # API spec used for testing the order and cmdb classes
     connexion_app.add_api('oimtest_manu.yaml')
 
+    # API spec used for oc calls
+    connexion_app.add_api('oim_occalls.yaml')
+
 
 def create_connexion_app(config_name=None, dotenv_path=None,
                          dotenv_override=False):

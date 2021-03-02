@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 from ourCloud.OurCloudHandler import OurCloudRequestHandler
 from ourCloud.OurCloudStatusProducer import OurCloudStatusProducer
 import logging
-from ourCloud.OcStaticVars import OC_REQUESTFIELD, OC_STATUS
+from ourCloud.OcStaticVars import OC_REQUESTFIELD, OC_STATUS, OC_CATALOGOFFERINGS
 
 load_dotenv()
 logger = logging.getLogger()
@@ -32,3 +32,8 @@ producer = OurCloudStatusProducer([OC_REQUESTFIELD.REQUESTDETAILID.value, OC_REQ
                                    OC_REQUESTFIELD.OSTYPE.value],
                                   finalStatus=OC_STATUS.FULFILLMENT_COMPLETED.value)
 producer.pollStatus(reqno)
+
+for member in OC_CATALOGOFFERINGS:
+    logging.info('{}={}'.format(member.name, member.value))
+
+logging.info(OC_CATALOGOFFERINGS.WINS2019.cataloguename)

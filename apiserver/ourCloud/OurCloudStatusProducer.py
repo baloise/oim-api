@@ -3,6 +3,7 @@ from threading import Thread
 from threading import Event
 from ourCloud.OurCloudHandler import OurCloudRequestHandler
 import logging
+from oim_logging import get_oim_logger
 import time
 from typing import Tuple
 import requests
@@ -41,26 +42,28 @@ class RunnerThread(Thread):
             while currentStatus != self.finalStatus:
                 if(self.StopEvent.wait(0)):
                     info = "Thread {} detected stop event, terminating gracefully...".format(self.name)
-                    logging.info(info)
+                    logging.getLogger(get_oim_logger()).info(info)
                     break
 
-                logging.info("Received status '{current}' of request {reqno} not equal to final status '{status}', waiting...".format(  # noqa: E501
-                    status=self.finalStatus, reqno=reqno, current=currentStatus))
+                info = "Received status '{current}' of request {reqno} not equal to final status '{status}', waiting...".format(  # noqa: E501
+                        status=self.finalStatus, reqno=reqno, current=currentStatus)
+                logging.getLogger(get_oim_logger()).info(info)
                 time.sleep(5)
                 currentStatus = handler.get_request_status(reqno)
             else:
-                logging.info("Received status '{current}' of request {reqno} is final status '{status}'".format(  # noqa: E501
-                    status=self.finalStatus, reqno=reqno, current=currentStatus))
+                info = "Received status '{current}' of request {reqno} is final status '{status}'".format(  # noqa: E501
+                        status=self.finalStatus, reqno=reqno, current=currentStatus)
+                logging.getLogger(get_oim_logger()).info(info)
         try:
             ocdetails = handler.get_extended_request_parameters(reqno, self.queryParams)
             info = "Polled extended parameters values of request {reqno}: {ocstatus}".format(ocstatus=ocdetails,
                                                                                              reqno=reqno)
-            logging.info(info)
+            logging.getLogger(get_oim_logger()).info(info)
             self.send_request(reqno, ocdetails)
         except Exception as e:
-            logging.error(e)
+            logging.getLogger(get_oim_logger()).error(e)
         finally:
-            logging.info("Polling completed")
+            logging.getLogger(get_oim_logger()).info("Polling completed")
             self.queue.task_done()
 
     def send_request(self, requestno, details: dict):
@@ -75,26 +78,29 @@ class RunnerThread(Thread):
                 "attribute_name": key,
                 "attribute_value": details[key]
             })
-        logging.debug("before: {b}".format(b=jsonObj))
+        logging.getLogger(get_oim_logger()).debug("before: {b}".format(b=jsonObj))
         payload = json.dumps(doubleQuoteDict(jsonObj))
-        logging.debug("after: {a}".format(a=payload))
+        logging.getLogger(get_oim_logger()).debug("after: {a}".format(a=payload))
 
         headers = {
             "Content-Type": "application/json"
         }
 
         # Send the request to the backend
-        logging.info("Send details to url {url} : {det}".format(url=url, det=payload))
+        info = "Send details to url {url} : {det}".format(url=url, det=payload)
+        logging.getLogger(get_oim_logger()).info(info)
         try:
             response = requests.post(url, headers=headers, data=payload)
         except Exception as e:
-            logging.error(e)
+            logging.getLogger(get_oim_logger()).error(e)
         else:
             # Ensure response looks valid
             if not response.status_code == 200:
-                logging.error("An error occured ({code}): {txt}".format(code=response.status_code, txt=response.text))
+                error = "An error occured ({code}): {txt}".format(code=response.status_code, txt=response.text)
+                logging.getLogger(get_oim_logger()).error(error)
                 return ""
-            logging.info("Details have been sent back successfully ({code})".format(code=response.status_code))
+            info = "Details have been sent back successfully ({code})".format(code=response.status_code)
+            logging.getLogger(get_oim_logger()).info(info)
 
 
 class OurCloudStatusProducer:
@@ -121,7 +127,8 @@ class OurCloudStatusProducer:
             # Set the stop event
             Stop.set()
             info = "Main thread asked child {} to stop".format(workerThread.name)
-            logging.info(info)
+            logging.getLogger(get_oim_logger()).info(info)
             # Block until child thread is joined back to the parent
             workerThread.join()
+
         self.queue.join()

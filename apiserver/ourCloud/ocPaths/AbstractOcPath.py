@@ -1,12 +1,13 @@
 import os
 import json
-import datetime
+from oim_logging import get_oim_logger
+import logging
 import jmespath
-from ourCloud.OcStaticVars import OC_RESPONSEFIELD, OC_REQUESTFIELD, OC_OBJECTTYPE, OC_ACTIONMAME, OC_LANGUAGE  # noqa F401
+from ourCloud.OcStaticVars import OC_RESPONSEFIELD, OC_REQUESTFIELD, OC_OBJECTTYPE, OC_ACTIONMAME, OC_LANGUAGE, OC_CATALOGOFFERINGS  # noqa F401
 
 
 class AbstractOcPath:
-    OC_RESPONSEFIELD, OC_REQUESTFIELD
+    OC_RESPONSEFIELD, OC_REQUESTFIELD, OC_OBJECTTYPE, OC_ACTIONMAME, OC_LANGUAGE, OC_CATALOGOFFERINGS
 
     def get_url(self) -> str:
         pass
@@ -26,7 +27,7 @@ class AbstractOcPath:
 
     def do_simulate(self) -> bool:
         sim = bool(os.getenv('DOSIM'))
-        self.writeLog("Simulation enabled, requests will not be sent do OC: {}".format(sim))
+        self.logInfo("Simulation enabled, requests will not be sent do OC: {}".format(sim))
         if sim:
             return sim
         else:
@@ -77,12 +78,11 @@ class AbstractOcPath:
     def getPlatformEntityId(self):
         return "VMWAR-15CFFB35-7FC6-449C-9F7F-1CF83A8A6237"
 
-    def writeLog(self, msg: str):
-        filename = 'oclogging.log'
-        # Open the file in append mode and append the new content in file_object
-        with open(filename, 'a') as file_object:
-            now = datetime.datetime.now()
-            file_object.write("{t}: {m}\n".format(m=msg, t=now.strftime('%Y-%m-%d %H:%M:%S')))
+    def logInfo(self, msg: str):
+        logging.getLogger(get_oim_logger()).info(msg)
+
+    def logError(self, msg: str):
+        logging.getLogger(get_oim_logger()).error(msg)
 
     def getResultJson(self, responseRaw, json_query):
         try:
