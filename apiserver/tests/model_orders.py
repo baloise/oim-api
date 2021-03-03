@@ -30,5 +30,7 @@ class TestModelOrder(unittest.TestCase):
         assert user is not None
 
     def test_2_user_doesnt_exist(self):
+        db.session.add(self.personPeter)
+        db.session.commit()
         user = Person.query.filter_by(username='b059485')
         assert user.count() == 0

@@ -87,6 +87,7 @@ class OrderStatus(db.Model):
     system = db.Column(db.Enum(BackendType))
     # This attribute might actually be a dupe of the dbrel parent_order
     order_id = db.Column(db.Integer, db.ForeignKey('orders.id'))
+    # order exists as backref from Order class
 
     def __repr__(self):
         return f"<OrderStatus {self.id!r} for Order {self.order.id!r}>"
