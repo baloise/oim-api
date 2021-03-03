@@ -9,6 +9,7 @@ class GetRequestStatusPath(AbstractOcPath.AbstractOcPath):
         if not requestno:
             raise ValueError("No request number provided")
         self.requestno = requestno
+        super().__init__()
 
     def get_url(self) -> str:
         return '{baseUrl}/Requests/Request'.format(
