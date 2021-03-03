@@ -1,19 +1,28 @@
 import os
+from abc import ABC, abstractmethod
 import json
 from oim_logging import get_oim_logger
-import logging
 import jmespath
 from ourCloud.OcStaticVars import OC_RESPONSEFIELD, OC_REQUESTFIELD, OC_OBJECTTYPE, OC_ACTIONMAME, OC_LANGUAGE, OC_CATALOGOFFERINGS  # noqa F401
 
 
-class AbstractOcPath:
+class AbstractOcPath(ABC):
     OC_RESPONSEFIELD, OC_REQUESTFIELD, OC_OBJECTTYPE, OC_ACTIONMAME, OC_LANGUAGE, OC_CATALOGOFFERINGS
 
+    def __init__(self):
+        self.log = get_oim_logger()
+
+    @abstractmethod
     def get_url(self) -> str:
         pass
 
+    @abstractmethod
     def get_body(self):
         return {}
+
+    @abstractmethod
+    def send_request(self):
+        pass
 
     def get_header(self) -> str:
         headers = {
@@ -22,12 +31,9 @@ class AbstractOcPath:
         }
         return headers
 
-    def send_request(self):
-        pass
-
     def do_simulate(self) -> bool:
         sim = bool(os.getenv('DOSIM'))
-        self.logInfo("Simulation enabled, requests will not be sent do OC: {}".format(sim))
+        self.log.info("Simulation enabled, requests will not be sent do OC: {}".format(sim))
         if sim:
             return sim
         else:
@@ -77,12 +83,6 @@ class AbstractOcPath:
 
     def getPlatformEntityId(self):
         return "VMWAR-15CFFB35-7FC6-449C-9F7F-1CF83A8A6237"
-
-    def logInfo(self, msg: str):
-        logging.getLogger(get_oim_logger()).info(msg)
-
-    def logError(self, msg: str):
-        logging.getLogger(get_oim_logger()).error(msg)
 
     def getResultJson(self, responseRaw, json_query):
         try:
