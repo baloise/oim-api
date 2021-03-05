@@ -1,7 +1,6 @@
 import connexion
 from flask_sqlalchemy import SQLAlchemy
 import os
-import logging
 # from dotenv import load_dotenv
 from oim_logging import init_logging
 from oim_logging import get_oim_logger
@@ -44,8 +43,7 @@ def create_connexion_app(config_name=None, dotenv_path=None,
 
     init_logging(config)
 
-    oim_logger = get_oim_logger()
-    running_logger = logging.getLogger(oim_logger)
+    running_logger = get_oim_logger()
 
     # Generate test messages
     if config.get('DEBUG') == 'True':

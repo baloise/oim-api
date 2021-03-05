@@ -5,6 +5,10 @@ import logging.config
 # import os
 
 
+def get_oim_logger():
+    return logging.getLogger('oim_logger')
+
+
 def init_logging(config: dict):
     # need validate check for the logging.conf
     if config.get('LOGGING_CONFIGFILE') is None:
@@ -23,8 +27,7 @@ def init_logging(config: dict):
                               defaults={'logfilename': logger_log_file,
                                         'mailhost': logger_mailhost,
                                         'toaddrs': 'foo@foo.ch'})
-    current_logger = get_oim_logger()
-    running_logger = logging.getLogger(current_logger)
+    running_logger = get_oim_logger()
 
     if config.get('DEBUG') == 'True':
         # set DEBUG als level on all oim_logger LOGGING
@@ -33,7 +36,3 @@ def init_logging(config: dict):
     else:
         running_logger.info('Found config DEBUG=False -> set log level INFO')
         running_logger.setLevel('INFO')
-
-
-def get_oim_logger() -> str:
-    return('oim_logger')

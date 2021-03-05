@@ -1,13 +1,15 @@
 import os
 import json
-from oim_logging import get_oim_logger
-import logging
 import jmespath
+from oim_logging import get_oim_logger
 from ourCloud.OcStaticVars import OC_RESPONSEFIELD, OC_REQUESTFIELD, OC_OBJECTTYPE, OC_ACTIONMAME, OC_LANGUAGE, OC_CATALOGOFFERINGS  # noqa F401
 
 
 class AbstractOcPath:
     OC_RESPONSEFIELD, OC_REQUESTFIELD, OC_OBJECTTYPE, OC_ACTIONMAME, OC_LANGUAGE, OC_CATALOGOFFERINGS
+
+    def __init__(self):
+        self.log = get_oim_logger()
 
     def get_url(self) -> str:
         pass
@@ -79,10 +81,12 @@ class AbstractOcPath:
         return "VMWAR-15CFFB35-7FC6-449C-9F7F-1CF83A8A6237"
 
     def logInfo(self, msg: str):
-        logging.getLogger(get_oim_logger()).info(msg)
+        # TODO: replace use of this function with direct self.log.info() calls
+        return self.log.info(msg)
 
     def logError(self, msg: str):
-        logging.getLogger(get_oim_logger()).error(msg)
+        # TODO: replace use of this function with direct self.log.error() calls
+        return self.log.error(msg)
 
     def getResultJson(self, responseRaw, json_query):
         try:

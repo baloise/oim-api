@@ -11,6 +11,7 @@ class DeleteVmPath(AbstractOcPath.AbstractOcPath):
         if not hostname:
             raise ValueError("No hostname provided")
         self.hostname = hostname
+        super().__init__()
 
     def get_url(self) -> str:
         return "{baseUrl}/Resources/ActionRequest".format(
