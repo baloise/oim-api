@@ -1,4 +1,4 @@
-from ourCloud.ourPaths.AbstractOcPath import AbstractOcPath
+from ourCloud.ocPaths.AbstractOcPath import AbstractOcPath
 import requests
 import json
 import jmespath
