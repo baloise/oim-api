@@ -15,6 +15,7 @@ class GetExtendedParametersPath(AbstractOcPath):
         self.listall = listall
         self.requestno = requestno
         self.parameters = parameters
+        super().__init__()
 
     def get_url(self) -> str:
         method_url = '{baseUrl}/Requests/RequestDetails/OrgEntityID/{orgEntityId}/PlatformEntityID/{platformEntityId}/RequestNo/{requestNo}/RequestDetailId/{requestDetailId}'.format(  # noqa: E501
