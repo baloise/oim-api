@@ -117,14 +117,6 @@ class Order(db.Model):
     requestor = db.Column(db.Integer, db.ForeignKey('persons.id'), nullable=False)
     items = db.relationship('OrderItem', backref='order', lazy=True)
 
-    def __init__(self):
-        self.items = []
-        self.requester = None
-
-    def __init__(self, items):
-        self.items = items
-        self.requester = None
-
     def __init__(self, items, requester):
         self.items = items
         self.requester = requester
