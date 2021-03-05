@@ -1,10 +1,9 @@
-from . import AbstractOcPath
-from .AbstractOcPath import doubleQuoteDict
+from .AbstractOcPath import doubleQuoteDict, AbstractOcPath
 import requests
 import json
 
 
-class CreateVmPath(AbstractOcPath.AbstractOcPath):
+class CreateVmPath(AbstractOcPath):
     # 3.4.80
 
     def get_url(self) -> str:
@@ -49,7 +48,7 @@ class CreateVmPath(AbstractOcPath.AbstractOcPath):
         payload = doubleQuoteDict(bodyJson)
         payloadStr = json.dumps(payload)
         payload = payloadStr
-        self.logInfo(payload)
+        self.log.info(payload)
 
         return payload
 
@@ -60,16 +59,16 @@ class CreateVmPath(AbstractOcPath.AbstractOcPath):
 
         # Ensure response looks valid
         if not response.status_code == 200:
-            self.logError("An error occured while transmitting request ({code}): {txt}".format(
+            self.log.error("An error occured while transmitting request ({code}): {txt}".format(
                 code=response.status_code,
                 txt=response.text))
             return ""
         responseJson = json.loads(response.text)
         if responseJson[self.OC_RESPONSEFIELD.STATUSCODE.value.value] == 200:
-            self.logInfo("New request has been created successfully: {code}".format(
+            self.log.info("New request has been created successfully: {code}".format(
                 code=responseJson[self.OC_RESPONSEFIELD.REQUESTID.value]))
             return responseJson[self.OC_RESPONSEFIELD.MESSAGE.value]
         else:
-            self.logInfo("Failed to create request: {code}".format(
+            self.log.info("Failed to create request: {code}".format(
                 code=response[self.OC_RESPONSEFIELD.ERRORMESSAGE.value]))
             return ""

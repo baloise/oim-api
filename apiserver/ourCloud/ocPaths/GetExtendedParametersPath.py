@@ -1,10 +1,10 @@
-from . import AbstractOcPath
+from ourCloud.ocPaths.AbstractOcPath import AbstractOcPath
 import requests
 import json
 import jmespath
 
 
-class GetExtendedParametersPath(AbstractOcPath.AbstractOcPath):
+class GetExtendedParametersPath(AbstractOcPath):
     # 3.4.5
 
     def __init__(self, requestno, parameters: list, listall=False):
