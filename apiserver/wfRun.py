@@ -4,32 +4,6 @@ import collections
 from models.my_orders import Person, SbuType, OrderItemType, OrderStateType, OrderItem, OrderStatus, Order  # noqa: F401,E501
 
 
-class DeepChainMap(collections.ChainMap):
-    'Variant of ChainMap that allows direct updates to inner scopes'
-
-    def __setitem__(self, key, value):
-        for mapping in self.maps:
-            if key in mapping:
-                mapping[key] = value
-                return
-        self.maps[0][key] = value
-
-    def __delitem__(self, key):
-        for mapping in self.maps:
-            if key in mapping:
-                del mapping[key]
-                return
-        raise KeyError(key)
-
-
-di1 = {"k1": "v1"}
-di2 = {"k2": "v2"}
-
-map = DeepChainMap(di1)
-map = map.new_child(di2)
-map.maps = reversed(map.maps)
-# print(map)
-
 personPeter = Person(
             username='u12345',
             email='peter.parker@test.fake',
@@ -73,6 +47,33 @@ wf.add_batch(bat_depl)
 wf.add_batch(bat_ver)
 wf.add_batch(bat_tst)
 wf.add_batch(bat_hov)
+#  ################################### PLAYGROUND, please ignore below code ##########################################
+
+
+class DeepChainMap(collections.ChainMap):
+    'Variant of ChainMap that allows direct updates to inner scopes'
+
+    def __setitem__(self, key, value):
+        for mapping in self.maps:
+            if key in mapping:
+                mapping[key] = value
+                return
+        self.maps[0][key] = value
+
+    def __delitem__(self, key):
+        for mapping in self.maps:
+            if key in mapping:
+                del mapping[key]
+                return
+        raise KeyError(key)
+
+
+di1 = {"k1": "v1"}
+di2 = {"k2": "v2"}
+
+map = DeepChainMap(di1)
+map = map.new_child(di2)
+map.maps = reversed(map.maps)
 
 print("List Batches&their Actions {}".format(wf.get_name()))
 for batch in wf.get_batches():
