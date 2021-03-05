@@ -1,7 +1,7 @@
 from typing import List
 import collections
 import enum
-from workflows.steps.WorkflowSteps import DeployItemStep, AbstractWorkflowStep
+from workflows.steps.WorkflowSteps import AbstractWorkflowStep
 
 
 class BatchPhase(enum.Enum):

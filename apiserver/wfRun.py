@@ -66,16 +66,16 @@ step6 = DummyStep("complete request")
 bat_hov.add_step(step6)
 
 if False:
-  print("Iterating batch {}".format(bat.get_name()))
-  iterator = iter(bat)
-  while True:
-      try:
-          # Get next element from TeamIterator object using iterator object
-          elem = next(iterator)
-          # Print the element
-          print(" Action: {}".format(elem.get_action()))
-      except StopIteration:
-          break
+    print("Iterating batch {}".format(bat.get_name()))
+    iterator = iter(bat)
+    while True:
+        try:
+            # Get next element from TeamIterator object using iterator object
+            elem = next(iterator)
+            # Print the element
+            print(" Action: {}".format(elem.get_action()))
+        except StopIteration:
+            break
 
 print("Defining Workflows")
 
