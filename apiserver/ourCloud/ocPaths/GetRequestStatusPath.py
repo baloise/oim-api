@@ -1,4 +1,4 @@
-from AbstractOcPath import AbstractOcPath
+from ourCloud.ocPaths.AbstractOcPath import AbstractOcPath
 import requests
 
 
