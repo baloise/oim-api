@@ -248,18 +248,6 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/Status'
-
-    order:
-      type: object
-      properties:
-        requester-id:
-          $ref: "#components/schemas/od.username"
-        requester-mail:
-          $ref: "#components/schemas/od.mail"
-        items:
-          type: array
-          items:
-            $ref: "#components/schemas/ordercommon"
     od.username:
       type: string
       pattern: "^[bB][0-9]{6}$"
