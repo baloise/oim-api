@@ -7,36 +7,35 @@ servers:
   - url: /private/v0.1
 
 paths:
-  /order/info/{id}:
-    get:
-      summary: "show the order info"
-      description: "is made to display the order info"
-      # operationId: api.calls_status.order_info_get
-      tags:
-        - orders
-      responses:
-        200:
-          description: "order info"
-          content:
-            text/plain:
-              schema:
-                type: string
-                example: "Order status is: pending/done TODO: Convert this response to a json object"
-        404:
-          description: "Specified order not found"
-          content:
-            text/plain:
-              schema:
-                type: string
-                example: "Order not found"
-      parameters:
-        - name: id
-          in: path
-          description: "the orderid from the original order"
-          required: true
-          schema:
-            type: string
-            example: "order123"
+  # /order/info/{id}:
+  #   get:
+  #     summary: "show the order info"
+  #     description: "is made to display the order info"
+  #     tags:
+  #       - orders
+  #     responses:
+  #       200:
+  #         description: "order info"
+  #         content:
+  #           text/plain:
+  #             schema:
+  #               type: string
+  #               example: "Order status is: pending/done TODO: Convert this response to a json object"
+  #       404:
+  #         description: "Specified order not found"
+  #         content:
+  #           text/plain:
+  #             schema:
+  #               type: string
+  #               example: "Order not found"
+  #     parameters:
+  #       - name: id
+  #         in: path
+  #         description: "the orderid from the original order"
+  #         required: true
+  #         schema:
+  #           type: string
+  #           example: "order123"
 
   /order/createminimal:
     post:
@@ -44,7 +43,7 @@ paths:
       description: | 
         This is a private method only used for testing internally. Normally orders are created when
         a resource is ordered. This should never be called directly by customers.
-      # operationId: api.calls_status.order_create
+      operationId: api.calls_status.create_minimal_order
       tags:
         - orders
       responses:
@@ -82,6 +81,7 @@ paths:
   /status/create:
     post:
       summary: Create a new status entry
+      operationId: api.calls_status.create_status
       requestBody:
         required: true
         content:
@@ -104,49 +104,49 @@ paths:
         '400':
           description: "Invalid requestBody"
 
-  /status/list:
-    get:
-      summary: Retrieve list of statuses for a given order
-      parameters:
-        - in: query
-          name: orderid
-          required: true
-          schema:
-            type: integer
-            example: 3458735773945
-      responses:
-        '200':
-          description: list of statuses found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ArrayOfStatuses'
-        '404':
-          $ref: '#/components/responses/NotFound'
+  # /status/list:
+  #   get:
+  #     summary: Retrieve list of statuses for a given order
+  #     parameters:
+  #       - in: query
+  #         name: orderid
+  #         required: true
+  #         schema:
+  #           type: integer
+  #           example: 3458735773945
+  #     responses:
+  #       '200':
+  #         description: list of statuses found
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/ArrayOfStatuses'
+  #       '404':
+  #         $ref: '#/components/responses/NotFound'
 
-  /orderitem/list:
-    get:
-      summary: lists orderitems belonging to specific order
-      parameters:
-        - in: query
-          name: order_id
-          required: true
-          schema: 
-            type: integer
-            example: 9475849385747
-      responses:
-        '200':
-          description: 'A list of orderitems belongig to the given order'
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Status'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
+  # /orderitem/list:
+  #   get:
+  #     summary: lists orderitems belonging to specific order
+  #     parameters:
+  #       - in: query
+  #         name: order_id
+  #         required: true
+  #         schema: 
+  #           type: integer
+  #           example: 9475849385747
+  #     responses:
+  #       '200':
+  #         description: 'A list of orderitems belongig to the given order'
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: array
+  #               items:
+  #                 $ref: '#/components/schemas/Status'
+  #       '401':
+  #         $ref: '#/components/responses/Unauthorized'
+  #       '404':
+  #         $ref: '#/components/responses/NotFound'
 
 
   # /order/details/{id}:
