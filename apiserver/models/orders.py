@@ -44,7 +44,7 @@ class Person(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
     email = db.Column(db.String(100), nullable=False)
-    sbu = db.Column(db.Enum(SbuType), nullable=False)
+    sbu = db.Column(db.Enum(SbuType), nullable=True)
     orders = db.relationship('Order', backref='person', lazy=True)
 
 

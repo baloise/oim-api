@@ -29,6 +29,9 @@ def load_openapis(connexion_app):
     # API spec used for oc calls
     connexion_app.add_api('oim_occalls.yaml')
 
+    # API parts not intended for customer use
+    connexion_app.add_api('oimapi-private.yaml')
+
 
 def create_connexion_app(config_name=None, dotenv_path=None,
                          dotenv_override=False):
