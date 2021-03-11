@@ -6,6 +6,8 @@ from .ocPaths.DeleteVmPath import DeleteVmPath
 from .ocPaths.GetExtendedParametersPath import GetExtendedParametersPath
 from .ocPaths.GetRequestStatusPath import GetRequestStatusPath
 from .ocPaths.AbstractOcPath import AbstractOcPath
+from models.orders import OrderItem, Person
+from oim_logging import get_oim_logger
 
 
 class doubleQuoteDict(dict):
@@ -23,6 +25,8 @@ class OurCloudRequestHandler:
     @staticmethod
     def getInstance():
         """ Static access method. """
+        logger = get_oim_logger()
+        logger.debug("Initializing request handler")
         if OurCloudRequestHandler.__instance is None:
             OurCloudRequestHandler()
         return OurCloudRequestHandler.__instance
@@ -36,8 +40,9 @@ class OurCloudRequestHandler:
             self.auth = TokenAuthHandler(abstractPath)
             urllib3.disable_warnings()
 
-    def create_vm(self):
-        path = CreateVmPath()
+    def create_vm(self, item: OrderItem, requester: Person):
+        path = CreateVmPath(item)
+        path.set_requester(requester)
         path.set_auth_token_handler(self.auth)
         res = path.send_request()
         return res
