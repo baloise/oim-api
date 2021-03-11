@@ -1,52 +1,89 @@
-from workflows.WorkflowStep import Workflow, Batch, BatchPhase
-from workflows.steps.WorkflowSteps import DeployItemStep, DummyStep, VerifyItemStep
+# from workflows.Workflows import GenericWorkflow, Batch, BatchPhase
+# from workflows.steps.WorkflowSteps import DeployItemStep, DummyStep, VerifyItemStep
 import collections
-from models.my_orders import Person, SbuType, OrderItemType, OrderStateType, OrderItem, OrderStatus, Order  # noqa: F401,E501
+from models.orders import Person, SbuType, OrderStateType, OrderItem, OrderStatus, Order  # noqa: F401,E501
+from workflows.Factory import WorkflowFactory, OrderFactory
+from workflows.Workflows import WorkflowTypes
+from workflows.WorkflowContext import WorkflowContext
+from models.orderTypes.OrderTypes import OrderType
+from ourCloud.OcStaticVars import OC_CATALOGOFFERINGS, OC_CATALOGOFFERING_SIZES  # noqa F401
+import logging
+from dotenv import load_dotenv
 
+
+load_dotenv()
+logger = logging.getLogger()
+logging.basicConfig(
+    level=logging.DEBUG,
+    style="{",
+    datefmt="%d.%m.%Y %H:%M:%S",
+    format="{asctime} {levelname}: {message}"
+)
+
+logger.setLevel(logging.DEBUG)
 
 personPeter = Person(
             username='u12345',
             email='peter.parker@test.fake',
             sbu=SbuType.SHARED
         )
+workflowFactory = WorkflowFactory()
+orderFactory = OrderFactory()
 
-rhel_item = OrderItem("rhel8", OrderItemType.DMY)
+rhel_item = OrderItem(OC_CATALOGOFFERINGS.RHEL7.cataloguename, OC_CATALOGOFFERING_SIZES.S2)
 items = [rhel_item]
-new_order = Order(items, personPeter)
+new_order = orderFactory.get_order(OrderType.CREATE_ORDER, items, personPeter)
 
-bat_pre = Batch("pre-work", BatchPhase.RE_VERIFICATION, False)
-step1 = DummyStep("verify request")
-bat_pre.add_step(step1)
+wf = workflowFactory.get_workflow(WorkflowTypes.WF_CREATE_VM)
+context = WorkflowContext(personPeter)
+wf.set_context(context)
+wf.set_order(new_order)
 
-bat_depl = Batch("deploy", BatchPhase.BE_PROCESSING, False)
-for it in new_order.get_items():
-    step = DeployItemStep(new_order.get_items()[0])
-    bat_depl.add_step(step)
+# bat_pre = Batch("pre-work", BatchPhase.RE_VERIFICATION, False)
+# step1 = DummyStep("verify request")
+# bat_pre.add_step(step1)
 
-bat_ver = Batch("verify", BatchPhase.BE_VERIFICATION, False)
-for it in new_order.get_items():
-    step = VerifyItemStep(new_order.get_items()[0])
-    bat_ver.add_step(step)
+# bat_depl = Batch("deploy", BatchPhase.BE_PROCESSING, False)
 
+# for item in new_order.get_items():
+#     step = DeployItemStep(item)
+#     bat_depl.add_step(step)
 
-bat_tst = Batch("test", BatchPhase.TESTING, False)
-step4 = DummyStep("request testing")
-step5 = DummyStep("receive testing status")
-bat_tst.add_step(step4)
-bat_tst.add_step(step5)
+# bat_ver = Batch("verify", BatchPhase.BE_VERIFICATION, False)
+# for item in new_order.get_items():
+#     step = VerifyItemStep(item)
+#     bat_ver.add_step(step)
 
-bat_hov = Batch("handover", BatchPhase.HANDOVER, False)
-step6 = DummyStep("complete request")
-bat_hov.add_step(step6)
+# bat_tst = Batch("test", BatchPhase.TESTING, False)
+# step4 = DummyStep("request testing")
+# step5 = DummyStep("receive testing status")
+# bat_tst.add_step(step4)
+# bat_tst.add_step(step5)
 
-print("Defining Workflows")
+# bat_hov = Batch("handover", BatchPhase.HANDOVER, False)
+# step6 = DummyStep("complete request")
+# bat_hov.add_step(step6)
 
-wf = Workflow("new vm")
-wf.add_batch(bat_pre)
-wf.add_batch(bat_depl)
-wf.add_batch(bat_ver)
-wf.add_batch(bat_tst)
-wf.add_batch(bat_hov)
+# print("Defining Workflows")
+
+# # batches will be ordered implicitly by BatchPhase
+# wf = GenericWorkflow("new vm")
+# wf.add_batch(bat_pre)
+# wf.add_batch(bat_depl)
+# wf.add_batch(bat_ver)
+# wf.add_batch(bat_tst)
+# wf.add_batch(bat_hov)
+
+print("Executing Workflows...")
+wf.execute()
+
+# #### Factory example ####
+
+# factory = WorkflowFactory()
+# crwf = factory.get_workflow(WorkflowTypes.WF_CREATE_VM)
+# crwf.add_batch(bat_depl)
+# crwf.execute()
+
 #  ################################### PLAYGROUND, please ignore below code ##########################################
 
 
@@ -74,34 +111,14 @@ di2 = {"k2": "v2"}
 map = DeepChainMap(di1)
 map = map.new_child(di2)
 map.maps = reversed(map.maps)
-
+print("..................")
 print("List Batches&their Actions {}".format(wf.get_name()))
 for batch in wf.get_batches():
     print(" Batch {}".format(batch))
     for step in batch:
         print("  Action: {}".format(step.get_action()))
 
-print("Execute Workflows")
-wf.execute()
+# print("Execute Workflows")
+# wf.execute()
 
-if False:
-    dm = DeepChainMap()
-    print("#1")
-    di1 = {"wf_a": step1}
-    dm = dm.new_child(di1)
-
-    vals = list(dm.values())
-    kys = list(dm.keys())
-    print("Length: {}".format(len(dm.maps)))
-    for kl in kys:
-        print("Map KV: {}={}".format(kl, dm[kl]))
-
-    print("#2")
-    di2 = {"c": "d"}
-    dm = dm.new_child(di2)
-    print(len(dm.maps))
-
-    kys = list(dm.keys())
-    for kl in kys:
-        print("{}={}".format(kl, dm[kl]))
 print("............")

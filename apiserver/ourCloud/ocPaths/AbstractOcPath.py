@@ -1,5 +1,5 @@
 import os
-from abc import ABC, abstractmethod
+from abc import ABC  # abstractmethod
 import json
 import jmespath
 from oim_logging import get_oim_logger
@@ -12,15 +12,15 @@ class AbstractOcPath(ABC):
     def __init__(self):
         self.log = get_oim_logger()
 
-    @abstractmethod
+    # @abstractmethod
     def get_url(self) -> str:
         pass
 
-    @abstractmethod
+    # @abstractmethod
     def get_body(self):
         return {}
 
-    @abstractmethod
+    # @abstractmethod
     def send_request(self):
         pass
 
@@ -31,13 +31,14 @@ class AbstractOcPath(ABC):
         }
         return headers
 
-    def do_simulate(self) -> bool:
-        sim = bool(os.getenv('DOSIM'))
-        self.log.info("Simulation enabled, requests will not be sent do OC: {}".format(sim))
+    def no_simulate(self) -> bool:
+        sim = bool(os.getenv('NOSIM'))
         if sim:
+            self.log.info("Simulation disabled, requests will be sent do OC: {}".format(sim))
             return sim
         else:
-            return False
+            self.log.info("Simulation enabled, requests will NOT be sent do OC: {}".format(sim))
+            return True
 
     def set_auth_token_handler(self, handler):
         self.auth = handler

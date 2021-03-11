@@ -55,6 +55,22 @@ class OC_LANGUAGE(enum.Enum):
     EN_US = "en-US"
 
 
+class OC_CATALOGOFFERING_SIZES(bytes, enum.Enum):
+    def __new__(cls, value, cataloguesize, catalogueid):
+        obj = bytes.__new__(cls, [value])
+        obj._value_ = value
+        obj.cataloguesize = cataloguesize
+        obj.catalogueid = catalogueid
+        return obj
+    S1 = (1, "Small (S1) - Cores: 2, Memory: 4", "S1")
+    S2 = (2, "Small (S2) - Cores: 1, Memory: 4", "S2")     # Lab only
+    M1 = (3, "Medium (M1) - Cores: 4, Memory: 8", "M1")
+    M2 = (4, "Medium (M2) - Cores: 4, Memory: 16", "M2")
+    L1 = (5, "Large (L1) - Cores: 8, Memory: 32", "L1")
+    L2 = (6, "Large (L2) - Cores: 8, Memory: 64", "L2")
+    X1 = (7, "ExtraLarge (X1) - Cores: 16, Memory: 64", "X1")
+
+
 class OC_CATALOGOFFERINGS(bytes, enum.Enum):
 
     def __new__(cls, value, cataloguename, catalogueid):
