@@ -39,7 +39,7 @@ class TestDbData(unittest.TestCase):
             requestor=1,
             # items=1
         )
-        db.session.add(self.orderItemFoo)
+        db.session.add(self.orderFoo)
         db.session.commit()
         # add OrderItems
         self.orderItemFoo = OrderItem(
@@ -48,7 +48,7 @@ class TestDbData(unittest.TestCase):
             # order_id=self.orderFoo.id
         )
         self.orderFoo.items.append(self.orderItemFoo)
-        # commit
+        db.session.commit()
 
     def tearDown(self):
         db.session.remove()
