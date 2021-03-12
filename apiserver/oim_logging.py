@@ -5,7 +5,7 @@ import logging.config
 # import os
 
 
-def get_oim_logger():
+def get_oim_logger() -> logging:
     return logging.getLogger('oim_logger')
 
 

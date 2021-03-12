@@ -66,6 +66,7 @@ class Person(db.Model):
 class OrderItem(db.Model):
     __tablename__ = 'orderitems'
 
+    # id = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
     id = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
     reference = db.Column(db.String(80), nullable=False)
     item_type = db.Column(db.Enum(OrderItemType), nullable=False)
@@ -103,7 +104,7 @@ class Order(db.Model):
     __tablename__ = 'orders'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    create_date = db.Column(db.DateTime)
+    create_date = db.Column(db.DateTime, default=datetime.now())
     history = db.relationship('OrderStatus', backref='order', lazy=True)
     requestor = db.Column(db.Integer, db.ForeignKey('persons.id'), nullable=False)
     items = db.relationship('OrderItem', backref='order', lazy=True)
