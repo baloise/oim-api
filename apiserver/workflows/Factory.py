@@ -1,5 +1,5 @@
 from workflows.Workflows import GenericWorkflow, CreateVmWorkflow, WorkflowTypes
-from models.orderTypes.OrderTypes import OrderType, CreateOrder, DeleteOrder, ModifyOrder, GenericOrder
+from models.orders import OrderType, Order, CreateOrder, DeleteOrder, ModifyOrder, Person
 
 
 class WorkflowFactory:
@@ -28,11 +28,11 @@ class OrderFactory:
         self.register_type(OrderType.DELETE_ORDER, DeleteOrder)
         self.register_type(OrderType.MODIFY_ORDER, ModifyOrder)
 
-    def register_type(self, order_type: OrderType, orderClass: GenericOrder):
+    def register_type(self, order_type: OrderType, orderClass: Order):
         self._creators[order_type] = orderClass
 
-    def get_order(self, order_type, items, requester):
+    def get_order(self, order_type: OrderType, items, requester: Person):
         creator = self._creators.get(order_type)
         if not creator:
             raise ValueError(order_type)
-        return creator(items, requester)
+        return creator(order_type, items, requester)

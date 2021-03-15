@@ -1,14 +1,18 @@
 # from workflows.Workflows import GenericWorkflow, Batch, BatchPhase
 # from workflows.steps.WorkflowSteps import DeployItemStep, DummyStep, VerifyItemStep
 import collections
-from models.orders import Person, SbuType, OrderStateType, OrderItem, OrderStatus, Order  # noqa: F401,E501
+from models.orders import Person, SbuType, OrderStateType, OrderItem, OrderStatus, Order, BackendType, OrderType  # noqa: F401,E501
 from workflows.Factory import WorkflowFactory, OrderFactory
 from workflows.Workflows import WorkflowTypes
 from workflows.WorkflowContext import WorkflowContext
-from models.orderTypes.OrderTypes import OrderType
+# from models.orderTypes.OrderTypes import OrderType
 from ourCloud.OcStaticVars import OC_CATALOGOFFERINGS, OC_CATALOGOFFERING_SIZES  # noqa F401
 import logging
 from dotenv import load_dotenv
+from api.calls_status import create_status
+from app import create_flask_app, db
+from flask_sqlalchemy import SQLAlchemy
+import json
 
 
 load_dotenv()
@@ -22,6 +26,10 @@ logging.basicConfig(
 
 logger.setLevel(logging.DEBUG)
 
+
+ff = OC_CATALOGOFFERINGS.from_str('Windows 2019')
+print("Offering {}".format(ff.name))
+
 personPeter = Person(
             username='u12345',
             email='peter.parker@test.fake',
@@ -30,7 +38,8 @@ personPeter = Person(
 workflowFactory = WorkflowFactory()
 orderFactory = OrderFactory()
 
-rhel_item = OrderItem(OC_CATALOGOFFERINGS.RHEL7.cataloguename, OC_CATALOGOFFERING_SIZES.S2)
+rhel_item = OrderItem(OC_CATALOGOFFERINGS.RHEL7, OC_CATALOGOFFERING_SIZES.S2)
+rhel_item.set_reference("ref")
 items = [rhel_item]
 new_order = orderFactory.get_order(OrderType.CREATE_ORDER, items, personPeter)
 
@@ -38,6 +47,42 @@ wf = workflowFactory.get_workflow(WorkflowTypes.WF_CREATE_VM)
 context = WorkflowContext(personPeter)
 wf.set_context(context)
 wf.set_order(new_order)
+
+app = create_flask_app()
+app_context = app.app_context()
+app_context.push()
+SQLAlchemy(app)
+db.create_all()
+
+db.session.add(personPeter)
+db.session.commit()
+
+print("Query Persons:")
+result = Person.query.all()
+for row in result:
+    print(f"{row.id}")
+
+new_order.set_requester(personPeter)
+# print("Insert Item:")
+# db.session.add(rhel_item)
+# db.session.commit()
+
+# print("Query Items:")
+# result = OrderItem.query.all()
+# for row in result:
+#    print(f"{row.id}")
+
+db.session.add(new_order)
+db.session.commit()
+
+print("Query Orders:")
+result = Order.query.all()
+
+for row in result:
+    print(f"{row.get_items()}")
+
+db.session.remove()
+db.drop_all()
 
 # bat_pre = Batch("pre-work", BatchPhase.RE_VERIFICATION, False)
 # step1 = DummyStep("verify request")
@@ -73,9 +118,18 @@ wf.set_order(new_order)
 # wf.add_batch(bat_ver)
 # wf.add_batch(bat_tst)
 # wf.add_batch(bat_hov)
+if False:
+    print("Executing Workflows...")
+    # wf.execute()
 
-print("Executing Workflows...")
-wf.execute()
+    print("Updating status...")
+    # create_status()
+
+    st = '{"state": \"' + OrderStateType.BE_DONE.value + '\", \
+        "system": \"' + BackendType.OURCLOUD.value + '\", \
+        "orderid": \"10\"}'
+    dodo = json.loads(st)
+    create_status(dodo)
 
 # #### Factory example ####
 

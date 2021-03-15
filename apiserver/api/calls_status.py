@@ -61,13 +61,15 @@ def create_minimal_order(orderinfo):
 
 def create_status(status):
     log = get_oim_logger()
-    if status.get('state') not in OrderStateType:
+    osStateValues = set(item.value for item in OrderStateType)
+    if status.get('state') not in osStateValues:
         log.warn('Illegal state given: {}'.format(str(status.get('state'))))
-        return 'Illegal state given', 401
+        return 'Illegal state given', 400
 
-    if status.get('system') not in BackendType:
+    btStateValues = set(item.value for item in BackendType)
+    if status.get('system') not in btStateValues:
         log.warn('Illegal system given: {}'.format(str(status.get('system'))))
-        return 'Illegal system given', 401
+        return 'Illegal system given', 400
 
     order_id = status.get('orderid', None)
     if not order_id:
@@ -75,7 +77,7 @@ def create_status(status):
         return 'Order not found', 404
     order = db.session.query(Order).filter(Order.id == order_id).one_or_none()
     if not order:
-        log.info('create_status() called with non-existant order id: {oid}'.format(
+        log.info('create_status() called with non-existent order id: {oid}'.format(
             oid=str(order_id)
         ))
         return 'Order not found', 404

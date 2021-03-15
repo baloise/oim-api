@@ -3,7 +3,7 @@ from oim_logging import get_oim_logger
 from workflows.Factory import WorkflowFactory, OrderFactory
 from workflows.Workflows import WorkflowTypes
 from models.orders import OrderItem, Person, SbuType
-from models.orderTypes.OrderTypes import OrderType
+from models.orders import OrderType
 from workflows.WorkflowContext import WorkflowContext
 from ourCloud.OcStaticVars import OC_CATALOGOFFERINGS, OC_CATALOGOFFERING_SIZES  # noqa F401
 
@@ -36,16 +36,22 @@ def deletevm(hostname: str):
 
 
 def createvm(body):
+    logger = get_oim_logger()
     workflowFactory = WorkflowFactory()
     orderFactory = OrderFactory()
 
     personPeter = Person(
             username='u12345',
-            email=body["requester"],
+            email=body.get("requester"),
             sbu=SbuType.SHARED
         )
 
-    rhel_item = OrderItem(body["cataloguename"], body["size"])
+    catName = body.get("cataloguename")
+    offering = OC_CATALOGOFFERINGS.from_str(catName)
+    catSize = body.get("size")
+    logger.info(catSize)
+    size = OC_CATALOGOFFERING_SIZES.from_str(catSize)
+    rhel_item = OrderItem(offering, size)
     items = [rhel_item]
     new_order = orderFactory.get_order(OrderType.CREATE_ORDER, items, personPeter)
 
@@ -54,7 +60,6 @@ def createvm(body):
     wf.set_context(context)
     wf.set_order(new_order)
 
-    logger = get_oim_logger()
     try:
         ocstatus = wf.execute()
     except Exception as e:

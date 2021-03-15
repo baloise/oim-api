@@ -2,7 +2,8 @@ from typing import List
 import collections
 import enum
 from workflows.steps.WorkflowSteps import AbstractWorkflowStep
-from models.orderTypes.OrderTypes import GenericOrder, OrderType
+from models.orders import OrderType
+from models.orders import Order
 from workflows.steps.WorkflowSteps import DeployItemStep
 from workflows.WorkflowContext import WorkflowContext
 from oim_logging import get_oim_logger
@@ -121,7 +122,7 @@ class WorkflowTypes(enum.Enum):
 
 class GenericWorkflow:
     type = WorkflowTypes.WF_GENERIC
-    order: GenericOrder = None     # might become constructor param
+    order: Order = None     # might become constructor param
     context: WorkflowContext
 
     def __init__(self, name: str, is_repeatable=False):
@@ -134,10 +135,10 @@ class GenericWorkflow:
     def set_context(self, context: WorkflowContext):
         self.context = context
 
-    def get_order(self) -> GenericOrder:
+    def get_order(self) -> Order:
         return self.order
 
-    def set_order(self, order: GenericOrder):
+    def set_order(self, order: Order):
         self.order = order
 
     def get_name(self):
@@ -174,6 +175,8 @@ class GenericWorkflow:
                 error = "Error while executing batch: {}".format(e)
                 logger.error(error)
                 break
+            # finally:
+            #     create_status()
         info = "{} of {} batches completed".format(batchCount, len(self.batches.maps))
         logger.debug(info)
         if batchCount < len(self.batches.maps):
@@ -187,7 +190,7 @@ class CreateVmWorkflow(GenericWorkflow):
     def __init__(self):
         super().__init__("create vm", False)
 
-    def set_order(self, order: GenericOrder):
+    def set_order(self, order: Order):
         if order.get_type() == OrderType.CREATE_ORDER:
             super().set_order(order)
             batch = Batch("deploy", BatchPhase.BE_PROCESSING, False)
