@@ -111,7 +111,7 @@ class OrderItem(db.Model):
 
 
 class OrderStatus(db.Model):
-    __tablename__ = 'orderstati'
+    __tablename__ = 'orderstatuses'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     state = db.Column(db.Enum(OrderStateType), nullable=False)
@@ -119,6 +119,7 @@ class OrderStatus(db.Model):
     system = db.Column(db.Enum(BackendType))
     # This attribute might actually be a dupe of the dbrel parent_order
     order_id = db.Column(db.Integer, db.ForeignKey('orders.id'))
+    payload = db.relationship("StatusPayload", uselist=False, back_populates="status")
 
     def __repr__(self):
         return f"<OrderStatus {self.id!r} for Order {self.order.id!r}>"
