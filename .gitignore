@@ -10,3 +10,4 @@ old/
 *.log
 *_data.xml
 apiserver/oclogging.log
+apiserver/foo.py
