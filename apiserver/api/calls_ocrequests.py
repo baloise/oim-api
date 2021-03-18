@@ -1,5 +1,11 @@
 from ourCloud.OurCloudHandler import OurCloudRequestHandler
 from oim_logging import get_oim_logger
+from workflows.Factory import WorkflowFactory, OrderFactory
+from workflows.Workflows import WorkflowTypes
+from models.orders import OrderItem, Person, SbuType
+from models.orders import OrderType
+from workflows.WorkflowContext import WorkflowContext
+from ourCloud.OcStaticVars import OC_CATALOGOFFERINGS, OC_CATALOGOFFERING_SIZES  # noqa F401
 
 # type alias
 Param = [str]
@@ -29,17 +35,45 @@ def deletevm(hostname: str):
         return 'Request failed'
 
 
-def createvm():
-    handler = OurCloudRequestHandler.getInstance()
-    ocstatus = handler.create_vm()
+def createvm(body):
     logger = get_oim_logger()
+    workflowFactory = WorkflowFactory()
+    orderFactory = OrderFactory()
+
+    personPeter = Person(
+            username='u12345',
+            email=body.get("requester"),
+            sbu=SbuType.SHARED
+        )
+
+    catName = body.get("cataloguename")
+    offering = OC_CATALOGOFFERINGS.from_str(catName)
+    catSize = body.get("size")
+    logger.info(catSize)
+    size = OC_CATALOGOFFERING_SIZES.from_str(catSize)
+    rhel_item = OrderItem(offering, size)
+    items = [rhel_item]
+    new_order = orderFactory.get_order(OrderType.CREATE_ORDER, items, personPeter)
+
+    wf = workflowFactory.get_workflow(WorkflowTypes.WF_CREATE_VM)
+    context = WorkflowContext(personPeter)
+    wf.set_context(context)
+    wf.set_order(new_order)
+
+    try:
+        ocstatus = wf.execute()
+    except Exception as e:
+        logger.error(e)
+        return "{}".format(e), 500
 
     if len(ocstatus) > 0:
         info = "New request : {ocstatus}".format(ocstatus=ocstatus)
-        logger.info(info)
+        logger.debug(info)
         return info
     else:
-        return 'Request failed'
+        error = "Request failed"
+        logger.error(error)
+        return "{}".format(error), 500
 
 
 def get_request_status(requestno: int) -> str:

@@ -70,6 +70,25 @@ class OC_CATALOGOFFERING_SIZES(bytes, enum.Enum):
     L2 = (6, "Large (L2) - Cores: 8, Memory: 64", "L2")
     X1 = (7, "ExtraLarge (X1) - Cores: 16, Memory: 64", "X1")
 
+    @classmethod
+    def from_str(cls, cataloguename):
+        if cataloguename == 'Small (S1) - Cores: 2, Memory: 4':
+            return cls.S1
+        elif cataloguename == 'Small (S2) - Cores: 1, Memory: 4':
+            return cls.S2
+        elif cataloguename == 'Medium (M1) - Cores: 4, Memory: 8':
+            return cls.M1
+        elif cataloguename == 'Medium (M2) - Cores: 4, Memory: 16':
+            return cls.M2
+        elif cataloguename == 'Large (L1) - Cores: 8, Memory: 32':
+            return cls.L1
+        elif cataloguename == 'Large (L2) - Cores: 8, Memory: 64':
+            return cls.L2
+        elif cataloguename == 'ExtraLarge (X1) - Cores: 16, Memory: 64':
+            return cls.X1
+        else:
+            raise NotImplementedError
+
 
 class OC_CATALOGOFFERINGS(bytes, enum.Enum):
 
@@ -82,3 +101,14 @@ class OC_CATALOGOFFERINGS(bytes, enum.Enum):
     WINS2019 = (1, 'Windows 2019', 1)
     RHEL7 = (2, 'RHEL7.X', 2)
     PGRHEL7 = (3, 'RHEL7.X PostgreSQL', 6)
+
+    @classmethod
+    def from_str(cls, cataloguename):
+        if cataloguename == 'Windows 2019':
+            return cls.WINS2019
+        elif cataloguename == 'RHEL7.X':
+            return cls.RHEL7
+        elif cataloguename == 'RHEL7.X':
+            return cls.PGRHEL7
+        else:
+            raise NotImplementedError

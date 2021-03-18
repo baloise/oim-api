@@ -1,8 +1,8 @@
-from . import AbstractOcPath
+from ourCloud.ocPaths.AbstractOcPath import AbstractOcPath
 import requests
 
 
-class GetRequestStatusPath(AbstractOcPath.AbstractOcPath):
+class GetRequestStatusPath(AbstractOcPath):
     # 3.4.4
 
     def __init__(self, requestno):

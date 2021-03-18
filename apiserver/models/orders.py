@@ -5,6 +5,12 @@ from datetime import datetime
 from ourCloud.OcStaticVars import OC_CATALOGOFFERINGS, OC_CATALOGOFFERING_SIZES
 
 
+class OrderType(enum.Enum):
+    CREATE_ORDER = 0
+    DELETE_ORDER = 100
+    MODIFY_ORDER = 200
+
+
 class SbuType(enum.Enum):
     BE = 'BE'
     CHB_CH = 'CH-BCH'  # Enum elements can't contain minus in the key
@@ -41,9 +47,16 @@ class Person(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
     email = db.Column(db.String(100), nullable=False)
-    sbu = db.Column(db.Enum(SbuType), nullable=True)
+    sbu = db.Column(db.String(100), nullable=True)
     orders = db.relationship('Order', backref='person', lazy=True)
 
+    def __init__(self, username: str, email: str, sbu: SbuType):
+        self.username = username
+        self.email = email
+        self.sbu = sbu.value
+
+    def get_id(self):
+        return self.id
 
 # class PersonSchema(Schema):
 #     id = fields.Email()
@@ -63,15 +76,22 @@ class Person(db.Model):
 class OrderItem(db.Model):
     __tablename__ = 'orderitems'
 
-    id = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     reference = db.Column(db.String(80), nullable=False)
     cataloguename = db.Column(db.String(500), nullable=False)
-    size = db.Column(db.String(10), nullable=False)
+    size = db.Column(db.String(50), nullable=False)
     order_id = db.Column(db.Integer, db.ForeignKey('orders.id'))
+    order = db.relationship("Order", back_populates="items")
 
     def __init__(self, name: OC_CATALOGOFFERINGS, size: OC_CATALOGOFFERING_SIZES):
-        self.cataloguename = name
-        self.size = size
+        self.cataloguename = name.cataloguename
+        self.size = size.cataloguesize
+
+    def set_reference(self, reference):
+        self.reference = reference
+
+    def get_reference(self):
+        return self.reference
 
     def get_cataloguename(self) -> OC_CATALOGOFFERINGS:
         return self.cataloguename
@@ -114,14 +134,21 @@ class Order(db.Model):
     __tablename__ = 'orders'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    create_date = db.Column(db.DateTime)
-    history = db.relationship('OrderStatus', backref='order', lazy=True)
+    create_date = db.Column(db.DateTime, default=db.func.current_timestamp())
     requester = db.Column(db.Integer, db.ForeignKey('persons.id'), nullable=False)
-    items = db.relationship('OrderItem', backref='order', lazy=True)
+    type = db.Column(db.String(20))
+    history = db.relationship('OrderStatus', backref='order', lazy=True)
+    items = db.relationship('OrderItem', back_populates='order', lazy=True)
 
-    def __init__(self, items, requester):
+    __mapper_args__ = {
+        'polymorphic_on': type,
+        'polymorphic_identity': 'order'
+    }
+
+    def __init__(self, order_type: OrderType, items, requester: Person):
+        self.order_type = order_type.value
         self.items: list = items
-        self.requester = requester
+        self.requester = requester.get_id()
 
     def __repr__(self):
         return f"<Order {self.id!r}>"
@@ -129,16 +156,41 @@ class Order(db.Model):
     def add_item(self, item):
         self.items.append(item)
 
-    def add_requester(self, requester):
-        if self.requestor is None:
-            self.requestor = []
-        self.requester.append(requester)
-
     def get_items(self) -> list:
         return self.items
 
+    def set_requester(self, requester: Person):
+        self.requester = requester.get_id()
+
     def get_requester(self):
         return self.requester
+
+    def get_type(self) -> OrderType:
+        return OrderType(self.order_type)
+
+    def set_type(self, order_type: OrderType):
+        self.order_type = order_type.value
+
+
+class CreateOrder(Order):
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'createorder'
+    }
+
+
+class DeleteOrder(Order):
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'deleteorder'
+    }
+
+
+class ModifyOrder(Order):
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'modifyorder'
+    }
 
 # class OrderSchema(Schema):
 #     id = fields.Integer()

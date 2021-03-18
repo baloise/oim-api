@@ -36,3 +36,7 @@ def init_logging(config: dict):
     else:
         running_logger.info('Found config DEBUG=False -> set log level INFO')
         running_logger.setLevel('INFO')
+
+
+def get_oim_logger_name() -> str:
+    return('oim_logger')

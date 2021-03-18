@@ -1,21 +1,28 @@
 import os
+from abc import ABC  # abstractmethod
 import json
 import jmespath
 from oim_logging import get_oim_logger
 from ourCloud.OcStaticVars import OC_RESPONSEFIELD, OC_REQUESTFIELD, OC_OBJECTTYPE, OC_ACTIONMAME, OC_LANGUAGE, OC_CATALOGOFFERINGS  # noqa F401
 
 
-class AbstractOcPath:
+class AbstractOcPath(ABC):
     OC_RESPONSEFIELD, OC_REQUESTFIELD, OC_OBJECTTYPE, OC_ACTIONMAME, OC_LANGUAGE, OC_CATALOGOFFERINGS
 
     def __init__(self):
         self.log = get_oim_logger()
 
+    # @abstractmethod
     def get_url(self) -> str:
         pass
 
+    # @abstractmethod
     def get_body(self):
         return {}
+
+    # @abstractmethod
+    def send_request(self):
+        pass
 
     def get_header(self) -> str:
         headers = {
@@ -24,16 +31,14 @@ class AbstractOcPath:
         }
         return headers
 
-    def send_request(self):
-        pass
-
-    def do_simulate(self) -> bool:
-        sim = bool(os.getenv('DOSIM'))
-        self.logInfo("Simulation enabled, requests will not be sent do OC: {}".format(sim))
+    def no_simulate(self) -> bool:
+        sim = bool(os.getenv('NOSIM'))
         if sim:
+            self.log.info("Simulation disabled, requests will be sent do OC: {}".format(sim))
             return sim
         else:
-            return False
+            self.log.info("Simulation enabled, requests will NOT be sent do OC: {}".format(sim))
+            return True
 
     def set_auth_token_handler(self, handler):
         self.auth = handler
@@ -79,14 +84,6 @@ class AbstractOcPath:
 
     def getPlatformEntityId(self):
         return "VMWAR-15CFFB35-7FC6-449C-9F7F-1CF83A8A6237"
-
-    def logInfo(self, msg: str):
-        # TODO: replace use of this function with direct self.log.info() calls
-        return self.log.info(msg)
-
-    def logError(self, msg: str):
-        # TODO: replace use of this function with direct self.log.error() calls
-        return self.log.error(msg)
 
     def getResultJson(self, responseRaw, json_query):
         try:

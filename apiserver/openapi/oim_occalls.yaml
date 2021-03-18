@@ -46,12 +46,23 @@ paths:
       description: send request
       operationId: api.calls_ocrequests.createvm
       responses:
-        200:
-          description: request response
-          content:
-            text/plain:
-              schema:
-                type: string
+        201:
+            description: "Request details received"
+            content:
+              text/plain:
+                schema:
+                  type: string    
+        204:
+            description: "Empty body"
+            content:
+              text/plain:
+                schema:
+                  type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#components/schemas/create_vm"
   
   /oc/vm/{hostname}:
     parameters:
@@ -171,3 +182,25 @@ components:
         - "hdnCPU"
         - "hdnMemory"
         - "DATAMAC"
+    create_vm:
+      type: object
+      properties:
+        requester:
+          type: string
+          pattern: "[^@ \t\r\n]+@[^@ \t\r\n]+\\.[^@ \t\r\n]+"
+        cataloguename:
+          type: string
+          enum:
+            - "Windows 2019"
+            - "RHEL7.X"
+            - "RHEL7.X PostgreSQL"
+        size:
+          type: string
+          enum:
+            - "Small (S1) - Cores: 2, Memory: 4"
+            - "Small (S2) - Cores: 1, Memory: 4"
+            - "Medium (M1) - Cores: 4, Memory: 8"
+            - "Medium (M2) - Cores: 4, Memory: 16"
+            - "Large (L1) - Cores: 8, Memory: 32"
+            - "Large (L2) - Cores: 8, Memory: 64"
+            - "ExtraLarge (X1) - Cores: 16, Memory: 64"
