@@ -61,9 +61,10 @@ def create_minimal_order(orderinfo):
 
 def create_status(status):
     log = get_oim_logger()
-    osStateValues = set(item.value for item in OrderStateType)
-    if status.get('state') not in osStateValues:
-        log.warn('Illegal state given: {}'.format(str(status.get('state'))))
+    osStateValues = set(item.state for item in OrderStateType)
+    stateName = status.get('state', OrderStateType.NEW.state)
+    if stateName not in osStateValues:
+        log.warn('Illegal state given: {name}'.format(name=stateName))
         return 'Illegal state given', 400
 
     btStateValues = set(item.value for item in BackendType)
@@ -86,12 +87,16 @@ def create_status(status):
             oid=str(order_id)
         ))
     log.debug('Constructing new orderstatus item')
+
     new_status = OrderStatus(
-        state=status.get('state', OrderStateType.NEW),
+        state=stateName,
         since=status.get('since', datetime.now()),
         system=status.get('system')
     )
-    log.debug('Adding new status to order object')
+
+    log.debug("Adding new status {stat} to order object {oid}".format(
+        stat=stateName,
+        oid=str(order_id)))
     order.history.append(new_status)
     db.session.commit()
     log.debug('All done, new status created with id: {sid}'.format(
