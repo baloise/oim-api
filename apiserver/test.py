@@ -82,7 +82,7 @@ class oimTests(flask_unittest.ClientTestCase):
 
 
 test_model_order = TestModelOrder()
-# add for test orders
+# add for test data sets
 test_db_order = TestDbData()
 
 

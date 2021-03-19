@@ -10,6 +10,7 @@ from oim_logging import get_oim_logger
 from models.orders import Person, SbuType, OrderStateType, OrderItem, OrderStatus, Order, BackendType  # noqa: F401,E501
 from app import db, create_flask_app
 from sqlalchemy import *
+from sqlalchemy.orm import sessionmaker
 
 # db = SQLAlchemy()
 
@@ -51,12 +52,19 @@ class TestData():
     def showTestData(self):
         print("Show Testdata")
         print("Person: Peter")
-        query = session.query()
-        s = db.session.query(func.count(Person.id))
-        rs = s.execute()
-        print('Resultat 1:[{}]'.format(rs))
-        result = db.session.query(func.count(Person.id)).group_by(Person.username)
-        print('Resultat 2:[{}]'.format(result))
+        # query the person
+        # Session = sessionmaker()
+        # Session.configure(bind=db)
+        # session = Session()
+        user = Person.query.filter_by(username='b12345')
+        # query = session.query(Person).filter(Person.username == 'u12345')
+        for _row in user.all():
+            print(_row.id, _row.username, _row.email, _row.sbu, _row.orders)
+        print('Resultat -> [{}]'.format(user))
+        # result = db.session.query(func.count(Person.id)).group_by(Person.username)
+        # print('Resultat 2:[{}]'.format(result))
+        # query the order
+        # query the order item
 
 
 if __name__ == '__main__':

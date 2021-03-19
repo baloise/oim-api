@@ -2,7 +2,7 @@ import unittest
 import os
 from datetime import datetime
 from oim_logging import get_oim_logger
-from models.orders import Person, SbuType, OrderItemType, OrderStateType, OrderItem, OrderStatus, Order, BackendType  # noqa: F401,E501
+from models.orders import Person, SbuType, OrderStateType, OrderItem, OrderStatus, Order, BackendType  # noqa: F401,E501
 from app import create_flask_app, db
 
 
