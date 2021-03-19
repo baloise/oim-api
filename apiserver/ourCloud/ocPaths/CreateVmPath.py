@@ -3,7 +3,7 @@ import requests
 import json
 from models.orders import OrderItem, Person
 from unittest.mock import Mock
-from requests.models import Response
+from exceptions.WorkflowExceptions import TransmitException
 
 
 class CreateVmPath(AbstractOcPath):
@@ -71,11 +71,11 @@ class CreateVmPath(AbstractOcPath):
         response = {}
         if self.no_simulate():
             self.log.info("Simulate creation of VM")
-            # return "simulate create VM"
-            response = Mock(spec=Response)
-            response.json.return_value = {}
-            response.text = "Simulate creation of VM"
-            response.status_code = 400
+
+            response_mock = Mock()
+            response_mock.status_code = 200     # simulate error by changing to != 200
+            response_mock.text = "{\"StatusCode\": 200, \"RequestId\": \"99\", \"ErrorMessage\": \"something went wrong\", \"Message\": \"mess\"}"   # noqa 501
+            response = response_mock
         else:
             response = requests.post(self.get_url(), headers=self.get_header(), data=self.get_body(), verify=False)
 
@@ -84,15 +84,15 @@ class CreateVmPath(AbstractOcPath):
             error = "An error occured while transmitting request ({code}): {txt}".format(
                     code=response.status_code,
                     txt=response.text)
-            self.log.error(error)
-            raise Exception(error)
+            raise TransmitException(error)
+
         responseJson = json.loads(response.text)
-        if responseJson[self.OC_RESPONSEFIELD.STATUSCODE.value.value] == 200:
-            self.log.info("New request has been created successfully: {code}".format(
+        if responseJson[self.OC_RESPONSEFIELD.STATUSCODE.value] == 200:
+            self.log.info("New request has been created successfully. OC request ID={code}".format(
                 code=responseJson[self.OC_RESPONSEFIELD.REQUESTID.value]))
-            return responseJson[self.OC_RESPONSEFIELD.MESSAGE.value]
+            return responseJson[self.OC_RESPONSEFIELD.REQUESTID.value]
         else:
             error = "Failed to create request: {code}".format(
-                    code=response[self.OC_RESPONSEFIELD.ERRORMESSAGE.value])
+                    code=responseJson[self.OC_RESPONSEFIELD.ERRORMESSAGE.value])
             self.log.error(error)
             raise Exception(error)

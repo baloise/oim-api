@@ -57,7 +57,7 @@ class OC_LANGUAGE(enum.Enum):
 
 class OC_CATALOGOFFERING_SIZES(bytes, enum.Enum):
     def __new__(cls, value, cataloguesize, catalogueid):
-        obj = bytes.__new__(cls, [value])
+        obj = bytes.__new__(cls)
         obj._value_ = value
         obj.cataloguesize = cataloguesize
         obj.catalogueid = catalogueid
@@ -93,7 +93,7 @@ class OC_CATALOGOFFERING_SIZES(bytes, enum.Enum):
 class OC_CATALOGOFFERINGS(bytes, enum.Enum):
 
     def __new__(cls, value, cataloguename, catalogueid):
-        obj = bytes.__new__(cls, [value])
+        obj = bytes.__new__(cls)
         obj._value_ = value
         obj.cataloguename = cataloguename
         obj.catalogueid = catalogueid

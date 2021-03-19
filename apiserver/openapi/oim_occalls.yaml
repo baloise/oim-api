@@ -42,16 +42,16 @@ paths:
 
   /oc/vm:
     post:
-      summary: send a request to create default VM
+      summary: send a request to create a VM
       description: send request
       operationId: api.calls_ocrequests.createvm
       responses:
         201:
             description: "Request details received"
             content:
-              text/plain:
+              application/json:
                 schema:
-                  type: string    
+                  $ref: "#components/schemas/create_response"
         204:
             description: "Empty body"
             content:
@@ -135,7 +135,6 @@ paths:
             text/plain:
               schema:
                 type: string
-
 components:
   securitySchemes:
     api_key:
@@ -148,6 +147,15 @@ components:
       scheme: basic
       x-basicInfoFunc: api.demo.basic_auth
   schemas:
+    create_response:
+      type: object
+      properties:
+        orderid:
+          type: integer
+        itemid:
+          type: integer
+        requestid:
+          type: integer
     request_details:
       type: object
       properties:
@@ -204,3 +212,5 @@ components:
             - "Large (L1) - Cores: 8, Memory: 32"
             - "Large (L2) - Cores: 8, Memory: 64"
             - "ExtraLarge (X1) - Cores: 16, Memory: 64"
+        tag:
+          type: string

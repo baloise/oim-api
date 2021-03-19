@@ -2,12 +2,17 @@ import os
 from abc import ABC  # abstractmethod
 import json
 import jmespath
-from oim_logging import get_oim_logger
 from ourCloud.OcStaticVars import OC_RESPONSEFIELD, OC_REQUESTFIELD, OC_OBJECTTYPE, OC_ACTIONMAME, OC_LANGUAGE, OC_CATALOGOFFERINGS  # noqa F401
+from oim_logging import get_oim_logger
 
 
 class AbstractOcPath(ABC):
-    OC_RESPONSEFIELD, OC_REQUESTFIELD, OC_OBJECTTYPE, OC_ACTIONMAME, OC_LANGUAGE, OC_CATALOGOFFERINGS
+    OC_RESPONSEFIELD = OC_RESPONSEFIELD
+    OC_REQUESTFIELD = OC_REQUESTFIELD
+    OC_OBJECTTYPE = OC_OBJECTTYPE
+    OC_ACTIONMAME = OC_ACTIONMAME
+    OC_LANGUAGE = OC_LANGUAGE
+    OC_CATALOGOFFERINGS = OC_CATALOGOFFERINGS
 
     def __init__(self):
         self.log = get_oim_logger()
@@ -34,10 +39,10 @@ class AbstractOcPath(ABC):
     def no_simulate(self) -> bool:
         sim = bool(os.getenv('NOSIM'))
         if sim:
-            self.log.info("Simulation disabled, requests will be sent do OC: {}".format(sim))
+            self.log.info("Simulation disabled, requests will be sent do OC ({})".format(sim))
             return sim
         else:
-            self.log.info("Simulation enabled, requests will NOT be sent do OC: {}".format(sim))
+            self.log.info("Simulation enabled, requests will NOT be sent do OC ({})".format(sim))
             return True
 
     def set_auth_token_handler(self, handler):
