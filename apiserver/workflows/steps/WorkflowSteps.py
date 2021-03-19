@@ -3,6 +3,9 @@ from models.orders import OrderItem
 from ourCloud.OurCloudHandler import OurCloudRequestHandler
 from workflows.WorkflowContext import WorkflowContext
 from oim_logging import get_oim_logger
+from exceptions.WorkflowExceptions import StepException, RequestHandlerException, TransmitException
+import traceback
+from app import db
 
 
 class AbstractWorkflowStep(ABC):
@@ -16,20 +19,21 @@ class AbstractWorkflowStep(ABC):
     @abstractmethod
     def execute(self, context: WorkflowContext):
         info = " execute action: {} for user {}".format(self.action, context.get_requester().email)
-        print(info)
         logger = get_oim_logger()
         logger.info(info)
 
 
 class DummyStep(AbstractWorkflowStep):
+    def __init__(self):
+        self.action = "dummy"
+
     def execute(self, context: WorkflowContext):
-        info = " Execute step: {} for user {}".format(self.action, context.get_requester().email)
-        print(info)
+        info = "  Execute step: {} for user {}".format(self.action, context.get_requester().email)
         logger = get_oim_logger()
         logger.info(info)
 
 
-class DeployItemStep(AbstractWorkflowStep):
+class DeployVmStep(AbstractWorkflowStep):
     def __init__(self, item: OrderItem):
         self.item = item
         self.action = "deploy"
@@ -44,23 +48,35 @@ class DeployItemStep(AbstractWorkflowStep):
                                                                         context.get_requester().email)
         logger = get_oim_logger()
         logger.info(info)
+
         try:
             handler = OurCloudRequestHandler.getInstance()
             try:
-                res = handler.create_vm(item=self.item, requester=context.get_requester())
+                ocRequestId = handler.create_vm(item=self.item, requester=context.get_requester())
+                self.persist_requestid(self.item, ocRequestId)
+            except TransmitException as te:
+                logger.error(te)
+                raise StepException(te, self.item.order_id)  # use custom Exception here
             except Exception as e:
+                track = traceback.extract_stack()
+                logger.debug(track)
                 error = "Failed to create vm: {} with parameters item='{} requester='{}' ".format(e, self.item, context.get_requester())  # noqa 501
                 logger.error(error)
-                raise Exception(error)
+                raise  # StepException(error, self.item.order_id)  # use custom Exception here
             else:
-                info = " Step result: {} ({})".format(res, self)
+                info = f" Step result: {ocRequestId} ({self})"
                 logger.info(info)
-        except Exception as e:
+        except RequestHandlerException as e:
             error = "Failed to instantiate request handler: {}".format(e)
             logger.error(error)
             raise Exception(error)
         else:
             logger.debug("Step completed ({})".format(self))
+
+    def persist_requestid(self, item, reqid):
+        anOrderItem = OrderItem.query.get(item.id)
+        anOrderItem.set_backend_request_id(reqid)
+        db.session.commit()
 
 
 class VerifyItemStep(AbstractWorkflowStep):
@@ -70,9 +86,8 @@ class VerifyItemStep(AbstractWorkflowStep):
 
     def execute(self, context: WorkflowContext):
         # check
-        info = " Execute step: {} item {} size '{}' for user {}".format(self.action, self.item.get_cataloguename(),
-                                                                        self.item.get_size().cataloguesize,
-                                                                        context.get_requester().email)
-        print(info)
+        info = "  Execute step: {} item {} size '{}' for user {}".format(self.action, self.item.get_cataloguename(),
+                                                                         self.item.get_size().cataloguesize,
+                                                                         context.get_requester().email)
         logger = get_oim_logger()
         logger.info(info)

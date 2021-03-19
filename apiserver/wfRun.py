@@ -1,4 +1,3 @@
-# from workflows.Workflows import GenericWorkflow, Batch, BatchPhase
 # from workflows.steps.WorkflowSteps import DeployItemStep, DummyStep, VerifyItemStep
 import collections
 from models.orders import Person, SbuType, OrderStateType, OrderItem, OrderStatus, Order, BackendType, OrderType  # noqa: F401,E501
@@ -80,57 +79,65 @@ result = Order.query.all()
 
 for row in result:
     print(f"{row.get_items()}")
+    print(f"{row.id}")
 
-db.session.remove()
-db.drop_all()
 
-# bat_pre = Batch("pre-work", BatchPhase.RE_VERIFICATION, False)
+# bat_pre = Batch("pre-work", OrderStateType.RE_VERIFICATION, False)
 # step1 = DummyStep("verify request")
 # bat_pre.add_step(step1)
 
-# bat_depl = Batch("deploy", BatchPhase.BE_PROCESSING, False)
+# bat_depl = Batch("deploy", OrderStateType.BE_PROCESSING, False)
 
 # for item in new_order.get_items():
 #     step = DeployItemStep(item)
 #     bat_depl.add_step(step)
 
-# bat_ver = Batch("verify", BatchPhase.BE_VERIFICATION, False)
+# bat_ver = Batch("verify", OrderStateType.BE_VERIFICATION, False)
 # for item in new_order.get_items():
 #     step = VerifyItemStep(item)
 #     bat_ver.add_step(step)
 
-# bat_tst = Batch("test", BatchPhase.TESTING, False)
+# bat_tst = Batch("test", OrderStateType.TESTING, False)
 # step4 = DummyStep("request testing")
 # step5 = DummyStep("receive testing status")
 # bat_tst.add_step(step4)
 # bat_tst.add_step(step5)
 
-# bat_hov = Batch("handover", BatchPhase.HANDOVER, False)
+# bat_hov = Batch("handover", OrderStateType.HANDOVER, False)
 # step6 = DummyStep("complete request")
 # bat_hov.add_step(step6)
 
 # print("Defining Workflows")
 
-# # batches will be ordered implicitly by BatchPhase
+# # batches will be ordered implicitly by OrderStateType
 # wf = GenericWorkflow("new vm")
 # wf.add_batch(bat_pre)
 # wf.add_batch(bat_depl)
 # wf.add_batch(bat_ver)
 # wf.add_batch(bat_tst)
 # wf.add_batch(bat_hov)
-if False:
+if True:
     print("Executing Workflows...")
     # wf.execute()
 
     print("Updating status...")
     # create_status()
 
-    st = '{"state": \"' + OrderStateType.BE_DONE.value + '\", \
+    st = '{"state": \"' + str(OrderStateType.BE_DONE.value) + '\", \
         "system": \"' + BackendType.OURCLOUD.value + '\", \
-        "orderid": \"10\"}'
+        "orderid": \"1\"}'
     dodo = json.loads(st)
     create_status(dodo)
 
+
+print("Query OrderStatus:")
+result = OrderStatus.query.all()
+
+for row in result:
+    print("{} {} {}".format(row.state, row.system, row.since))
+
+db.session.remove()
+db.drop_all()
 # #### Factory example ####
 
 # factory = WorkflowFactory()

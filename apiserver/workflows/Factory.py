@@ -1,5 +1,6 @@
 from workflows.Workflows import GenericWorkflow, CreateVmWorkflow, WorkflowTypes
 from models.orders import OrderType, Order, CreateOrder, DeleteOrder, ModifyOrder, Person
+from app import db
 
 
 class WorkflowFactory:
@@ -35,4 +36,7 @@ class OrderFactory:
         creator = self._creators.get(order_type)
         if not creator:
             raise ValueError(order_type)
-        return creator(order_type, items, requester)
+        new_order = creator(order_type, items, requester)
+        db.session.add(new_order)
+        db.session.commit()
+        return new_order

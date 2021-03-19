@@ -2,20 +2,13 @@ from typing import List
 import collections
 import enum
 from workflows.steps.WorkflowSteps import AbstractWorkflowStep
-from models.orders import OrderType
-from models.orders import Order
-from workflows.steps.WorkflowSteps import DeployItemStep
+from models.orders import Order, OrderStateType, OrderType, BackendType
+from workflows.steps.WorkflowSteps import DeployVmStep, DummyStep
 from workflows.WorkflowContext import WorkflowContext
 from oim_logging import get_oim_logger
-
-
-class BatchPhase(enum.Enum):
-    RE_VERIFICATION = 0
-    BE_PROCESSING = 100
-    BE_VERIFICATION = 200
-    TESTING = 300
-    CMDB = 400
-    HANDOVER = 500
+from api.calls_status import create_status
+import json
+from exceptions.WorkflowExceptions import StepException, RequestHandlerException, WorkflowIncompleteException
 
 
 class DeepChainMap(collections.ChainMap):
@@ -55,29 +48,29 @@ class BatchIterator:
 
 
 class Batch:
-    def __init__(self, name, position: BatchPhase, is_repeatable=False):
+    def __init__(self, name, target_state, is_repeatable=False):
         self.steps: List[AbstractWorkflowStep] = []
         self.name = name
         self.is_repeatable = is_repeatable
-        self.position = position
+        self.target_state = target_state
 
     def __eq__(self, other):
-        return ((self.name, self.position.value) == (other.name, other.position.value))
+        return ((self.name, self.target_state) == (other.name, other.target_state))
 
     def __ne__(self, other):
-        return ((self.name, self.position.value) != (other.name, other.position.value))
+        return ((self.name, self.target_state) != (other.name, other.target_state))
 
     def __lt__(self, other):
-        return (self.position.value < other.position.value)
+        return (OrderStateType.from_state(self.target_state) < OrderStateType.from_state(other.target_state))
 
     def __le__(self, other):
-        return (self.position.value <= other.position.value)
+        return (OrderStateType.from_state(self.target_state) <= OrderStateType.from_state(other.target_state))
 
     def __gt__(self, other):
-        return (self.position.value > other.position.value)
+        return (OrderStateType.from_state(self.target_state) > OrderStateType.from_state(other.target_state))
 
     def __ge__(self, other):
-        return (self.position.value >= other.position.value)
+        return (OrderStateType.from_state(self.target_state) >= OrderStateType.from_state(other.target_state))
 
     def __repr__(self):
         return "{}".format(self.name)
@@ -94,18 +87,31 @@ class Batch:
     def add_step(self, step):
         self.steps.append(step)
 
+    def get_target_state(self):
+        return self.target_state
+
+    def get_fail_state(self):
+        if OrderStateType.from_state(self.target_state) < OrderStateType.TESTING.value:
+            retState = OrderStateType.BE_FAILED.state
+        else:
+            retState = OrderStateType.TEST_FAILED.state
+        return retState
+
     def execute(self, context: WorkflowContext):
-        stepCount = len(self.steps)
+        processedStepCount = 0
         logger = get_oim_logger()
         for step in self.steps:
             try:
                 step.execute(context)
-                stepCount -= 1
-            except Exception as e:
-                error = "Error while executing step: {}".format(e)
+                processedStepCount += 1
+            except StepException as se:
+                error = "Error while executing step: {}, order_id: {}".format(se, se.order_id)
                 logger.error(error)
-                break
-        info = "{} of {} steps completed".format(stepCount, len(self.steps))
+                raise Exception(error)  # rethow here once custom Exception is available
+            except RequestHandlerException as re:
+                error = "Error while executing step: {} order_id".format(re)
+                logger.error(error)
+        info = "  {} of {} steps completed".format(processedStepCount, len(self.steps))
         logger = get_oim_logger()
         logger.info(info)
         return info
@@ -162,26 +168,59 @@ class GenericWorkflow:
 
     def execute(self) -> str:
         if self.batches is None:
-            return
+            return f"Workflow {self.name} has no batches"
         batches_maplist = self.batches.maps
         batches_maplist.sort()
-        batchCount = len(self.batches.maps)
+
         logger = get_oim_logger()
+
+        currentOrder = self.order.id
+        processedBatchCnt = 0
+        processedBackendBatch = 0
         for batch in batches_maplist:
+            info = f" Execute new batch: {batch}"
+            logger.info(info)
+            # update status upon start of BE
+            if processedBackendBatch < 1 and batch.get_target_state() == OrderStateType.BE_DONE.state:
+                statusJson = self.get_json(OrderStateType.BE_PROCESSING.state, BackendType.OURCLOUD.name, currentOrder)
+                create_status(statusJson)
+                processedBackendBatch += 1
+            if processedBackendBatch < 1 and batch.get_target_state() == OrderStateType.TEST_SUCCEEDED.state:
+                statusJson = self.get_json(OrderStateType.TESTING.state, BackendType.OURCLOUD.name, currentOrder)
+                create_status(statusJson)
+                processedBackendBatch += 1
+
             try:
                 batch.execute(self.context)
-                batchCount -= 1
+                processedBatchCnt += 1
+                statusJson = self.get_json(batch.get_target_state(), BackendType.OURCLOUD.name, currentOrder)
+                create_status(statusJson)
             except Exception as e:
-                error = "Error while executing batch: {}".format(e)
+                error = "Error while executing batch:: {} item ".format(e)
                 logger.error(error)
+                statusJson = self.get_json(batch.get_fail_state(), BackendType.OURCLOUD.name, currentOrder)
+                create_status(statusJson)
                 break
-            # finally:
-            #     create_status()
-        info = "{} of {} batches completed".format(batchCount, len(self.batches.maps))
-        logger.debug(info)
-        if batchCount < len(self.batches.maps):
-            raise Exception(info)
+
+        info = "{} of {} batches completed".format(processedBatchCnt, len(self.batches.maps))
+        logger.info(info)
+
+        # update status after completion of BE processing
+        if processedBatchCnt < len(self.batches.maps):
+            statusJson = self.get_json(batch.get_fail_state(), BackendType.OURCLOUD.name, currentOrder)
+            create_status(statusJson)
+            msg = f" Workflow {self.name} didn't complete: {info}"
+            logger.error(msg)
+            raise WorkflowIncompleteException(msg)
+
         return info
+
+    def get_json(self, state, system, orderid):
+        st = '{"state": \"' + state + '\", \
+               "system": \"' + system + '\", \
+               "orderid": \"' + str(orderid) + '\"}'
+        jStr = json.loads(st)
+        return jStr
 
 
 class CreateVmWorkflow(GenericWorkflow):
@@ -193,9 +232,44 @@ class CreateVmWorkflow(GenericWorkflow):
     def set_order(self, order: Order):
         if order.get_type() == OrderType.CREATE_ORDER:
             super().set_order(order)
-            batch = Batch("deploy", BatchPhase.BE_PROCESSING, False)
+            vBatch = Batch("verify", OrderStateType.VERIFIED.state, True)
             for item in super().get_order().get_items():
                 if item.is_Vm():
-                    step = DeployItemStep(item)
-                    batch.add_step(step)
-            self.add_batch(batch)
+                    step = DummyStep()
+                    vBatch.add_step(step)
+            self.add_batch(vBatch)
+
+            dBatch = Batch("deploy", OrderStateType.BE_DONE.state, False)
+            for item in super().get_order().get_items():
+                if item.is_Vm():
+                    step = DeployVmStep(item)
+                    dBatch.add_step(step)
+            self.add_batch(dBatch)
+
+            tBatch = Batch("test", OrderStateType.TEST_SUCCEEDED.state, True)
+            for item in super().get_order().get_items():
+                if item.is_Vm():
+                    step = DummyStep()
+                    tBatch.add_step(step)
+            self.add_batch(tBatch)
+
+            cBatch = Batch("cmdb", OrderStateType.CMDB_DONE.state, False)
+            for item in super().get_order().get_items():
+                if item.is_Vm():
+                    step = DummyStep()
+                    cBatch.add_step(step)
+            self.add_batch(cBatch)
+
+            hBatch = Batch("handover", OrderStateType.HANDOVER_DONE.state, False)
+            for item in super().get_order().get_items():
+                if item.is_Vm():
+                    step = DummyStep()
+                    hBatch.add_step(step)
+            self.add_batch(hBatch)
+
+            fBatch = Batch("done", OrderStateType.DONE.state, False)
+            for item in super().get_order().get_items():
+                if item.is_Vm():
+                    step = DummyStep()
+                    fBatch.add_step(step)
+            self.add_batch(fBatch)
