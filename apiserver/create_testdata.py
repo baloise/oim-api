@@ -11,7 +11,7 @@ from models.orders import Person, SbuType, OrderStateType, OrderItem, OrderStatu
 from app import db, create_flask_app
 from sqlalchemy import *
 
-db = SQLAlchemy()
+# db = SQLAlchemy()
 
 
 class TestData():
@@ -33,7 +33,20 @@ class TestData():
         db.session.add(self.personPeter)
         db.session.commit()
         # add Order
+        self.orderTest = Order(
+            requester='',
+            type=''
+        )
+        db.session.add(self.orderTest)
+        db.session.commit()
         # add OrderItem
+        self.orderItem = OrderItem(
+            reference='test123',
+            cataloguename='FED123',
+            size='100',
+            backend_request_id=1,
+            order_id=1
+        )
 
     def showTestData(self):
         print("Show Testdata")
