@@ -3,6 +3,7 @@ from app import db
 import enum
 from datetime import datetime
 from ourCloud.OcStaticVars import OC_CATALOGOFFERINGS, OC_CATALOGOFFERING_SIZES
+from models.statuspayload import StatusPayload  # noqa: F401
 
 
 class OrderType(enum.Enum):
