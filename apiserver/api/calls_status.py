@@ -1,6 +1,7 @@
 from datetime import datetime
 from app import db
-from models.orders import Person, Order, OrderStateType, BackendType, OrderStatus
+from models.orders import OrderType, Person, Order, OrderStateType, BackendType, OrderStatus
+from workflows.Factory import OrderFactory
 from oim_logging import get_oim_logger
 
 
@@ -39,20 +40,18 @@ def retrieve_user(id=None, username=None, email=None, create_if_missing=False):
 # set of classes.
 def create_minimal_order(orderinfo):
     log = get_oim_logger()
-    # For this method, all parameters are optional. We create them here if not given
-    if orderinfo.get('order_id'):
-        order_id = int(orderinfo.get('order_id'))
-    else:
-        order_id = int(datetime.timestamp()*1000)
 
     requester_username = orderinfo.get('requester_username', 'b000000')
     requester = retrieve_user(username=requester_username, create_if_missing=True)
     if not requester:
         log.critical('Error retrieving person object for requester')
         return 'Error retrieving user', 500
-    new_order = Order(
-        id=order_id,
-        requestor=requester  # TODO: Globally rename this attribute to requester
+    order_factory = OrderFactory()
+    items = []
+    new_order = order_factory.get_order(
+        OrderType.CREATE_ORDER,
+        items,
+        requester
     )
     db.session.add(new_order)
     db.session.commit()
