@@ -1,4 +1,5 @@
 from datetime import datetime
+from models.statuspayload import StatusPayload
 from oim_logging import get_oim_logger
 from models.orders import OrderStateType, BackendType, Order, OrderStatus
 from app import db
@@ -31,8 +32,8 @@ def create_status(status):
         log.debug('Successfully retreived order item for id: {oid}'.format(
             oid=str(order_id)
         ))
-    log.debug('Constructing new orderstatus item')
 
+    log.debug('Constructing new orderstatus item')
     new_status = OrderStatus(
         state=stateName,
         since=status.get('since', datetime.now()),
@@ -44,6 +45,19 @@ def create_status(status):
         oid=str(order_id)))
     order.history.append(new_status)
     db.session.commit()
+
+    payload_text = status.get('payload')
+    if payload_text:
+        log.debug('Extended payload detected. Also preparing payload item...')
+        payload_entry = StatusPayload(
+            payload=str(payload_text),
+            status=new_status
+        )
+        log.debug('...and adding it to the DB.')
+        db.session.add(payload_entry)
+    else:
+        log.debug('No payload detected. Skipping payload handling.')
+
     log.debug('All done, new status created with id: {sid}'.format(
         sid=new_status.id
     ))
