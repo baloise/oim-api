@@ -161,7 +161,7 @@ class OrderStatus(db.Model):
     # This attribute might actually be a dupe of the dbrel parent_order
     order_id = db.Column(db.Integer, db.ForeignKey('orders.id'))
     order = db.relationship("Order", back_populates="history")
-    payload = db.relationship("StatusPayload", uselist=False, back_populates="status")
+    payload = db.relationship("StatusPayload", uselist=False, backref="status")
 
     def __repr__(self):
         return f"<OrderStatus {self.id!r} for Order {self.order.id!r}>"

@@ -2,17 +2,18 @@ import unittest
 import flask_unittest
 import json
 import os
-from datetime import datetime
 from models.orders import BackendType, Person, SbuType, OrderStateType, OrderItem, OrderStatus, OrderType  # noqa: F401,E501
 from models.statuspayload import StatusPayload
 from workflows.Factory import OrderFactory
 from app import create_flask_app, db
+from oim_logging import get_oim_logger
 
 
 class TestModelStatuspayload(unittest.TestCase):
     def __init__(self, methodName='runTest') -> None:
         super().__init__(methodName=methodName)
         self.order_factory = OrderFactory()
+        self.log = get_oim_logger()
 
     def prepare_relatives(self):
         db.session.add(self.personPeter)
@@ -62,7 +63,6 @@ class TestModelStatuspayload(unittest.TestCase):
 
         status_1_a = OrderStatus(
             state=OrderStateType.NEW,
-            since=datetime.now,
             system=BackendType.ORCHESTRA,
             order_id=self.order.id
         )
@@ -76,26 +76,33 @@ class TestModelStatuspayload(unittest.TestCase):
 
         status_10_a = OrderStatus(
             state=OrderStateType.NEW,
-            since=datetime.now,
             system=BackendType.ORCHESTRA,
             order_id=self.order.id
         )
-
         db.session.add(status_10_a)
         assert status_10_a is not None
 
         payload_10_a = StatusPayload(
-            status_id=status_10_a.id,
+            status=status_10_a,
             payload=self.sample_payload_1
         )
         db.session.add(payload_10_a)
         assert payload_10_a is not None
 
         db.session.commit()
+        self.log.debug(f'status_10_a.id is {status_10_a.id}')
+        self.log.debug(f'status_10_a.payload is {status_10_a.payload!r}')
+        self.log.debug(f'payload_10_a.id is {payload_10_a.id}')
+        self.log.debug(f'payload_10_a.status is {payload_10_a.status!r}')
 
-        found_payloads = StatusPayload.query.filter_by(status_id=status_10_a.id)
-        assert found_payloads is not None
+        found_payloads = db.session.query(StatusPayload).filter(StatusPayload.status_id == status_10_a.id)
+        self.log.debug(f'found payloads is {found_payloads.count()}')
         assert found_payloads.count() == 1
+
+        first_payload = found_payloads.first()
+        assert first_payload is not None
+
+        self.log.debug(f'first payload is {first_payload!r}')
 
 
 class TestApiStatusPayload(flask_unittest.ClientTestCase):
