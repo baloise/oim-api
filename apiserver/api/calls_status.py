@@ -1,7 +1,8 @@
-from datetime import datetime
 from app import db
-from models.orders import Person, Order, OrderStateType, BackendType, OrderStatus
+from models.orders import OrderType, Person
+from workflows.Factory import OrderFactory
 from oim_logging import get_oim_logger
+import api.util_status
 
 
 def retrieve_user(id=None, username=None, email=None, create_if_missing=False):
@@ -39,20 +40,18 @@ def retrieve_user(id=None, username=None, email=None, create_if_missing=False):
 # set of classes.
 def create_minimal_order(orderinfo):
     log = get_oim_logger()
-    # For this method, all parameters are optional. We create them here if not given
-    if orderinfo.get('order_id'):
-        order_id = int(orderinfo.get('order_id'))
-    else:
-        order_id = int(datetime.timestamp()*1000)
 
     requester_username = orderinfo.get('requester_username', 'b000000')
     requester = retrieve_user(username=requester_username, create_if_missing=True)
     if not requester:
         log.critical('Error retrieving person object for requester')
         return 'Error retrieving user', 500
-    new_order = Order(
-        id=order_id,
-        requestor=requester  # TODO: Globally rename this attribute to requester
+    order_factory = OrderFactory()
+    items = []
+    new_order = order_factory.get_order(
+        OrderType.CREATE_ORDER,
+        items,
+        requester
     )
     db.session.add(new_order)
     db.session.commit()
@@ -60,49 +59,7 @@ def create_minimal_order(orderinfo):
 
 
 def create_status(status):
-    log = get_oim_logger()
-    osStateValues = set(item.state for item in OrderStateType)
-    stateName = status.get('state', OrderStateType.NEW.state)
-    if stateName not in osStateValues:
-        log.warn('Illegal state given: {name}'.format(name=stateName))
-        return 'Illegal state given', 400
-
-    btStateValues = set(item.value for item in BackendType)
-    if status.get('system') not in btStateValues:
-        log.warn('Illegal system given: {}'.format(str(status.get('system'))))
-        return 'Illegal system given', 400
-
-    order_id = status.get('orderid', None)
-    if not order_id:
-        log.warn('create_status called without orderid!')
-        return 'Order not found', 404
-    order = db.session.query(Order).filter(Order.id == order_id).one_or_none()
-    if not order:
-        log.info('create_status() called with non-existent order id: {oid}'.format(
-            oid=str(order_id)
-        ))
-        return 'Order not found', 404
-    else:
-        log.debug('Successfully retreived order item for id: {oid}'.format(
-            oid=str(order_id)
-        ))
-    log.debug('Constructing new orderstatus item')
-
-    new_status = OrderStatus(
-        state=stateName,
-        since=status.get('since', datetime.now()),
-        system=status.get('system')
-    )
-
-    log.debug("Adding new status {stat} to order object {oid}".format(
-        stat=stateName,
-        oid=str(order_id)))
-    order.history.append(new_status)
-    db.session.commit()
-    log.debug('All done, new status created with id: {sid}'.format(
-        sid=new_status.id
-    ))
-    return {'statusid': new_status.id}, 201
+    return api.util_status.create_status(status)
 
 
 def list_statuses(orderid):

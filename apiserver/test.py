@@ -5,6 +5,8 @@ import re
 from unittest import mock
 from dotenv import load_dotenv
 from tests.model_orders import TestModelOrder  # noqa: F401
+from tests.model_statuspayload import TestModelStatuspayload
+
 
 # Force overwrite envvars with mock values from .env.unittests
 load_dotenv(dotenv_path='.env.unittests', override=True)
@@ -82,6 +84,7 @@ class oimTests(flask_unittest.ClientTestCase):
 
 test_model_order = TestModelOrder()
 
+test_model_status_payload = TestModelStatuspayload()
 
 if __name__ == '__main__':
     unittest.main()
