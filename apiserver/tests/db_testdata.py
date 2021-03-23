@@ -22,9 +22,9 @@ class TestDbData(unittest.TestCase):
         )
         db.session.add(self.personPeter)
         db.session.commit()
+
         # add orderStatus
         self.orderStatusFoo = OrderStatus(
-            # add the fileds
             state=OrderStateType.NEW,
             system=BackendType.ORCHESTRA,
             order_id=1
@@ -34,28 +34,25 @@ class TestDbData(unittest.TestCase):
 
         # add OrderItems
         self.orderItemFoo = OrderItem(
-            # reference='foo',
             name=OC_CATALOGOFFERINGS.RHEL7,
             size=OC_CATALOGOFFERING_SIZES.S1
-            # order_id=self.orderFoo.id
         )
         self.orderItemFoo.set_reference('foo')
-        db.session.add(self.orderItemFoo)
-        db.session.commit()
+        # db.session.add(self.orderItemFoo)
+        # db.session.commit()
 
         # define current datetime utc
         current_datetime = datetime.utcnow()
         running_logger = get_oim_logger()
-        running_logger.info('DateTime:[{}]'.format(current_datetime))
+        running_logger.info('CREATE_ORDER DateTime:[{}]'.format(current_datetime))
 
         # add Order
         self.orderFoo = Order(
-            # create_date=current_datetime,
             requester=self.personPeter,
             order_type=OrderType.CREATE_ORDER,
-            # history=1,
-            items={self.orderItemFoo}
+            items=[self.orderItemFoo]
         )
+        self.orderFoo.set_create_date(current_datetime)
         db.session.add(self.orderFoo)
         db.session.commit()
 
@@ -64,12 +61,15 @@ class TestDbData(unittest.TestCase):
         db.drop_all()
         self.app_context.pop()
 
-    def test_1_order_exists(self):
+    def test_1_orderItem_exists(self):
         db.session.add(self.orderItemFoo)
         db.session.commit()
         query = OrderItem.query.filter_by(reference='foo')
 
         assert query.count() > 0
+
+    def test_2_order_date(self):
+        pass
 
 #    def test_2_order_doesnt_exist(self):
 #        db.session.add(self.orderItemFoo)
