@@ -53,23 +53,27 @@ class TestDbData(unittest.TestCase):
             items=[self.orderItemFoo]
         )
         self.orderFoo.set_create_date(current_datetime)
-        db.session.add(self.orderFoo)
-        db.session.commit()
+        # db.session.add(self.orderFoo)
+        # db.session.commit()
 
     def tearDown(self):
         db.session.remove()
         db.drop_all()
         self.app_context.pop()
 
-    def test_1_orderItem_exists(self):
+    def test_1_order_exists(self):
+        db.session.add(self.orderFoo)
         db.session.add(self.orderItemFoo)
         db.session.commit()
         query = OrderItem.query.filter_by(reference='foo')
-
         assert query.count() > 0
 
-    def test_2_order_date(self):
-        pass
+    def test_2_orderItem_date(self):
+        db.session.add(self.orderFoo)
+        db.session.add(self.orderItemFoo)
+        db.session.commit()
+        query = Order.query() # not finished
+        assert query.count() > 0
 
 #    def test_2_order_doesnt_exist(self):
 #        db.session.add(self.orderItemFoo)
