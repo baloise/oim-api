@@ -244,6 +244,9 @@ components:
           type: integer
           description: ID of the order this status belongs to
           example: 384738477583
+        payload:
+          type: string
+          description: Freeform text to contain additional status info
     ArrayOfStatuses:
       type: array
       items:

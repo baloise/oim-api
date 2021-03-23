@@ -46,17 +46,10 @@ def create_connexion_app(config_name=None, dotenv_path=None,
 
     init_logging(config)
 
-    running_logger = get_oim_logger()
-
-    # Generate test messages
-    if config.get('DEBUG') == 'True':
-        running_logger.debug('Debug message')
-        running_logger.info('Info message')
-        running_logger.warning('Warning message')
-        running_logger.error('Error message')
-        running_logger.critical('Critical message')
+    log = get_oim_logger()
 
     specdir = config.get('SPECDIR', 'openapi/')
+    log.debug('Creating connexion_app')
     connexion_app = connexion.FlaskApp(__name__, port=server_port,
                                        specification_dir=specdir)
 
@@ -64,11 +57,13 @@ def create_connexion_app(config_name=None, dotenv_path=None,
                              'SQLALCHEMY_DATABASE_URI') or 'sqlite:///:memory:'
     connexion_app.app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # This reduces warnings
 
+    log.debug('Initializing DB to Flaskapp')
     db.init_app(connexion_app.app)
 
     from blueprints.index import index as index_blueprint
     connexion_app.app.register_blueprint(index_blueprint)
 
+    log.debug("Loading API's")
     load_openapis(connexion_app)
 
     return connexion_app

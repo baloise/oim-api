@@ -6,7 +6,7 @@ from models.orders import Order, OrderStateType, OrderType, BackendType
 from workflows.steps.WorkflowSteps import DeployVmStep, DummyStep
 from workflows.WorkflowContext import WorkflowContext
 from oim_logging import get_oim_logger
-from api.calls_status import create_status
+from api.util_status import create_status
 import json
 from exceptions.WorkflowExceptions import StepException, RequestHandlerException, WorkflowIncompleteException
 

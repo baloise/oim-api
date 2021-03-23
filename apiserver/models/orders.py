@@ -3,6 +3,7 @@ from app import db
 import enum
 from datetime import datetime
 from ourCloud.OcStaticVars import OC_CATALOGOFFERINGS, OC_CATALOGOFFERING_SIZES
+from models.statuspayload import StatusPayload  # noqa: F401
 
 
 class OrderType(enum.Enum):
@@ -152,7 +153,7 @@ class OrderItem(db.Model):
 
 
 class OrderStatus(db.Model):
-    __tablename__ = 'orderstati'
+    __tablename__ = 'orderstatuses'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     state = db.Column(db.Enum(OrderStateType), nullable=False)
@@ -161,6 +162,7 @@ class OrderStatus(db.Model):
     # This attribute might actually be a dupe of the dbrel parent_order
     order_id = db.Column(db.Integer, db.ForeignKey('orders.id'))
     order = db.relationship("Order", back_populates="history")
+    payload = db.relationship("StatusPayload", uselist=False, backref="status")
 
     def __repr__(self):
         return f"<OrderStatus {self.id!r} for Order {self.order.id!r}>"
