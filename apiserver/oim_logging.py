@@ -6,7 +6,7 @@ import logging.config
 
 
 def get_oim_logger():
-    return logging.getLogger('oim_logger')
+    return logging.getLogger('oiml')
 
 
 def init_logging(config: dict):
