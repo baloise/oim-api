@@ -204,6 +204,9 @@ class Order(db.Model):
     def set_requester(self, requester: Person):
         self.requester = requester.get_id()
 
+    def set_create_date(self, createdate: datetime):
+        self.create_date = createdate
+
     def get_requester(self):
         return self.requester
 
