@@ -2,7 +2,7 @@ import unittest
 import os
 from datetime import datetime
 from oim_logging import get_oim_logger
-from models.orders import Person, SbuType, OrderStateType, OrderItem, OrderStatus, Order, BackendType  # noqa: F401,E501
+from models.orders import Person, SbuType, OrderStateType, OrderItem, OrderStatus, Order, OrderType, BackendType, OC_CATALOGOFFERING_SIZES, OC_CATALOGOFFERINGS  # noqa: F401,E501
 from app import create_flask_app, db
 
 
@@ -20,6 +20,8 @@ class TestDbData(unittest.TestCase):
             email='peter.parker@test.fake',
             sbu=SbuType.SHARED
         )
+        db.session.add(self.personPeter)
+        db.session.commit()
         # add orderStatus
         self.orderStatusFoo = OrderStatus(
             # add the fileds
@@ -27,27 +29,34 @@ class TestDbData(unittest.TestCase):
             system=BackendType.ORCHESTRA,
             order_id=1
         )
+        db.session.add(self.orderStatusFoo)
+        db.session.commit()
 
+        # add OrderItems
+        self.orderItemFoo = OrderItem(
+            # reference='foo',
+            name=OC_CATALOGOFFERINGS.RHEL7,
+            size=OC_CATALOGOFFERING_SIZES.S1
+            # order_id=self.orderFoo.id
+        )
+        self.orderItemFoo.set_reference('foo')
+        db.session.add(self.orderItemFoo)
+        db.session.commit()
+
+        # define current datetime utc
         current_datetime = datetime.utcnow()
         running_logger = get_oim_logger()
         running_logger.info('DateTime:[{}]'.format(current_datetime))
 
         # add Order
         self.orderFoo = Order(
-            create_date=current_datetime,
+            # create_date=current_datetime,
+            requester=self.personPeter,
+            order_type=OrderType.CREATE_ORDER,
             # history=1,
-            requestor=1,
-            # items=1
+            items={self.orderItemFoo}
         )
         db.session.add(self.orderFoo)
-        db.session.commit()
-        # add OrderItems
-        self.orderItemFoo = OrderItem(
-            reference='foo',
-            item_type=OrderItemType.DMY,
-            # order_id=self.orderFoo.id
-        )
-        self.orderFoo.items.append(self.orderItemFoo)
         db.session.commit()
 
     def tearDown(self):
@@ -58,8 +67,9 @@ class TestDbData(unittest.TestCase):
     def test_1_order_exists(self):
         db.session.add(self.orderItemFoo)
         db.session.commit()
-        reference = OrderItem.query.filter_by(reference='foo')
-        assert reference is not None
+        query = OrderItem.query.filter_by(reference='foo')
+
+        assert query.count() > 0
 
 #    def test_2_order_doesnt_exist(self):
 #        db.session.add(self.orderItemFoo)
