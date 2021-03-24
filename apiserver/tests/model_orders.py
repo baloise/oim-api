@@ -3,6 +3,7 @@ import os
 from models.orders import Person, SbuType, OrderStateType, OrderItem, OrderStatus, Order  # noqa: F401,E501
 from app import create_flask_app, db
 from sqlalchemy import select, create_engine
+from oim_logging import get_oim_logger
 
 
 class TestModelOrder(unittest.TestCase):
@@ -29,7 +30,7 @@ class TestModelOrder(unittest.TestCase):
         db.session.commit()
         # not working user = Person.query.filter_by(username='u12345g')
         query = db.session.query(Person).filter(Person.username == 'u12345')
-        assert query.count() > 0
+        assert query.count() == 1
 
     def test_2_user_doesnt_exist(self):
         db.session.add(self.personPeter)

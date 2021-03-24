@@ -32,14 +32,18 @@ class TestDbData(unittest.TestCase):
         db.session.add(self.orderStatusFoo)
         db.session.commit()
 
-        # add OrderItems
-        self.orderItemFoo = OrderItem(
+        # add OrderItem1
+        self.orderItemTest1 = OrderItem(
             name=OC_CATALOGOFFERINGS.RHEL7,
             size=OC_CATALOGOFFERING_SIZES.S1
         )
-        self.orderItemFoo.set_reference('foo')
-        # db.session.add(self.orderItemFoo)
-        # db.session.commit()
+        self.orderItemTest1.set_reference('TestItem1 reference')
+        # add OrderItem2
+        self.orderItemTest2 = OrderItem(
+            name=OC_CATALOGOFFERINGS.WINS2019,
+            size=OC_CATALOGOFFERING_SIZES.L1
+        )
+        self.orderItemTest2.set_reference('TestItem2 reference')
 
         # define current datetime utc
         current_datetime = datetime.utcnow()
@@ -47,14 +51,13 @@ class TestDbData(unittest.TestCase):
         running_logger.info('CREATE_ORDER DateTime:[{}]'.format(current_datetime))
 
         # add Order
-        self.orderFoo = Order(
+        self.orderTest = Order(
             requester=self.personPeter,
             order_type=OrderType.CREATE_ORDER,
-            items=[self.orderItemFoo]
+            items=[self.orderItemTest1, self.orderItemTest2]
         )
-        self.orderFoo.set_create_date(current_datetime)
-        # db.session.add(self.orderFoo)
-        # db.session.commit()
+        # self.orderTest.set_create_date(datetime.utcnow())
+        self.orderTest.set_create_date(current_datetime)
 
     def tearDown(self):
         db.session.remove()
@@ -62,21 +65,76 @@ class TestDbData(unittest.TestCase):
         self.app_context.pop()
 
     def test_1_order_exists(self):
-        db.session.add(self.orderFoo)
-        db.session.add(self.orderItemFoo)
+        db.session.add(self.orderTest)
+        db.session.add(self.orderItemTest1)
         db.session.commit()
-        query = OrderItem.query.filter_by(reference='foo')
-        assert query.count() > 0
+        query = db.session.query(Order).filter(Order.id == 1)
+        # query = Order.query.  # wip not finished
+        # running_logger = get_oim_logger()
+        # running_logger.info('test_1 query:[{}]'.format(query))
+        # running_logger.info('test_1 count:[{}]'.format(query.count()))
+        assert query.count() == 1
 
-    def test_2_orderItem_date(self):
-        db.session.add(self.orderFoo)
-        db.session.add(self.orderItemFoo)
+    def test_2_orderItem_exists(self):
+        db.session.add(self.orderTest)
+        db.session.add(self.orderItemTest1)
         db.session.commit()
-        query = Order.query() # not finished
-        assert query.count() > 0
+        query = OrderItem.query.filter_by(reference='TestItem1 reference')
+        assert query.count() == 1
 
-#    def test_2_order_doesnt_exist(self):
-#        db.session.add(self.orderItemFoo)
-#        db.session.commit()
-#        reference = OrderItem.query.filter_by(reference='notFoo')
-#        assert reference.count() == 0
+    def test_3_order_doesnt_exists(self):
+        db.session.add(self.orderTest)
+        db.session.add(self.orderItemTest1)
+        db.session.commit()
+        query = db.session.query(Order).filter(Order.id == 10)
+        assert query.count() == 0
+
+    def test_4_orderItem_doesnt_exist(self):
+        db.session.add(self.orderTest)
+        db.session.add(self.orderItemTest1)
+        db.session.commit()
+        query = OrderItem.query.filter_by(reference='TestItem1 no reference')
+        assert query.count() == 0
+
+    def test_5_both_orderItems_exist(self):
+        db.session.add(self.orderTest)
+        db.session.add(self.orderItemTest1)
+        db.session.add(self.orderItemTest2)
+        db.session.commit()
+        query1 = OrderItem.query.filter_by(reference='TestItem1 reference')
+        query2 = OrderItem.query.filter_by(reference='TestItem2 reference')
+        assert query1.count() == 1
+        assert query2.count() == 1
+
+    def test_6_count_orderItems_exist(self):
+        db.session.add(self.orderTest)
+        db.session.add(self.orderItemTest1)
+        db.session.add(self.orderItemTest2)
+        db.session.commit()
+        query = db.session.query(Order.items)
+        assert query.count() == 2
+
+    def test_7_order_createdate_exist(self):
+        db.session.add(self.orderTest)
+        db.session.add(self.orderItemTest1)
+        db.session.add(self.orderItemTest2)
+        current_datetime = datetime.utcnow()
+        self.orderTest.set_create_date(current_datetime)
+        db.session.commit()
+        query = db.session.query(Order.create_date)
+        running_logger = get_oim_logger()
+        running_logger.info('test_7 query:[{}]'.format(query))
+        running_logger.info('test_7 count:[{}]'.format(query.create_date))
+        assert query.count() == 1
+
+    def test_8_change_orderType_exist(self):
+        db.session.add(self.orderTest)
+        db.session.add(self.orderItemTest1)
+        db.session.add(self.orderItemTest2)
+        self.orderTest.set_type(OrderType.MODIFY_ORDER)
+        db.session.commit()
+        query = Order.query.filter_by(type=OrderType.MODIFY_ORDER)
+        running_logger = get_oim_logger()
+        running_logger.info('test_8 query:[{}]'.format(query))
+        running_logger.info('test_8 count:[{}]'.format(query.all()))
+        assert query.count() == 1
