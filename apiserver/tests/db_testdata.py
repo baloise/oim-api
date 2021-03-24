@@ -46,9 +46,9 @@ class TestDbData(unittest.TestCase):
         self.orderItemTest2.set_reference('TestItem2 reference')
 
         # define current datetime utc
-        current_datetime = datetime.utcnow()
-        running_logger = get_oim_logger()
-        running_logger.info('CREATE_ORDER DateTime:[{}]'.format(current_datetime))
+        # current_datetime = datetime.utcnow()
+        # running_logger = get_oim_logger()
+        # running_logger.info('CREATE_ORDER DateTime:[{}]'.format(current_datetime))
 
         # add Order
         self.orderTest = Order(
@@ -56,8 +56,8 @@ class TestDbData(unittest.TestCase):
             order_type=OrderType.CREATE_ORDER,
             items=[self.orderItemTest1, self.orderItemTest2]
         )
-        # self.orderTest.set_create_date(datetime.utcnow())
-        self.orderTest.set_create_date(current_datetime)
+        self.orderTest.set_create_date(datetime.utcnow())
+        # self.orderTest.set_create_date(current_datetime)
 
     def tearDown(self):
         db.session.remove()
@@ -122,10 +122,14 @@ class TestDbData(unittest.TestCase):
         self.orderTest.set_create_date(current_datetime)
         db.session.commit()
         query = db.session.query(Order.create_date)
-        running_logger = get_oim_logger()
-        running_logger.info('test_7 query:[{}]'.format(query))
-        running_logger.info('test_7 count:[{}]'.format(query.create_date))
-        assert query.count() == 1
+        # db_create_date = db.session.query(Order.create_date).all()
+        # running_logger = get_oim_logger()
+        # running_logger.info('test_7 query:[{}]'.format(query))
+        for row in query.all():
+            cur_create_date = row.create_date
+            # running_logger.info('Value:[{}]'.format(cur_create_date))
+        # running_logger.info('test_7 value:[{}]'.format(db_create_date))
+        assert cur_create_date == current_datetime
 
     def test_8_change_orderType_exist(self):
         db.session.add(self.orderTest)
@@ -133,8 +137,14 @@ class TestDbData(unittest.TestCase):
         db.session.add(self.orderItemTest2)
         self.orderTest.set_type(OrderType.MODIFY_ORDER)
         db.session.commit()
-        query = Order.query.filter_by(type=OrderType.MODIFY_ORDER)
+        # query = Order.query.filter_by(type=OrderType.MODIFY_ORDER)
+        query = db.session.query(Order).filter(Order.id == 1)
+        # query = db.session.query(Order)
         running_logger = get_oim_logger()
+        for row in query.all():
+            # cur_create_date = row.create_date
+            running_logger.info('Value:[{},{},{},{}]'.format(row.id, row.create_date, row.requester, row.type))
+
         running_logger.info('test_8 query:[{}]'.format(query))
         running_logger.info('test_8 count:[{}]'.format(query.all()))
         assert query.count() == 1
