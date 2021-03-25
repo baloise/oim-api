@@ -1,7 +1,7 @@
 import unittest
 import os
 from datetime import datetime
-from oim_logging import get_oim_logger
+# from oim_logging import get_oim_logger
 from models.orders import Person, SbuType, OrderStateType, OrderItem, OrderStatus, Order, OrderType, BackendType, OC_CATALOGOFFERING_SIZES, OC_CATALOGOFFERINGS  # noqa: F401,E501
 from app import create_flask_app, db
 
@@ -45,11 +45,6 @@ class TestDbData(unittest.TestCase):
         )
         self.orderItemTest2.set_reference('TestItem2 reference')
 
-        # define current datetime utc
-        # current_datetime = datetime.utcnow()
-        # running_logger = get_oim_logger()
-        # running_logger.info('CREATE_ORDER DateTime:[{}]'.format(current_datetime))
-
         # add Order
         self.orderTest = Order(
             requester=self.personPeter,
@@ -57,7 +52,6 @@ class TestDbData(unittest.TestCase):
             items=[self.orderItemTest1, self.orderItemTest2]
         )
         self.orderTest.set_create_date(datetime.utcnow())
-        # self.orderTest.set_create_date(current_datetime)
 
     def tearDown(self):
         db.session.remove()
