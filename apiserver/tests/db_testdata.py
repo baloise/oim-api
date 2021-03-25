@@ -122,29 +122,20 @@ class TestDbData(unittest.TestCase):
         self.orderTest.set_create_date(current_datetime)
         db.session.commit()
         query = db.session.query(Order.create_date)
-        # db_create_date = db.session.query(Order.create_date).all()
-        # running_logger = get_oim_logger()
-        # running_logger.info('test_7 query:[{}]'.format(query))
         for row in query.all():
             cur_create_date = row.create_date
-            # running_logger.info('Value:[{}]'.format(cur_create_date))
-        # running_logger.info('test_7 value:[{}]'.format(db_create_date))
+
         assert cur_create_date == current_datetime
 
     def test_8_change_orderType_exist(self):
         db.session.add(self.orderTest)
         db.session.add(self.orderItemTest1)
         db.session.add(self.orderItemTest2)
+        # change OrderType from CREATE_ORDER to MODIFY_ORDER 
         self.orderTest.set_type(OrderType.MODIFY_ORDER)
         db.session.commit()
-        # query = Order.query.filter_by(type=OrderType.MODIFY_ORDER)
         query = db.session.query(Order).filter(Order.id == 1)
-        # query = db.session.query(Order)
-        running_logger = get_oim_logger()
         for row in query.all():
-            # cur_create_date = row.create_date
-            running_logger.info('Value:[{},{},{},{}]'.format(row.id, row.create_date, row.requester, row.type))
+            cur_orderType = row.get_type()
 
-        running_logger.info('test_8 query:[{}]'.format(query))
-        running_logger.info('test_8 count:[{}]'.format(query.all()))
-        assert query.count() == 1
+        assert cur_orderType == OrderType.MODIFY_ORDER
