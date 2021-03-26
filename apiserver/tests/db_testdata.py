@@ -125,7 +125,7 @@ class TestDbData(unittest.TestCase):
         db.session.add(self.orderTest)
         db.session.add(self.orderItemTest1)
         db.session.add(self.orderItemTest2)
-        # change OrderType from CREATE_ORDER to MODIFY_ORDER 
+        # change OrderType from CREATE_ORDER to MODIFY_ORDER
         self.orderTest.set_type(OrderType.MODIFY_ORDER)
         db.session.commit()
         query = db.session.query(Order).filter(Order.id == 1)
