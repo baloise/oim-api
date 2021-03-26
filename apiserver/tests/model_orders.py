@@ -26,11 +26,12 @@ class TestModelOrder(unittest.TestCase):
     def test_1_user_exists(self):
         db.session.add(self.personPeter)
         db.session.commit()
-        user = Person.query.filter_by(username='b12345')
-        assert user is not None
+        # not working user = Person.query.filter_by(username='u12345g')
+        query = db.session.query(Person).filter(Person.username == 'u12345')
+        assert query.count() == 1
 
     def test_2_user_doesnt_exist(self):
         db.session.add(self.personPeter)
         db.session.commit()
-        user = Person.query.filter_by(username='b059485')
-        assert user.count() == 0
+        query = Person.query.filter_by(username='b059485')
+        assert query.count() == 0
