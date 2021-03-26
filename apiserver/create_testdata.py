@@ -1,16 +1,16 @@
 # create_testdata.py
 import os
-import enum
-import connexion
-from load_config import load_config
-from datetime import datetime
-from flask_sqlalchemy import SQLAlchemy
-from ourCloud.OcStaticVars import OC_CATALOGOFFERINGS, OC_CATALOGOFFERING_SIZES
-from oim_logging import get_oim_logger
+# import enum
+# import connexion
+# from load_config import load_config
+# from datetime import datetime
+# from flask_sqlalchemy import SQLAlchemy
+# from ourCloud.OcStaticVars import OC_CATALOGOFFERINGS, OC_CATALOGOFFERING_SIZES
+# from oim_logging import get_oim_logger
 from models.orders import Person, SbuType, OrderStateType, OrderItem, OrderStatus, Order, BackendType  # noqa: F401,E501
 from app import db, create_flask_app
-from sqlalchemy import *
-from sqlalchemy.orm import sessionmaker
+# from sqlalchemy import *
+# from sqlalchemy.orm import sessionmaker
 
 # db = SQLAlchemy()
 
