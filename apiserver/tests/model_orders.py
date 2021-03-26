@@ -2,8 +2,8 @@ import unittest
 import os
 from models.orders import Person, SbuType, OrderStateType, OrderItem, OrderStatus, Order  # noqa: F401,E501
 from app import create_flask_app, db
-from sqlalchemy import select, create_engine
-from oim_logging import get_oim_logger
+# from sqlalchemy import select, create_engine
+# from oim_logging import get_oim_logger
 
 
 class TestModelOrder(unittest.TestCase):
