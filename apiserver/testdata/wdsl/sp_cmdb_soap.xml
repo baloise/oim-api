@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?><wsdl:definitions xmlns:emds="urn:emds:service" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:tns="urn:service" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:service"><wsdl:types><xsd:schema xmlns:emds="http://www.emds-ag.de/namespace/" elementFormDefault="unqualified" emds:messageFormat="XML">
+    <xsd:element name="mt_cmdb_system">
+      <xsd:complexType>
+        <xsd:sequence>
+          <xsd:element name="AMA_SYSTEM">
+            <xsd:annotation>
+              <xsd:appinfo source="emdsorch:tablename">AMA_SYSTEM</xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="STATUS">
+                  <xsd:annotation>
+                    <xsd:appinfo source="emdsorch:columnname">STATUS</xsd:appinfo>
+                    <xsd:appinfo source="emdsorch:dbtypename">VARCHAR2</xsd:appinfo>
+                  </xsd:annotation>
+                  <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                      <xsd:maxLength value="254"/>
+                    </xsd:restriction>
+                  </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="SYSTEMTYPE_ID">
+                  <xsd:annotation>
+                    <xsd:appinfo source="emdsorch:columnname">SYSTEMTYPE_ID</xsd:appinfo>
+                    <xsd:appinfo source="emdsorch:dbtypename">NUMBER</xsd:appinfo>
+                  </xsd:annotation>
+                  <xsd:simpleType>
+                    <xsd:restriction base="xsd:decimal">
+                      <xsd:totalDigits value="10"/>
+                      <xsd:fractionDigits value="0"/>
+                    </xsd:restriction>
+                  </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="SHORTTEXT">
+                  <xsd:annotation>
+                    <xsd:appinfo source="emdsorch:columnname">SHORTTEXT</xsd:appinfo>
+                    <xsd:appinfo source="emdsorch:dbtypename">VARCHAR2</xsd:appinfo>
+                  </xsd:annotation>
+                  <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                      <xsd:maxLength value="254"/>
+                    </xsd:restriction>
+                  </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="VALIDFROM" type="xsd:dateTime">
+                  <xsd:annotation>
+                    <xsd:appinfo source="emdsorch:columnname">VALIDFROM</xsd:appinfo>
+                    <xsd:appinfo source="emdsorch:dbtypename">DATE</xsd:appinfo>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="VALIDTO" type="xsd:dateTime">
+                  <xsd:annotation>
+                    <xsd:appinfo source="emdsorch:columnname">VALIDTO</xsd:appinfo>
+                    <xsd:appinfo source="emdsorch:dbtypename">DATE</xsd:appinfo>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="NAME">
+                  <xsd:annotation>
+                    <xsd:appinfo source="emdsorch:columnname">NAME</xsd:appinfo>
+                    <xsd:appinfo source="emdsorch:dbtypename">VARCHAR2</xsd:appinfo>
+                  </xsd:annotation>
+                  <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                      <xsd:maxLength value="254"/>
+                    </xsd:restriction>
+                  </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="DOMAIN_ID">
+                  <xsd:annotation>
+                    <xsd:appinfo source="emdsorch:columnname">DOMAIN_ID</xsd:appinfo>
+                    <xsd:appinfo source="emdsorch:dbtypename">NUMBER</xsd:appinfo>
+                  </xsd:annotation>
+                  <xsd:simpleType>
+                    <xsd:restriction base="xsd:decimal">
+                      <xsd:totalDigits value="10"/>
+                      <xsd:fractionDigits value="0"/>
+                    </xsd:restriction>
+                  </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="ENVIRONMENT_ID">
+                  <xsd:annotation>
+                    <xsd:appinfo source="emdsorch:columnname">ENVIRONMENT_ID</xsd:appinfo>
+                    <xsd:appinfo source="emdsorch:dbtypename">NUMBER</xsd:appinfo>
+                  </xsd:annotation>
+                  <xsd:simpleType>
+                    <xsd:restriction base="xsd:decimal">
+                      <xsd:totalDigits value="10"/>
+                      <xsd:fractionDigits value="0"/>
+                    </xsd:restriction>
+                  </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="BUSINESSPART_ID">
+                  <xsd:annotation>
+                    <xsd:appinfo source="emdsorch:columnname">BUSINESSPART_ID</xsd:appinfo>
+                    <xsd:appinfo source="emdsorch:dbtypename">NUMBER</xsd:appinfo>
+                  </xsd:annotation>
+                  <xsd:simpleType>
+                    <xsd:restriction base="xsd:decimal">
+                      <xsd:totalDigits value="10"/>
+                      <xsd:fractionDigits value="0"/>
+                    </xsd:restriction>
+                  </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="OIM_PROVIDER_SLA">
+                  <xsd:annotation>
+                    <xsd:appinfo source="emdsorch:columnname">OIM_PROVIDER_SLA</xsd:appinfo>
+                    <xsd:appinfo source="emdsorch:dbtypename">VARCHAR2</xsd:appinfo>
+                  </xsd:annotation>
+                  <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                      <xsd:maxLength value="254"/>
+                    </xsd:restriction>
+                  </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="OIM_INTERNAL_AUDIT">
+                  <xsd:annotation>
+                    <xsd:appinfo source="emdsorch:columnname">OIM_INTERNAL_AUDIT</xsd:appinfo>
+                    <xsd:appinfo source="emdsorch:dbtypename">CHAR</xsd:appinfo>
+                  </xsd:annotation>
+                  <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                      <xsd:maxLength value="1"/>
+                    </xsd:restriction>
+                  </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="OIM_CID">
+                  <xsd:annotation>
+                    <xsd:appinfo source="emdsorch:columnname">OIM_CID</xsd:appinfo>
+                    <xsd:appinfo source="emdsorch:dbtypename">VARCHAR2</xsd:appinfo>
+                  </xsd:annotation>
+                  <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                      <xsd:maxLength value="254"/>
+                    </xsd:restriction>
+                  </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="OIM_PATCH_WINDOW">
+                  <xsd:annotation>
+                    <xsd:appinfo source="emdsorch:columnname">OIM_PATCH_WINDOW</xsd:appinfo>
+                    <xsd:appinfo source="emdsorch:dbtypename">VARCHAR2</xsd:appinfo>
+                  </xsd:annotation>
+                  <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                      <xsd:maxLength value="254"/>
+                    </xsd:restriction>
+                  </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="OIM_PROVIDER_SERVICELINE">
+                  <xsd:annotation>
+                    <xsd:appinfo source="emdsorch:columnname">OIM_PROVIDER_SERVICELINE</xsd:appinfo>
+                    <xsd:appinfo source="emdsorch:dbtypename">VARCHAR2</xsd:appinfo>
+                  </xsd:annotation>
+                  <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                      <xsd:maxLength value="254"/>
+                    </xsd:restriction>
+                  </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="OIM_TSHIRT_SIZE">
+                  <xsd:annotation>
+                    <xsd:appinfo source="emdsorch:columnname">OIM_TSHIRT_SIZE</xsd:appinfo>
+                    <xsd:appinfo source="emdsorch:dbtypename">VARCHAR2</xsd:appinfo>
+                  </xsd:annotation>
+                  <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                      <xsd:maxLength value="254"/>
+                    </xsd:restriction>
+                  </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="OIM_PERFORMANCE">
+                  <xsd:annotation>
+                    <xsd:appinfo source="emdsorch:columnname">OIM_PERFORMANCE</xsd:appinfo>
+                    <xsd:appinfo source="emdsorch:dbtypename">VARCHAR2</xsd:appinfo>
+                  </xsd:annotation>
+                  <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                      <xsd:maxLength value="254"/>
+                    </xsd:restriction>
+                  </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="OIM_MIRRORING">
+                  <xsd:annotation>
+                    <xsd:appinfo source="emdsorch:columnname">OIM_MIRRORING</xsd:appinfo>
+                    <xsd:appinfo source="emdsorch:dbtypename">VARCHAR2</xsd:appinfo>
+                  </xsd:annotation>
+                  <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                      <xsd:maxLength value="254"/>
+                    </xsd:restriction>
+                  </xsd:simpleType>
+                </xsd:element>
+                <xsd:element name="SERVICE_INSTANCE" type="xsd:string"/>
+              </xsd:sequence>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema></wsdl:types><wsdl:message name="insert_systemRequest"><wsdl:part element="mt_cmdb_system" name="data"/></wsdl:message><wsdl:message name="insert_systemResponse"><wsdl:part name="soapres" type="xsd:string"/></wsdl:message><wsdl:portType name="cmdb_actions"><wsdl:operation name="insert_system"><wsdl:input message="tns:insert_systemRequest"/><wsdl:output message="tns:insert_systemResponse"/></wsdl:operation></wsdl:portType><wsdl:binding name="SoapBinding" type="tns:cmdb_actions"><soap12:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/><wsdl:operation name="insert_system"><soap12:operation soapAction="insert_system" style="document"/><wsdl:input><soap12:body use="literal"/></wsdl:input><wsdl:output><soap12:body use="literal"/></wsdl:output></wsdl:operation></wsdl:binding><wsdl:service name="sp_cmdb_soap"><wsdl:port binding="tns:SoapBinding" name="PortSoapBinding_0"><soap12:address location="http://X10037275.balgroupit.com:8819/Orchestra/48dbe175-f1fa-4e60-ad8c-4db85ffc036f/83/PortSoapBinding_0/sp_cmdb_soap"/></wsdl:port></wsdl:service></wsdl:definitions>

@@ -1,0 +1,18 @@
+{
+  "systemtypes": [
+    { "type": "Linux Virtual Server", "orcaname": "Linux Virtual Server", "orcaid": 100162 },
+    { "type": "Windows Virtual Server", "orcaname": "Windows Virtual Server", "orcaid": 100165 }
+  ],
+  "systemstatus": [
+    { "active": true, "orcastatus": "ACT" },
+    { "active": false, "orcastatus": "INACT" }
+  ],
+  "storagemirror": [
+    { "mirrored": false, "orcaname": "Not Mirrored", "ocid": "NM" },
+    { "mirrored": true, "orcaname": "Mirrored", "ocid": "M" }
+  ],
+  "storageperformance": [
+    { "name": "high", "orcaname": "High", "ocid": "HP" },
+    { "name": "low", "orcaname": "Medium", "ocid": "MP"  }
+  ]
+}

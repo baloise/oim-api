@@ -1,0 +1,16 @@
+{
+    "provider_sla": [
+    {
+      "level": "bronzi", "orcaid": "Bronze", "ocid": "B"
+    },
+    {
+      "level": "silver", "orcaid": "Silver", "ocid": "S"
+    },
+    {
+      "level": "goldi", "orcaid": "Gold", "ocid": "G"
+    },
+    {
+      "level": "goldplus", "orcaid": "Gold+", "ocid": "GP"
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?><wsdl:definitions xmlns:DT1="urn:service" xmlns:emds="urn:emds:service" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:tns="myns" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="myns"><wsdl:import location="?wsdl=service_import_0&amp;reference=%7B48dbe175-f1fa-4e60-ad8c-4db85ffc036f%3AServiceProvider%7D87" namespace="urn:service"/><wsdl:types><xsd:schema xmlns:emds="http://www.emds-ag.de/namespace/" elementFormDefault="unqualified" emds:messageFormat="XML">
+    <xsd:element name="mt_cmdb_system">
+      <xsd:complexType>
+        <xsd:sequence>
+          <xsd:element name="AMA_SYSTEM">
+            <xsd:annotation>
+              <xsd:appinfo source="emdsorch:tablename">AMA_SYSTEM</xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="STATUS">
+                  <xsd:annotation>
+                    <xsd:appinfo source="emdsorch:columnname">STATUS</xsd:appinfo>
+                    <xsd:appinfo source="emdsorch:dbtypename">VARCHAR2</xsd:appinfo>
+                  </xsd:annotation>
+                  <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                      <xsd:maxLength value="254"/>
+                    </xsd:restriction>
+                  </xsd:simpleType>
+                </xsd:element>
+              </xsd:sequence>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema></wsdl:types><wsdl:service name="sp_cmdb_mini"><wsdl:port binding="DT1:SoapBinding" name="PortSoapBinding_0"><soap12:address location="http://X10037275.balgroupit.com:8819/mini_actions"/></wsdl:port></wsdl:service></wsdl:definitions>

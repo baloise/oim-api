@@ -112,3 +112,34 @@ class OC_CATALOGOFFERINGS(bytes, enum.Enum):
             return cls.PGRHEL7
         else:
             raise NotImplementedError
+
+
+class ENVIRONMENT(bytes, enum.Enum):
+
+    def __new__(cls, value, apiname, orcaid, ocid):
+        obj = bytes.__new__(cls)
+        obj._value_ = value
+        obj.apiname = apiname
+        obj.orcaid = orcaid
+        obj.ocid = ocid
+        return obj
+    DEVELOPMENT = (1, 'development', 1, 'DEV')
+    TEST = (2, 'test', 2, 'TEST')
+    INTEGRATION = (3, 'intgegration', 3, 'INT')
+    ACCEPTANCE = (4, 'acceptance', 4, 'ACC')
+    PRODUCTION = (5, 'production', 5, 'PROD')
+
+    @classmethod
+    def get_id(cls, val):
+        if val == cls.DEVELOPMENT:
+            return cls.DEVELOPMENT.orcaid
+        elif val == cls.TEST:
+            return cls.TEST.orcaid
+        elif val == cls.INTEGRATION:
+            return cls.INTEGRATION.orcaid
+        elif val == cls.ACCEPTANCE:
+            return cls.ACCEPTANCE.orcaid
+        elif val == cls.PRODUCTION:
+            return cls.PRODUCTION.orcaid
+        else:
+            raise NotImplementedError
