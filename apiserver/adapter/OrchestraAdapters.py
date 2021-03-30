@@ -4,6 +4,11 @@ from ourCloud.OcStaticVars import ENVIRONMENT, TRANSLATE_TARGETS, METAL_CLASS, S
 
 
 class AbstractAdapter:
+    
+    def __init__(self):
+        self.json = None
+        self.field = None
+        self.file = None
 
     def read_file(self):
         with open(self.file, 'r') as myfile:
