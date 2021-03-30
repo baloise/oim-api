@@ -13,6 +13,6 @@
   ],
   "storageperformance": [
     { "name": "high", "orcaname": "High", "ocid": "HP" },
-    { "name": "low", "orcaname": "Medium", "ocid": "MP"  }
+    { "name": "medium", "orcaname": "Medium", "ocid": "MP"  }
   ]
 }

@@ -1,32 +1,21 @@
 from adapter.OrchestraAdapters import environment_adapter, cmdb_performance_adapter, provider_sla_adapter
 import zeep
-from ourCloud.OcStaticVars import ENVIRONMENT
-
-
-adapter = environment_adapter()
-adapter.read_file()
-
-# adapter.get_apinames()
-# adapter.get_orcaids()
-# adapter.get_ocids()
+from ourCloud.OcStaticVars import ENVIRONMENT, TRANSLATE_TARGETS, METAL_CLASS, STORAGE_PERFORMANCE_LEVEL
 
 
 cmadapter = cmdb_performance_adapter()
-cmadapter.read_file()
-cmadapter.get_apiperformance()
-res = cmadapter.translate("high")
-print(res)
+cmdb_perf = cmadapter.translate(STORAGE_PERFORMANCE_LEVEL.HIGH, TRANSLATE_TARGETS.CMDB)
+print("Performance: {}".format(cmdb_perf))
 
 environment_adapter = environment_adapter()
-environment_adapter.read_file()
-cmdb_env_id = environment_adapter.translate(ENVIRONMENT.TEST)
-print(cmdb_env_id)
+cmdb_env_id = environment_adapter.translate(ENVIRONMENT.TEST, TRANSLATE_TARGETS.CMDB)
+print("Environment: {}".format(cmdb_env_id))
 
 prosla_adapter = provider_sla_adapter()
-prosla_adapter.read_file()
-cmdb_sla_brz = prosla_adapter.translate("goldi")
-
+cmdb_sla_brz = prosla_adapter.translate(METAL_CLASS.GOLD)
+print("SLA: {}".format(cmdb_sla_brz))
 print("XXXX")
+
 # wsdl = 'http://x10037275.balgroupit.com:8819/mini_action?wsdl'
 wsdl = 'http://x10037275.balgroupit.com:8819/Orchestra/48dbe175-f1fa-4e60-ad8c-4db85ffc036f/83/PortSoapBinding_0/sp_cmdb_soap?wsdl'  # noqa E501
 client = zeep.Client(wsdl=wsdl)
@@ -46,7 +35,6 @@ payload = {
   "OIM_CID": "NO CID",
   "OIM_INTERNAL_AUDIT": "",
   "OIM_MIRRORING": "Not Mirrored",
-  "OIM_PERFORMANCE": "Medium",
   "SHORTTEXT": "Added by OIM API",
   "SERVICE_INSTANCE": "Medium",
   "BUSINESSPART_ID": 100233,
@@ -56,6 +44,7 @@ payload = {
 
 payload.update(cmdb_env_id)
 payload.update(cmdb_sla_brz)
+payload.update(cmdb_perf)
 print("payload: {}".format(payload))
 fff = service.insert_system(AMA_SYSTEM=payload)
 print(fff)

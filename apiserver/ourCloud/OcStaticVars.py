@@ -114,6 +114,23 @@ class OC_CATALOGOFFERINGS(bytes, enum.Enum):
             raise NotImplementedError
 
 
+class METAL_CLASS(enum.Enum):
+    BRONZE = "bronzi"
+    SILVER = "silver"
+    GOLD = "bronzi"
+    MORETHANGOLD = "goldplus"
+
+
+class TRANSLATE_TARGETS(enum.Enum):
+    CMDB = 1
+    OURCLOUD = 2
+
+
+class STORAGE_PERFORMANCE_LEVEL(enum.Enum):
+    HIGH = "high"
+    MEDIUM = "medium"
+
+
 class ENVIRONMENT(bytes, enum.Enum):
 
     def __new__(cls, value, apiname, orcaid, ocid):
