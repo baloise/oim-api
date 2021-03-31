@@ -75,7 +75,7 @@ class OrchestraCmdbHandler(GenericCmdbHandler):     # has no idea of SOAP
         payload.update(self.cmdb_env_id)
         payload.update(self.cmdb_sla_brz)
         payload.update(self.cmdb_perf)
-        payload = {'AMA_SYSTEM':payload}
+        payload = {'AMA_SYSTEM': payload}
         print("[DBG] payload: {}".format(payload))
         if payload is not None:  # exits
             return self.orchestra.insert_system(payload)
