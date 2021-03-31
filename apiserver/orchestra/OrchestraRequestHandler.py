@@ -1,7 +1,8 @@
-# Version 0.16
 from abc import ABC, abstractmethod
 from zeep import Client
-from random import random
+from adapter.OrchestraAdapters import cmdb_adapter, environment_adapter, cmdb_performance_adapter, provider_sla_adapter  # noqa E501
+from ourCloud.OcStaticVars import ENVIRONMENT, TRANSLATE_TARGETS, METAL_CLASS, STORAGE_PERFORMANCE_LEVEL                 # noqa E501
+
 # from datetime import datetime
 # from zeep.transports import Transport
 # from requests import Session
@@ -18,14 +19,14 @@ class OrchestraRequestHandler():        # This class knows SOAP
         print('Namespace: ', self.soap_client.namespaces)
         print('Operations: ', self.soap_client.service._operations)
 
-    def get_asset(self, filter):
-        return self.soap_client.service.get_asset(**filter)
+    def select_system(self, filter):
+        return self.soap_client.service.select_system(**filter)
 
-    def deactivate_asset(self, id):
-        return self.soap_client.service.deactivate_asset(id)
+#    def deactivate_asset(self, id):
+#        return self.soap_client.service.deactivate_asset(id)
 
-    def insert_asset(self, data):
-        return self.soap_client.service.insert_asset(**data)
+    def insert_system(self, data):
+        return self.soap_client.service.insert_system(**data)
 
 #    def update_item(self, query):  # update one or dict of values
 #        return self.soap_client.service.update_item(**query)
@@ -33,53 +34,53 @@ class OrchestraRequestHandler():        # This class knows SOAP
 
 class GenericCmdbHandler(ABC):
 
-    @abstractmethod
-    def get_asset(self, filter): pass
+    #    @abstractmethod
+    #    def get_asset(self, filter): pass
+
+    #    @abstractmethod
+    #    def deactivate_asset(self, query): pass
 
     @abstractmethod
-    def deactivate_asset(self, query): pass
+    def insert_system(self, data): pass
 
     @abstractmethod
-    def insert_asset(self, data): pass
+    def select_system(self, data): pass
 
 
 class OrchestraCmdbHandler(GenericCmdbHandler):     # has no idea of SOAP
     def __init__(self):
-        self.url = 'http://127.0.0.1:8819/cmdb_request?wsdl'
+        self.url = 'http://127.0.0.1:8819/sp_cmdb_soap?wsdl'
         self.orchestra = OrchestraRequestHandler(self.url)
+        self.cmdb_perf = cmdb_performance_adapter().translate(STORAGE_PERFORMANCE_LEVEL.HIGH, TRANSLATE_TARGETS.CMDB)  # noqa E501
+        self.cmdb_env_id = environment_adapter().translate(ENVIRONMENT.TEST, TRANSLATE_TARGETS.CMDB)    # noqa E501
+        self.cmdb_sla_brz = provider_sla_adapter().translate(METAL_CLASS.GOLD)
 
-    def get_asset(self, field, pattern):
+    def select_system(self, field, pattern):
         xml_filter = {'field': field, 'pattern': pattern}
-        return self.orchestra.get_asset(xml_filter)
+        return self.orchestra.select_system(xml_filter)
 
-    def deactivate_asset(self, id):
-        return self.orchestra.deactivate_asset(id)
+#    def deactivate_asset(self, id):
+#        return self.orchestra.deactivate_asset(id)
 
-    def fake_ip(self):
-        return '10.0.'+str(int(random()*256))+'.'+str(int(random()*256))+'/24'
+#    def fake_ip(self):
+#        return '10.0.'+str(int(random()*256))+'.'+str(int(random()*256))+'/24'
 
-    def fake_name(self):
-        tmp = ''
-        for i in range(0, 24):
-            tmp += chr(48+int(random()*75))
-        return tmp
+#    def fake_name(self):
+#        tmp = ''
+#        for i in range(0, 24):
+#            tmp += chr(48+int(random()*75))
+#        return tmp
 
-    def insert_asset(self, data=None):  # data must be a dictionnary
-        if data is None:  # create fake
-            data = {'asset': {
-                    'id': 0,
-                    'name': self.fake_name(),
-                    'type_id': int(1+random()*3),
-                    'cidr': self.fake_ip(),
-                    'active_since': '2020-11-01T07:15:00',
-                    'active_until': '2030-12-31T17:40:00',
-                    'provider_id': 1,
-                    'sla_id': int(1+random()*3),
-                    'service_id': int(1+random()*3),
-                    'tshirt_size_id': int(1+random()*3),
-                    'order_id': int(1+random()*999999),
-                    'has_cid': 'true'}}
-        return self.orchestra.insert_asset(data)
+    def insert_system(self, payload=None):  # payload must be a dictionnary
+        payload.update(self.cmdb_env_id)
+        payload.update(self.cmdb_sla_brz)
+        payload.update(self.cmdb_perf)
+        payload = {'AMA_SYSTEM': payload}
+        print("[DBG] payload: {}".format(payload))
+        if payload is not None:  # exits
+            return self.orchestra.insert_system(payload)
+        else:
+            return None
 
 #    def update_asset(self, query):
 #        query = {'id': '1',
@@ -92,15 +93,13 @@ class OrchestraCmdbHandler(GenericCmdbHandler):     # has no idea of SOAP
 if __name__ == '__main__':
     cmdb_h = OrchestraCmdbHandler()
     cmdb_h.orchestra.list_operations()
-    print("List all assets")
-    for asset in cmdb_h.get_asset('id', '%'):
-        print(asset)
-    print('_____________________')
-    print("List all assets from type rhel")
-    for asset in cmdb_h.get_asset('type', '%rhel%'):
-        print(asset)
-    print('_____________________')
-    print('deactivate asset id=3')
-    cmdb_h.deactivate_asset(3)
-    print('insert a random asset')
-    cmdb_h.insert_asset()
+#    print("List all assets")
+#    for asset in cmdb_h.get_asset('id', '%'):
+#        print(asset)
+#    print('_____________________')
+#    print("List all assets from type rhel")
+#    for asset in cmdb_h.get_asset('type', '%rhel%'):
+#        print(asset)
+#    print('_____________________')
+#    print('deactivate asset id=3')
+#    cmdb_h.deactivate_asset(3)

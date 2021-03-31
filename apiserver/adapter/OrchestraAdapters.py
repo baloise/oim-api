@@ -5,6 +5,11 @@ from ourCloud.OcStaticVars import ENVIRONMENT, TRANSLATE_TARGETS, METAL_CLASS, S
 
 class AbstractAdapter:
 
+    def __init__(self):
+        self.json = None
+        self.field = None
+        self.file = None
+
     def read_file(self):
         with open(self.file, 'r') as myfile:
             data = myfile.read()
@@ -16,7 +21,7 @@ class provider_sla_adapter(AbstractAdapter):
     def __init__(self):
         self.json = None
         self.field = "provider_sla"
-        self.file = 'mappings/sla_mappings.json'
+        self.file = 'apiserver/mappings/sla_mappings.json'
         self.read_file()
 
     def translate(self, sla_level: METAL_CLASS) -> dict:
@@ -31,7 +36,7 @@ class environment_adapter(AbstractAdapter):
     def __init__(self):
         self.json = None
         self.field = "environment"
-        self.file = 'mappings/environment_mappings.json'
+        self.file = 'apiserver/mappings/environment_mappings.json'
         self.read_file()
 
     # def get_apinames(self):
@@ -64,7 +69,7 @@ class cmdb_adapter(AbstractAdapter):
 
     def __init__(self):
         self.json = None
-        self.file = 'mappings/cmdb_mappings.json'
+        self.file = 'apiserver/mappings/cmdb_mappings.json'
 
 
 class cmdb_status_adapter(cmdb_adapter):
