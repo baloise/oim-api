@@ -11,7 +11,7 @@ for system in cmdb_h.select_system('NAME', '%manu%'):
 print('insert a system')
 payload = {
       "STATUS": "ACT",
-      "NAME": "manu_210330_1057",
+      "NAME": "manu_5",
       "DOMAIN_ID": 8,
       "VALIDFROM": "2021-03-17T00:00:00",
       "VALIDTO": "2100-01-01T00:00:00",

@@ -25,7 +25,7 @@ class OrchestraRequestHandler():        # This class knows SOAP
 #    def deactivate_asset(self, id):
 #        return self.soap_client.service.deactivate_asset(id)
 
-    def insert_system(self, data=None):
+    def insert_system(self, data):
         return self.soap_client.service.insert_system(**data)
 
 #    def update_item(self, query):  # update one or dict of values
@@ -77,7 +77,7 @@ class OrchestraCmdbHandler(GenericCmdbHandler):     # has no idea of SOAP
         payload.update(self.cmdb_perf)
         payload = { 'AMA_SYSTEM' : payload }
         print("[DBG] payload: {}".format(payload))
-        if payload is None:  # exits
+        if payload is not None:  # exits
             return self.orchestra.insert_system(payload)
         else:
             return None
