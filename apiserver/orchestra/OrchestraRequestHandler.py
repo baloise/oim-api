@@ -19,13 +19,13 @@ class OrchestraRequestHandler():        # This class knows SOAP
         print('Namespace: ', self.soap_client.namespaces)
         print('Operations: ', self.soap_client.service._operations)
 
-#    def get_asset(self, filter):
-#        return self.soap_client.service.get_asset(**filter)
+    def select_system(self, filter):
+        return self.soap_client.service.select_system(**filter)
 
 #    def deactivate_asset(self, id):
 #        return self.soap_client.service.deactivate_asset(id)
 
-    def insert_system(self, data):
+    def insert_system(self, data=None):
         return self.soap_client.service.insert_system(**data)
 
 #    def update_item(self, query):  # update one or dict of values
@@ -43,6 +43,9 @@ class GenericCmdbHandler(ABC):
     @abstractmethod
     def insert_system(self, data): pass
 
+    @abstractmethod
+    def select_system(self, data): pass
+
 
 class OrchestraCmdbHandler(GenericCmdbHandler):     # has no idea of SOAP
     def __init__(self):
@@ -51,13 +54,10 @@ class OrchestraCmdbHandler(GenericCmdbHandler):     # has no idea of SOAP
         self.cmdb_perf = cmdb_performance_adapter().translate(STORAGE_PERFORMANCE_LEVEL.HIGH, TRANSLATE_TARGETS.CMDB)  # noqa E501
         self.cmdb_env_id = environment_adapter().translate(ENVIRONMENT.TEST, TRANSLATE_TARGETS.CMDB)    # noqa E501
         self.cmdb_sla_brz = provider_sla_adapter().translate(METAL_CLASS.GOLD)
-        print("[DBG] Performance: {}".format(self.cmdb_perf))
-        print("[DBG] Environment: {}".format(self.cmdb_env_id))
-        print("[DBG] SLA: {}".format(self.cmdb_sla_brz))
 
-#    def get_asset(self, field, pattern):
-#        xml_filter = {'field': field, 'pattern': pattern}
-#        return self.orchestra.get_asset(xml_filter)
+    def select_system(self, field, pattern):
+        xml_filter = {'field': field, 'pattern': pattern}
+        return self.orchestra.select_system(xml_filter)
 
 #    def deactivate_asset(self, id):
 #        return self.orchestra.deactivate_asset(id)
@@ -75,6 +75,7 @@ class OrchestraCmdbHandler(GenericCmdbHandler):     # has no idea of SOAP
         payload.update(self.cmdb_env_id)
         payload.update(self.cmdb_sla_brz)
         payload.update(self.cmdb_perf)
+        payload = { 'AMA_SYSTEM' : payload }
         print("[DBG] payload: {}".format(payload))
         if payload is None:  # exits
             return self.orchestra.insert_system(payload)
@@ -102,26 +103,3 @@ if __name__ == '__main__':
 #    print('_____________________')
 #    print('deactivate asset id=3')
 #    cmdb_h.deactivate_asset(3)
-
-    print('insert a system')
-    payload = {
-      "STATUS": "ACT",
-      "NAME": "manu_210330_1057",
-      "DOMAIN_ID": 8,
-      "VALIDFROM": "2021-03-17T00:00:00",
-      "VALIDTO": "2100-01-01T00:00:00",
-      "OIM_TSHIRT_SIZE": "S1",
-      "SYSTEMTYPE_ID": 100162,
-      "OIM_CID": "NO CID",
-      "OIM_INTERNAL_AUDIT": "",
-      "OIM_MIRRORING": "Not Mirrored",
-      "SHORTTEXT": "Added by OIM API",
-      "SERVICE_INSTANCE": "Medium",
-      "BUSINESSPART_ID": 100233,
-      "OIM_PATCH_WINDOW": "H-SERVER-SCCM-BCH-LV33-03-MI-2100",
-      "OIM_PROVIDER_SERVICELINE": "Server"
-    }
-
-    print("payload: {}".format(payload))
-    sp_result = cmdb_h.insert_system(payload)
-    print("[SP Result] ", sp_result)
