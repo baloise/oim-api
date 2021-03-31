@@ -1,18 +1,16 @@
-import os
 import json
 import jmespath
 from ourCloud.OcStaticVars import ENVIRONMENT, TRANSLATE_TARGETS, METAL_CLASS, STORAGE_PERFORMANCE_LEVEL
 
 
 class AbstractAdapter:
-    
+
     def __init__(self):
         self.json = None
         self.field = None
         self.file = None
 
     def read_file(self):
-#        print('[DBG] ', os.listdir())
         with open(self.file, 'r') as myfile:
             data = myfile.read()
             self.json = json.loads(data)

@@ -4,9 +4,8 @@ from orchestra.OrchestraRequestHandler import OrchestraCmdbHandler
 cmdb_h = OrchestraCmdbHandler()
 cmdb_h.orchestra.list_operations()
 
-for system in cmdb_h.select_system('NAME', '%manu%'):
+for system in cmdb_h.select_system('NAME', '%manu_%'):
     print(system.NAME, system.SYSTEM_ID, system.STATUS)
-
 
 print('insert a system')
 payload = {
@@ -29,4 +28,3 @@ payload = {
 
 sp_result = cmdb_h.insert_system(payload)
 print("[SP Result] ", sp_result)
-
