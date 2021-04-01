@@ -4,11 +4,9 @@ from orchestra.OrchestraRequestHandler import OrchestraCmdbHandler
 cmdb_h = OrchestraCmdbHandler()
 cmdb_h.orchestra.list_operations()
 
-for system in cmdb_h.select_system('NAME', '%manu_%'):
-    print(system.NAME, system.SYSTEM_ID, system.STATUS)
-
 print('insert a system')
 payload = {
+      "SYSTEM_ID": 0,
       "STATUS": "ACT",
       "NAME": "manu_5",
       "DOMAIN_ID": 8,
@@ -28,3 +26,19 @@ payload = {
 
 sp_result = cmdb_h.insert_system(payload)
 print("[SP Result] ", sp_result)
+
+sp_result = cmdb_h.deactivate_system('SYSTEM_ID', '101460')
+sp_result = cmdb_h.deactivate_system('NAME', 'manu_23')
+
+print('List all systems with where clause')
+for system in cmdb_h.select_system('NAME', '%manu_%'):
+    print(system.NAME, system.SYSTEM_ID, system.STATUS)
+
+print('update a system')
+payload = {
+      "SYSTEM_ID": 101441,
+      "NAME": "manu_6",
+      "VALIDFROM": "2345-01-10T00:00:00",
+      "OIM_TSHIRT_SIZE": "S2"
+    }
+cmdb_h.update_system(payload)
