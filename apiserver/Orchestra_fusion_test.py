@@ -8,7 +8,7 @@ print('insert a system')
 payload = {
       "SYSTEM_ID": 0,
       "STATUS": "ACT",
-      "NAME": "manu_8",
+      "NAME": "manu_9",
       "DOMAIN_ID": 8,
       "VALIDFROM": "2021-03-17T00:00:00",
       "VALIDTO": "2100-01-01T00:00:00",
@@ -29,6 +29,8 @@ print("[SP Result] ", sp_result)
 
 sp_result = cmdb_h.deactivate_system('SYSTEM_ID', '101460')
 sp_result = cmdb_h.deactivate_system('NAME', 'manu_23')
+
+sp_result = cmdb_h.delete_system('NAME', 'manu_8')
 
 print('List all systems with where like')
 for system in cmdb_h.select_like_system('NAME', '%manu%'):

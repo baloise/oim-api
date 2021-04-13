@@ -27,6 +27,9 @@ class OrchestraRequestHandler():        # This class knows SOAP
     def deactivate_system(self, filter):
         return self.soap_client.service.deactivate_system(**filter)
 
+    def delete_system(self, filter):
+        return self.soap_client.service.delete_system(**filter)
+
     def insert_system(self, data):
         return self.soap_client.service.insert_system(**data)
 
@@ -41,6 +44,9 @@ class GenericCmdbHandler(ABC):
 
     @abstractmethod
     def deactivate_system(self, filter): pass
+
+    @abstractmethod
+    def delete_system(self, filter): pass
 
     @abstractmethod
     def insert_system(self, data): pass
@@ -71,6 +77,10 @@ class OrchestraCmdbHandler(GenericCmdbHandler):     # has no idea of SOAP
     def deactivate_system(self, field, pattern):
         xml_filter = {'field': field, 'pattern': pattern}
         return self.orchestra.deactivate_system(xml_filter)
+
+    def delete_system(self, field, pattern):
+        xml_filter = {'field': field, 'pattern': pattern}
+        return self.orchestra.delete_system(xml_filter)
 
     def update_system(self, payload):
         payload.update(self.cmdb_env_id)
