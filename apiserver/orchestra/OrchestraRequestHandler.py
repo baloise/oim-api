@@ -18,6 +18,9 @@ class OrchestraRequestHandler():        # This class knows SOAP
         print('Namespace: ', self.soap_client.namespaces)
         print('Operations: ', self.soap_client.service._operations)
 
+    def select_like_system(self, filter):
+        return self.soap_client.service.select_like_system(**filter)
+
     def select_system(self, filter):
         return self.soap_client.service.select_system(**filter)
 
@@ -43,6 +46,9 @@ class GenericCmdbHandler(ABC):
     def insert_system(self, data): pass
 
     @abstractmethod
+    def select_like_system(self, filter): pass
+
+    @abstractmethod
     def select_system(self, filter): pass
 
 
@@ -57,6 +63,10 @@ class OrchestraCmdbHandler(GenericCmdbHandler):     # has no idea of SOAP
     def select_system(self, field, pattern):
         xml_filter = {'field': field, 'pattern': pattern}
         return self.orchestra.select_system(xml_filter)
+
+    def select_like_system(self, field, pattern):
+        xml_filter = {'field': field, 'pattern': pattern}
+        return self.orchestra.select_like_system(xml_filter)
 
     def deactivate_system(self, field, pattern):
         xml_filter = {'field': field, 'pattern': pattern}
