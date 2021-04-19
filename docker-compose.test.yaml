@@ -1,0 +1,34 @@
+version: "3.3"  # optional since v1.27.0
+
+services:
+  apiserver:
+    env_file:
+      - "apiserver/.env"
+    build:
+      context: "apiserver/"
+      dockerfile: "Dockerfile"
+    restart: always
+    ports:
+      - "9090:9090"
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:12.3-alpine
+    restart: always
+    env_file:
+      - "postgres/.env"
+    volumes:
+      - /var/lib/oimapi/test/pgdata:/var/lib/postgresql/data:z
+
+  pgadmin:
+    image: dpage/pgadmin4:4.23
+    restart: always
+    env_file:
+      - "pgadmin/.env"
+    ports:
+      - 15432:80
+    volumes:
+      - /var/lib/oimapi/test/pgadmin:/var/lib/pgadmin:Z
+    depends_on:
+      - postgres
