@@ -4,7 +4,7 @@ services:
   apiserver:
     env_file:
       - "apiserver/.env"
-    build: 
+    build:
       context: "apiserver/"
       dockerfile: "Dockerfile"
     restart: always
