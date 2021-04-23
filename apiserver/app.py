@@ -32,6 +32,9 @@ def load_openapis(connexion_app):
     # API parts not intended for customer use
     connexion_app.add_api('oimapi-private.yaml')
 
+    # Add the oim itsm api spec
+    connexion_app.add_api('oim_itsm.yaml')
+
 
 def create_connexion_app(config_name=None, dotenv_path=None,
                          dotenv_override=False):
