@@ -1,0 +1,51 @@
+openapi: "3.0.0"
+
+info:
+  title: "ITSM Calls - Baloise SIAM-SID"
+  version: "0.1"
+servers:
+  - url: /itsm/v0.1
+
+paths:
+  /change:
+    post:
+      summary: "Create Standard Change"
+      description: "Create a standard change"
+      operationId: itsm.calls_change.update_change
+      responses:
+        200:
+          description: "Creation succeeded"
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/update_change_response"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#components/schemas/update_change"
+components:
+  schemas:
+    update_change:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - CH_CLD
+        changeno:
+          type: string
+          example: "CH-0032554"
+        description:
+          type: string
+          example: "issue resolved"
+        supportgroup:
+          type: string
+          example: "hcl team 1"
+    update_change_response:
+      type: object
+      properties:
+        changestatus:
+          type: string
+        changeno:
+          type: string
