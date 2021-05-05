@@ -5,3 +5,4 @@ flask_unittest
 flask-sqlalchemy
 jmespath
 zeep
+requests
