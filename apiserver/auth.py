@@ -2,14 +2,14 @@ import os
 import secrets
 import time
 import connexion
-from connexion.decorators.security import validate_scope
-from connexion.exceptions import OAuthScopeProblem, OAuthProblem
+# from connexion.decorators.security import validate_scope
+# from connexion.exceptions import OAuthScopeProblem, OAuthProblem
 from oim_logging import get_oim_logger
 
 
 DEFAULT_TOKEN_LIFETIME = 3600
 
-# This is an absolutely minimal token storage. 
+# This is an absolutely minimal token storage.
 # TODO: Replace with DB (and cache)
 TOKEN_STORE = {}
 
@@ -25,7 +25,7 @@ def util_validate_token(query_token):
 
     query_token = str(query_token)
     log.debug('Validating token "{token}"'.format(token=query_token))
-    
+
     check_result = TOKEN_STORE.get(query_token, None)
     if check_result:
         expiry = check_result.get('expiry', 0)
@@ -78,7 +78,7 @@ def basic_auth(username, password, required_scopes=None):
     ldap_creds = check_ldap_creds(username, password)
     if ldap_creds:
         return {
-            'sub': username, 
+            'sub': username,
             'scope': '',  # Dummy, TODO: Implement scope mapping from LDAP
             }
 
@@ -103,12 +103,12 @@ def token_post():
 
     # Validate credentials
     validation_results = basic_auth(username=username, password=password, required_scopes=scope)
-    if not validate_scope:
+    if not validation_results:
         return 'Unauthorized', 401
 
     created_token = util_create_token(owner=username)
     token_info = util_get_token_info(created_token)
-    
+
     expires_in = int(token_info['expiry'] - time.time())
 
     if not created_token:
