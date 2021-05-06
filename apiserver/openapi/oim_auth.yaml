@@ -48,7 +48,7 @@ paths:
                 properties:
                   access_token:
                     type: string
-                    example: 4f4rftFEGWXGCDSRgcegDeGdcdCGt
+                    example: fxy-a0QzHJQRFzU4vZmQ9R2jACfyluHZOY_gaYDUd0c
                   token_type:
                     type: string
                     example: bearer
