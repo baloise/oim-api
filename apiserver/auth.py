@@ -2,8 +2,10 @@ import os
 import secrets
 import time
 import connexion
+from connexion.exceptions import Unauthorized, BadRequestProblem
 # from connexion.decorators.security import validate_scope
 # from connexion.exceptions import OAuthScopeProblem, OAuthProblem
+from werkzeug.exceptions import InternalServerError
 from oim_logging import get_oim_logger
 
 
@@ -65,10 +67,22 @@ def util_create_token(scope='', owner=''):
     return proposed_token
 
 
+# This function is used by x-bearerInfoProc to validate tokens
+def bearer_auth(token):
+    log = get_oim_logger()
+    log.debug('Validating token: {tok}'.format(tok=str(token)))
+    validation_result = util_validate_token(query_token=token)
+    if not validation_result:
+        raise Unauthorized
+    else:
+        return util_get_token_info(token)
+
+
 def check_ldap_creds(username, password):
     return True  # TODO: Implement LDAP
 
 
+# This function is used to verity username and password
 def basic_auth(username, password, required_scopes=None):
     # In debug and Test scenarios, allow auth skip with known params
     if os.getenv('DEBUG_SKIP_AUTH', '').lower() == 'true':
@@ -85,6 +99,7 @@ def basic_auth(username, password, required_scopes=None):
     return None  # Auth failed
 
 
+# This function is triggered by the /token POST from the API
 def token_post():
     log = get_oim_logger()
 
@@ -95,16 +110,17 @@ def token_post():
     scope = form_body.get('scope', '')
 
     if not grant_type or not username or not password:
-        return 'Bad request', 400
+        # return 'Bad request', 400
+        raise BadRequestProblem(detail='Missing one or more required inputs.')
 
     if not grant_type.lower() == 'password':
         log.error("Unsupported grant_type requested: {gt}".format(gt=grant_type))
-        return 'Unsupported grant_type', 400
+        raise BadRequestProblem(detail='The only supported grant_type is currently "password".')
 
     # Validate credentials
     validation_results = basic_auth(username=username, password=password, required_scopes=scope)
     if not validation_results:
-        return 'Unauthorized', 401
+        raise Unauthorized
 
     created_token = util_create_token(owner=username)
     token_info = util_get_token_info(created_token)
@@ -113,16 +129,10 @@ def token_post():
 
     if not created_token:
         log.error('Error creating a token for user {user}'.format(user=str(username)))
+        raise InternalServerError
+
     return {
         'access_token': created_token,
         'token_type': 'bearer',  # only this type is supported at this time
         'expires_in':  expires_in,
     }
-
-
-def token_post_dummy():
-    log = get_oim_logger()
-    log.debug('Request body:')
-    formbody = connexion.request.form
-    grant_type = formbody.get('grant_type')
-    log.debug('grant_type: {}'.format(grant_type))

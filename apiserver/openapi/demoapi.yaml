@@ -79,7 +79,7 @@ paths:
             $ref: "#components/schemas/teammember"
   /secret/usingapikey:
     get:
-      summary: Return secret string protected by a token
+      summary: Return secret string protected by a preshared, static token
       operationId: api.demo.get_secret
       responses:
         '200':
@@ -106,9 +106,26 @@ paths:
                 type: string
       security:
         - basic: ['secrets']
+  /secret/usingbearer:
+    get:
+      summary: Return secret string protected by a bearer token
+      operationId: api.demo.get_secret_bearer
+      responses:
+        '200':
+          description: secret response
+          content:
+            '*/*':
+              schema:
+                type: string
+      security:
+        - bearer_auth: []
 
 components:
   securitySchemes:
+    bearer_auth:
+      type: http
+      scheme: bearer
+      x-bearerInfoFunc: auth.bearer_auth
     api_key:
       type: apiKey
       name: X-Auth
