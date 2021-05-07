@@ -2,6 +2,8 @@ import os
 import secrets
 import time
 import connexion
+import sys
+from distutils.util import strtobool
 from connexion.exceptions import Unauthorized, BadRequestProblem
 # from connexion.decorators.security import validate_scope
 # from connexion.exceptions import OAuthScopeProblem, OAuthProblem
@@ -15,9 +17,25 @@ from string import Template
 
 DEFAULT_TOKEN_LIFETIME = 3600
 
+SCOPE_MAP = {
+    'subtree': ldap3.SUBTREE,
+    'base': ldap3.BASE,
+    'level': ldap3.LEVEL,
+}
+
 # This is an absolutely minimal token storage.
 # TODO: Replace with DB (and cache)
 TOKEN_STORE = {}
+
+
+def map_scope(text, default=ldap3.SUBTREE):
+    return SCOPE_MAP.get(str(text).lower(), default=default)
+
+
+def need_missing_var(varname):
+    log = get_oim_logger()
+    log.critical('Envvar {varname} not set. Aborting execution!'.format(varname=str(varname)))
+    sys.exit(3)
 
 
 def util_get_token_info(query_token):
@@ -100,19 +118,22 @@ def util_count_ldap_response_entries(response):
 def check_ldap_creds(username, password):
     log = get_oim_logger()
 
-    username = escape_rdn(username)  # as per ldap3 docs, usernames from untrusted sources must be escaped
+    untrusted_username = username
+    username = escape_rdn(untrusted_username)  # as per ldap3 docs, usernames from untrusted sources must be escaped
+    log.debug('Escaped username "{before}" to "{after}"'.format(before=untrusted_username, after=username))
 
     if username == '':  # Empty usernames are a no-go
         return False
 
-    ldap_host = os.getenv('LDAP_HOST')
+    ldap_host = os.getenv('LDAP_HOST') or need_missing_var('LDAP_HOST')
     ldap_port = os.getenv('LDAP_PORT', '389')
-    ldap_usessl = os.getenv('LDAP_USESSL', False)
-    ldap_base = os.getenv('LDAP_BASE')
-    ldap_login = os.getenv('LDAP_LOGIN')
-    ldap_password = os.getenv('LDAP_PASSWORD')
-    ldap_permitted_group = os.getenv('LDAP_PERMITTED_GROUP')
-    ldap_scope_user = os.getenv('LDAP_SCOPE_USER')
+    ldap_usessl = os.getenv('LDAP_USESSL', 'false')
+    ldap_usessl = bool(strtobool(ldap_usessl))
+    ldap_base = os.getenv('LDAP_BASE') or need_missing_var('LDAP_BASE')
+    ldap_login = escape_rdn(os.getenv('LDAP_LOGIN'))
+    ldap_password = os.getenv('LDAP_PASSWORD', '')
+    ldap_permitted_group = os.getenv('LDAP_PERMITTED_GROUP') or need_missing_var('LDAP_PERMITTED_GROUP')
+    ldap_scope_user = os.getenv('LDAP_SCOPE_USER', 'SUBTREE')
     def_tpl = '(&(objectclass=user)(|(cn=$user)(samaccountname=$user)(mail=$user))(memberOf=$group))'
     ldap_filter_user_tpl = os.getenv('LDAP_FILTER_USER', def_tpl)
     ldap_username_attribs = os.getenv('LDAP_USERNAME_ATTRIBS', 'cn,samaccountname,mail')
@@ -121,8 +142,8 @@ def check_ldap_creds(username, password):
     try:
         ldap_filter_user_tpl = Template(ldap_filter_user_tpl)
         ldap_filter_user = ldap_filter_user_tpl.safe_substitute(user=username, group=ldap_permitted_group)
-    except ValueError:
-        log.critical('Error parsing the ldap filter templates. Make sure to escape properly!')
+    except ValueError as exc:
+        log.critical('Error parsing the ldap filter templates. Make sure to escape properly!', exc_info=exc)
         return False
 
     try:
@@ -141,8 +162,8 @@ def check_ldap_creds(username, password):
             auto_range=True,
             read_only=True
         )
-    except LDAPException:
-        log.error('Error connecting to LDAP.')
+    except LDAPException as exc:
+        log.error('Error connecting to LDAP.', exc_info=exc)
         return False
 
     log.debug('LDAP connection successful')
@@ -152,7 +173,7 @@ def check_ldap_creds(username, password):
     status, result, response, _ = conn.search(
         search_base=ldap_base,
         search_filter=ldap_filter_user,
-        search_scope=ldap_scope_user,
+        search_scope=map_scope(ldap_scope_user),
         attributes=ldap3.ALL_ATTRIBUTES,  # TODO: Reduce this to the needed attribs only
     )
 
