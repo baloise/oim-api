@@ -26,6 +26,8 @@ paths:
                 grant_type:
                   description: Type of grant. Only the literal value 'password' supported currently
                   type: string
+                  enum:
+                    - password
                   example: password
                 username:
                   description: username
