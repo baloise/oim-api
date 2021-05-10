@@ -4,7 +4,7 @@ info:
   title: "Authenication calls"
   version: "0.1"
 servers:
-  - url: /auth/v0.1
+  - url: /auth/v1.0
 
 paths:
   /token:
@@ -49,6 +49,7 @@ paths:
                   access_token:
                     type: string
                     example: fxy-a0QzHJQRFzU4vZmQ9R2jACfyluHZOY_gaYDUd0c
+                    description: The example may not be an indication of actual length. Be sure to allow for <256char length.
                   token_type:
                     type: string
                     example: bearer
