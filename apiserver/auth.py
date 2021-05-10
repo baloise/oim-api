@@ -164,6 +164,8 @@ def check_ldap_creds(username, password):
         )
     except LDAPException as exc:
         log.error('Error connecting to LDAP.', exc_info=exc)
+        if conn:
+            conn.unbind()
         return False
 
     log.debug('LDAP connection successful')
@@ -179,6 +181,8 @@ def check_ldap_creds(username, password):
 
     if util_count_ldap_response_entries(response=response) < 1:
         log.info('LDAP search did not yield any satisfying results')
+        if conn:
+            conn.unbind()
         return False
 
     # Verify that the correct user was found by the ldap query
@@ -194,6 +198,8 @@ def check_ldap_creds(username, password):
 
     if not user_found:
         log.debug('Could not locate use in full LDAP response... Did the LDAP search lie to us?!')
+        if conn:
+            conn.unbind()
         return False
 
     #####
@@ -201,13 +207,20 @@ def check_ldap_creds(username, password):
     try:
         if not conn.rebind(user=username, password=password):
             log.info('Invalid credentials supplied.')
+            if conn:
+                conn.unbind()
             return False
     except LDAPException:
         log.exception('LDAP Exception, cannot verify login.')
+        if conn:
+            conn.unbind()
         return False
     #####
     # END
     # If we reached this point, we checked the user existance, group membership and password.
+    if conn:
+        conn.unbind()
+
     return True
 
 
