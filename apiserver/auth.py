@@ -211,7 +211,7 @@ def check_ldap_creds(username, password):
     return True
 
 
-# This function is used to verity username and password
+# This function is used to verify username and password
 def basic_auth(username, password, required_scopes=None):
     # In debug and Test scenarios, allow auth skip with known params
     if os.getenv('DEBUG_SKIP_AUTH', '').lower() == 'true':
