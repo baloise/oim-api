@@ -1,0 +1,73 @@
+openapi: "3.0.0"
+
+info:
+  title: "Authenication calls"
+  version: "1.0"
+servers:
+  - url: /auth/v1.0
+
+paths:
+  /token:
+    post:
+      summary: Request creation of new authentication token
+      tags:
+        - auth
+      operationId: auth.token_post
+      requestBody:
+        content:
+          "application/x-www-form-urlencoded":
+            schema:
+              type: object
+              required:
+                - grant_type
+                - username
+                - password
+              properties:
+                grant_type:
+                  description: Type of grant. Only the literal value 'password' supported currently
+                  type: string
+                  enum:
+                    - password
+                  example: password
+                username:
+                  description: username
+                  type: string
+                  example: johndoe
+                password:
+                  description: password
+                  type: string
+                  example: hunter2
+      responses:
+        200:
+          description: Token created
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - access_token
+                  - token_type
+                properties:
+                  access_token:
+                    type: string
+                    example: fxy-a0QzHJQRFzU4vZmQ9R2jACfyluHZOY_gaYDUd0c
+                    description: The example may not be an indication of actual length. Be sure to allow for <256char length.
+                  token_type:
+                    type: string
+                    example: bearer
+                  expires_in:
+                    type: integer
+                    example: 3600
+                  refresh_token:
+                    type: string
+                    description: Not yet implemented
+                  scope:
+                    type: string
+                    description: Not yet implemented. Only given if different than requested scope.
+        401:
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Unauthorized

@@ -6,3 +6,4 @@ flask-sqlalchemy
 jmespath
 zeep
 requests
+ldap3

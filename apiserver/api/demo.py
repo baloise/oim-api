@@ -104,3 +104,7 @@ def get_secret(user) -> str:
 
 def get_secret_basicauth(user) -> str:
     return "You are {user} and the secret is 'wbevuec'".format(user=user)
+
+
+def get_secret_bearer(user, token_info) -> str:
+    return "You are {user} and the secret is 'Blubb'. Token information is '{ti}'".format(user=user, ti=token_info)

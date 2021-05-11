@@ -17,6 +17,9 @@ def load_openapis(connexion_app):
     # you can specify variables to be filled as shown with the arguments parameter below
     connexion_app.add_api('olddemo.yaml', arguments={'title': 'OpenAPI Demo of an older API version'})
 
+    # Authentication api
+    connexion_app.add_api('oim_auth.yaml')
+
     # Add the oim test api spec
     connexion_app.add_api('oimtest.yaml')
 
