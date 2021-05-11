@@ -23,7 +23,6 @@ WORKDIR /code
 RUN \
   touch /tmp/.env.build && \
   export $(grep -v '^#' /tmp/.env.build | xargs -0) && \
-  echo "Proxy is $http_proxy" && \
   pip install -r requirements.txt && \
   rm -f /tmp/.env.build /code/.env.build
 
