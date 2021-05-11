@@ -29,7 +29,7 @@ TOKEN_STORE = {}
 
 
 def map_scope(text, default=ldap3.SUBTREE):
-    return SCOPE_MAP.get(str(text).lower(), default=default)
+    return SCOPE_MAP.get(str(text).lower(), default)
 
 
 def need_missing_var(varname):
@@ -126,7 +126,7 @@ def check_ldap_creds(username, password):
         return False
 
     ldap_host = os.getenv('LDAP_HOST') or need_missing_var('LDAP_HOST')
-    ldap_port = os.getenv('LDAP_PORT', '389')
+    ldap_port = int(os.getenv('LDAP_PORT', '389'))
     ldap_usessl = os.getenv('LDAP_USESSL', 'false')
     ldap_usessl = bool(strtobool(ldap_usessl))
     ldap_base = os.getenv('LDAP_BASE') or need_missing_var('LDAP_BASE')
