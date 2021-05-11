@@ -164,8 +164,6 @@ def check_ldap_creds(username, password):
         )
     except LDAPException as exc:
         log.error('Error connecting to LDAP.', exc_info=exc)
-        if conn:
-            conn.unbind()
         return False
 
     log.debug('LDAP connection successful')
