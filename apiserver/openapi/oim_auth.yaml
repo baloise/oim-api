@@ -66,8 +66,4 @@ paths:
                     description: Not yet implemented. Only given if different than requested scope.
         401:
           description: Unauthorized
-          content:
-            text/plain:
-              schema:
-                type: string
-                example: Unauthorized
+
