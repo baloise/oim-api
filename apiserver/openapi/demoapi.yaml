@@ -117,6 +117,8 @@ paths:
             '*/*':
               schema:
                 type: string
+        '401':
+          description: Unauthorized
       security:
         - bearer_auth: []
 
