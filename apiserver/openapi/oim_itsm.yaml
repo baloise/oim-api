@@ -9,8 +9,8 @@ servers:
 paths:
   /change:
     post:
-      summary: "Create Standard Change"
-      description: "Create a standard change"
+      summary: "Update Standard Change"
+      description: "Update a standard change"
       operationId: itsm.calls_change.update_change
       responses:
         200:
@@ -29,19 +29,38 @@ components:
     update_change:
       type: object
       properties:
+        changeno:
+          type: string
+          pattern: "^CH-[0-9]{7}$"
+          example: "CH-0032554"
         status:
           type: string
           enum:
             - CH_CLD
-        changeno:
+            - CH_IMPF
+        taskname:
           type: string
-          example: "CH-0032554"
+          example: "Task #5"
         description:
           type: string
-          example: "issue resolved"
+          example: "failed and not complete"
         supportgroup:
           type: string
-          example: "hcl team 1"
+          pattern: "[^@ \t\r\n]+@[^@ \t\r\n]+\\.[^@ \t\r\n]+"
+          example: "group.foo@foo.com"
+      example: >
+        {
+          "items": [
+            {
+              "changeno": "CH-0000016",
+              "status": "CH_IMPF",
+              "taskname": "Task #7",
+              "description": "Error on playbook need investigated !",
+              "supportgroup": "group.foo@foo.com"
+            }
+          ]
+        }
+
     update_change_response:
       type: object
       properties:
