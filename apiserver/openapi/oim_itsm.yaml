@@ -24,7 +24,14 @@ paths:
           application/json:
             schema:
               $ref: "#components/schemas/update_change"
+      security:
+        - bearer_auth: []
 components:
+  securitySchemes:
+    bearer_auth:
+      type: http
+      scheme: bearer
+      x-bearerInfoFunc: auth.bearer_auth
   schemas:
     update_change:
       type: object
@@ -50,15 +57,11 @@ components:
           example: "group.foo@foo.com"
       example: >
         {
-          "items": [
-            {
-              "changeno": "CH-0000016",
-              "status": "CH_IMPF",
-              "taskname": "Task #7",
-              "description": "Error on playbook need investigated !",
-              "supportgroup": "group.foo@foo.com"
-            }
-          ]
+          "changeno": "CH-0000016",
+          "status": "CH_IMPF",
+          "taskname": "Task #7",
+          "description": "Error on playbook need investigated !",
+          "supportgroup": "group.foo@foo.com"
         }
 
     update_change_response:

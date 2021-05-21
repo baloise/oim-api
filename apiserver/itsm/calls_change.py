@@ -8,8 +8,8 @@ def update_change(body):
     mydescription = body.get("description")
     mysupportgroup = body.get("supportgroup")
 
-    info = "Update change : {stat}{tck}{desc}{supg}".format(stat=mystatus, tck=myticketno, desc=mydescription,
-                                                            supg=mysupportgroup)
+    info = "Update change : {stat}, {tck}, {desc}, {supg}".format(stat=mystatus, tck=myticketno, desc=mydescription,
+                                                                  supg=mysupportgroup)
     logger.info(info)
 
     retStr = {"changeno": myticketno, "changestatus": mystatus}
