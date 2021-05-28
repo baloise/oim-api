@@ -1,7 +1,7 @@
 openapi: "3.0.0"
 
 info:
-  title: "Authenication calls"
+  title: "Authentication calls"
   version: "1.0"
 servers:
   - url: /auth/v1.0
