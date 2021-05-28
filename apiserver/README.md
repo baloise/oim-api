@@ -1,6 +1,6 @@
 # apiserver
 
-![apiserverCI](https://github.com/vangual/oimapi/workflows/apiserverCI/badge.svg)
+![apiserverCI](https://github.com/baloise/oimapi/workflows/apiserverCI/badge.svg)
 
 - [apiserver](#apiserver)
   - [Development environment](#development-environment)
