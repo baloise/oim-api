@@ -15,7 +15,7 @@ def load_openapis(connexion_app):
 
     # add_api() pipes the yaml spec thru the Jinja2 template engine before loading,
     # you can specify variables to be filled as shown with the arguments parameter below
-    connexion_app.add_api('olddemo.yaml', arguments={'title': 'OpenAPI Demo of an older API version'})
+    # connexion_app.add_api('olddemo.yaml', arguments={'title': 'OpenAPI Demo of an older API version'})
 
     # Authentication api
     connexion_app.add_api('oim_auth.yaml')
@@ -37,6 +37,9 @@ def load_openapis(connexion_app):
 
     # Add the oim itsm api spec
     connexion_app.add_api('oim_itsm.yaml')
+
+    # Customer-facing API
+    connexion_app.add_api('oimapi-v0.8.yaml')
 
 
 def create_connexion_app(config_name=None, dotenv_path=None,
