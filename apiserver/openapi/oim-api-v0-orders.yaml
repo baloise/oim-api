@@ -1,0 +1,468 @@
+openapi: "3.0.0"
+
+info:
+  title: OneIT Marketplace orders
+  version: "0.9.0"
+servers:
+  - url: /v0/orders
+
+paths:
+  /{id}:
+    get:
+      summary: "show the order status"
+      description: "is used to display the basic order status"
+      operationId: api.calls_phs.order_get
+      responses:
+        200:
+          description: "order status"
+        404:
+          description: "Specified order not found"
+      parameters:
+        - name: id
+          in: path
+          description: "the orderid from the original order"
+          required: true
+          schema:
+            type: string
+            example: "order123"
+
+  /{id}/details:
+    get:
+      summary: "show the order details"
+      description: "is made to display the order details"
+      operationId: api.calls_phs.order_get_detail
+      tags:
+        - orders
+      responses:
+        200:
+          description: "order details"
+        404:
+          description: "Specified order not found"
+      parameters:
+        - name: id
+          in: path
+          description: "the orderid from the original order"
+          required: true
+          schema:
+            type: string
+            example: "order123"
+#
+# Do NOT edit the components section in this file!
+# Instead edit the include file named on the following line and this file.
+# STARTINCLUDE:oim-api-v0-components.inc
+
+components:
+  schemas:
+    order-database:
+      type: object
+      properties:
+        database-name:
+          type: string
+          example: "DB01"
+        database-user:
+          type: string
+          example: "L000001"
+        database-rolls:
+          type: string
+          example: "baloise-devops"
+        database-platform:
+          type: string
+          enum:
+            - shared
+            - dedicated
+          example: "dedicated"
+        requester-id:
+          $ref: "#/components/schemas/user-id"
+          example: "b000001"
+        requester-mail:
+          $ref: "#/components/schemas/user-mail"
+          example: "the.requester@fake.example"  # This seems to be ignored
+        database-info:
+          $ref: "#/components/schemas/dbitem"
+        order-info:  # This needs to be dereferenced! TODO
+          type: array
+          items:
+            $ref: "#/components/schemas/order-common"
+      # example: >
+      #   {
+      #     "items": [
+      #       {
+      #         "database-name": "DB01",
+      #         "database-user": "L000001",
+      #         "database-rolls": "baloise-devops",
+      #         "database-platform": "shared",
+      #         "deputy-id": "b123456",
+      #         "deputy-mail": "b123456@js.on",
+      #         "owner-id": "b123456",
+      #         "owner-mail": "b123456@js.on",
+      #         "sbu": "CH-BCH",
+      #         "catalog-reference": "PGSQL01",
+      #         "size": "S1",
+      #         "role": "APP",
+      #         "metal-category": "Basic",
+      #         "environment": "Test",
+      #         "application-id": "_A01",
+      #         "security-zone": "_Z1",
+      #         "group-permissions": [
+      #           { 
+      #             "ad-group-name": "f_adm",
+      #             "local-group-name": "Power User"
+      #           }
+      #         ],
+      #           "data-disk": {
+      #           "filesystem": "/data",
+      #           "size-gb": 1
+      #         }
+      #       }
+      #     ],
+      #     "requester-id": "b123456"
+      #   }
+
+    listdatabase:
+      type: object
+      properties:
+        filter:
+          type: string
+          description: "Allows limitation of list result"
+          default: ".*"
+          example: "DB*"
+        limit:
+          type: integer
+          description: "Limit the list of elements"
+          default: 10
+          example: "50"
+      # example: >
+      #   {
+      #     "items": [
+      #       {
+      #         "filter": "DB*",
+      #         "limit": 5
+      #       }
+      #     ]
+      #   }
+    virtual-machine-list-response:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/vmitem"
+    order:
+      type: object
+      properties:
+        requester-id:
+          $ref: "#/components/schemas/user-id"
+        requester-mail:
+          $ref: "#/components/schemas/user-mail"
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/order-common"
+    order-common:
+      type: object
+      properties:
+        allOf:
+          oneOf:
+            - $ref: "#/components/schemas/vmitem"
+        owner-id:
+          $ref: "#/components/schemas/user-id"
+        owner-mail:
+          $ref: "#/components/schemas/user-mail"
+        deputy-id:
+          $ref: "#/components/schemas/user-id"
+        deputy-mail:
+          $ref: "#/components/schemas/user-mail"
+        sbu:
+          $ref: "#/components/schemas/sbu"
+    dbitem:
+      type: object
+      properties:
+        catalog-reference:
+          oneOf:
+            - $ref: "#/components/schemas/db.pg.catalog-reference"
+        size:
+          $ref: "#/components/schemas/size"
+        metal-category:
+          $ref: "#/components/schemas/metal-category"
+        environment:
+          $ref: "#/components/schemas/environment"
+        security-zone:
+          $ref: "#/components/schemas/security-zone"
+      # example: >
+      #   {
+      #     "catalog-reference": "PGSQL01",
+      #     "size": "S1",
+      #     "metal-category": "Basic",
+      #     "environment": "Test",
+      #     "security-zone": "_Z1"
+      #   }
+    vmitem:
+      type: object
+      properties:
+        catalog-reference:
+          oneOf:
+            - $ref: "#/components/schemas/vm.lin.catalog-reference"
+            - $ref: "#/components/schemas/vm.win.catalog-reference"
+        size:
+          $ref: "#/components/schemas/size"
+        role:
+          $ref: "#/components/schemas/role"
+        metal-category:
+          $ref: "#/components/schemas/metal-category"
+        environment:
+          $ref: "#/components/schemas/environment"
+        application-id:
+          $ref: "#/components/schemas/application-id"
+        security-zone:
+          $ref: "#/components/schemas/security-zone"
+        group-permissions:
+          $ref: "#/components/schemas/group-permissions"
+    size:
+      type: string
+      enum:
+        - S1
+        - M1
+        - M2
+        - L1
+        - L2
+        - X1
+      example: "S1"
+    db.pg.catalog-reference:
+      type: string
+      enum:
+        - PGSQL01
+        - PGSQL02
+        - PGSQL03
+        - PGSQL04
+      example: "PGSQL01"
+    vm.lin.catalog-reference:
+      type: string
+      enum:
+        - VL01
+        - VL02
+      example: "VL01"
+    vm.win.catalog-reference:
+      type: string
+      enum:
+        - VW01
+        - VW02
+      example: "VW01"
+    role:
+      type: string
+      enum:
+        - APP
+        - WEB
+        - DB
+      example: "APP"
+    metal-category:
+        type: string
+        enum:
+          - Basic
+          - Advanced
+          - Premium
+          - Elite
+        example: "Basic"
+    application-id:
+      type: string
+      description: "4-letter-max identifier of associated service."
+      example: "exmp"
+    group-permissions:
+      type: array
+      items:
+        $ref: "#/components/schemas/permission-map"
+
+    jboss-order:
+      type: object
+      properties:
+        requester-id:
+          $ref: "#/components/schemas/user-id"
+        sbu:
+          $ref: "#/components/schemas/sbu"
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/jboss-order-item"
+    jboss-order-item:
+      type: object
+      properties:
+        catalog-reference:
+          $ref: "#/components/schemas/jboss-catalog-reference"
+        # version:
+        #   $ref: "#/components/schemas/jboss-version"
+        size:
+          $ref: "#/components/schemas/jboss-size"
+        metal-category:
+          $ref: "#/components/schemas/metal-category"
+        environment:
+          $ref: "#/components/schemas/environment"
+        security-zone:
+          $ref: "#/components/schemas/security-zone"
+        owner-id:
+          $ref: "#/components/schemas/user-id"
+        deputy-id:
+          $ref: "#/components/schemas/user-id"
+        group-permissions:
+          type: array
+          items:
+            $ref: "#/components/schemas/permission-map"
+        data-disk:
+          $ref: "#/components/schemas/data-disk-linux"
+    jboss-catalog-reference:
+      type: string
+      enum:
+        - JBSL01
+        - JBSL02
+        - JBSL03
+    # jboss-version:
+    #   type: number
+    #   enum:
+    #     - 7.1
+    #     - 7.2
+    #     - 7.3
+    jboss-size:
+      type: string
+      enum:
+        - S1
+        - M1
+        - M2
+        - L1
+        - L2
+        - X1
+
+    vm-order:
+      type: object
+      properties:
+        requester-id:
+          $ref: "#/components/schemas/user-id"
+        sbu:
+          $ref: "#/components/schemas/sbu"
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/vm-order-item"
+    vm-order-item:
+      oneOf:
+        - $ref: "#/components/schemas/vm-specifics-linux"
+        - $ref: "#/components/schemas/vm-specifics-windows"
+      type: object
+      properties:
+        role:
+          $ref: "#/components/schemas/virtual-machine-role"
+        size:
+          $ref: "#/components/schemas/virtual-machine-size"
+        metal-category:
+          $ref: "#/components/schemas/metal-category"
+        environment:
+          $ref: "#/components/schemas/environment"
+        security-zone:
+          $ref: "#/components/schemas/security-zone"
+        owner-id:
+          $ref: "#/components/schemas/user-id"
+        deputy-id:
+          $ref: "#/components/schemas/user-id"
+        group-permissions:
+          type: array
+          items:
+            $ref: "#/components/schemas/permission-map"
+    virtual-machine-role:
+      type: string
+      enum:
+        - APP
+        - WEB
+        - DB
+    vm-specifics-linux:
+      type: object
+      properties:
+        data-disk:
+          $ref: "#/components/schemas/data-disk-linux"
+        catalog-reference:
+          $ref: "#/components/schemas/vm.lin.catalog-reference"
+    vm-specifics-windows:
+      type: object
+      properties:
+        data-disk:
+          $ref: "#/components/schemas/data-disk-windows"
+        catalog-reference:
+          $ref: "#/components/schemas/vm.win.catalog-reference"
+    virtual-machine-size:
+      type: string
+      enum:
+        - S1
+        - M1
+        - M2
+        - L1
+        - L2
+        - X1
+    disk-size-gb:
+      type: integer
+      minimum: 1
+      example: 20
+    data-disk-linux:
+      type: object
+      required:
+        - filesystem
+        - size-gb
+      properties:
+        filesystem:
+          type: string
+          pattern: "^(?!/boot|/dev|/dev/.*|/run$)/.*$"
+          example: "/opt/myapp"
+        size-gb:
+          $ref: "#/components/schemas/disk-size-gb"
+    data-disk-windows:
+      type: object
+      required:
+        - filesystem
+        - size-gb
+      properties:
+        filesystem:
+          type: string
+          pattern: "^[d-zD-Z]:$"
+          example: "D:"
+        size-gb:
+          $ref: "#/components/schemas/disk-size-gb"
+    permission-map:
+      type: object
+      required:
+        - ad-group-name
+        - local-group-name
+      properties:
+        ad-group-name:
+          type: string
+        local-group-name:
+          type: string
+    user-id:
+      type: string
+      pattern: "^[a-zA-Z][0-9]{6}$"
+    user-mail:
+      type: string
+      pattern: "[^@ \t\r\n]+@[^@ \t\r\n]+\\.[^@ \t\r\n]+"
+    sbu:
+      type: string
+      enum: 
+        - BE
+        - CH-BCH
+        - CH-SOB
+        - DE
+        - LI
+        - LU-RED
+        - LU-YELLOW
+        - SHARED
+      example: "CH-BCH"
+    environment:
+        type: string
+        enum:
+          - Dev
+          - Test
+          - Int
+          - Acc
+          - Prod
+        example: "Test"
+    security-zone:
+      type: string
+      enum:
+        - PROD
+        - PRODR
+        - NPROD
+        - NPRODR
+      example: "NPROD"

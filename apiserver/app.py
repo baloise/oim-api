@@ -39,7 +39,9 @@ def load_openapis(connexion_app):
     connexion_app.add_api('oim_itsm.yaml')
 
     # Customer-facing API
-    connexion_app.add_api('oimapi-v0.8.yaml')
+    connexion_app.add_api('oim-api-v0-orders.yaml')
+    connexion_app.add_api('oim-api-v0-virtual-machines.yaml')
+    connexion_app.add_api('oim-api-v0-postgresql-databases.yaml')
 
 
 def create_connexion_app(config_name=None, dotenv_path=None,
