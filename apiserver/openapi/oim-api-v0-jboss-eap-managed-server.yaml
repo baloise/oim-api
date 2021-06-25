@@ -1,10 +1,11 @@
 openapi: "3.0.0"
 
 info:
-  title: OneIT Marketplace jboss-middleware
+  title: OneIT Marketplace jboss-eap-managed-server
   version: "0.9.0"
 servers:
-  - url: /v0/jboss-middleware
+  - url: /v0/jboss-eap-managed-server
+  - url: /v0/jboss-eap
 
 paths:
   /:
@@ -51,6 +52,7 @@ paths:
 # Do NOT edit the components section in this file!
 # Instead edit the include file named on the following line and this file.
 # STARTINCLUDE:oim-api-v0-components.inc
+
 
 components:
   schemas:
@@ -100,7 +102,7 @@ components:
       #         "catalog-reference": "PGSQL01",
       #         "size": "S1",
       #         "role": "APP",
-      #         "metal-category": "Basic",
+      #         "service-level": "Basic",
       #         "environment": "Test",
       #         "application-id": "_A01",
       #         "security-zone": "_Z1",
@@ -183,8 +185,8 @@ components:
             - $ref: "#/components/schemas/db.pg.catalog-reference"
         size:
           $ref: "#/components/schemas/size"
-        metal-category:
-          $ref: "#/components/schemas/metal-category"
+        service-level:
+          $ref: "#/components/schemas/service-level"
         environment:
           $ref: "#/components/schemas/environment"
         security-zone:
@@ -193,7 +195,7 @@ components:
       #   {
       #     "catalog-reference": "PGSQL01",
       #     "size": "S1",
-      #     "metal-category": "Basic",
+      #     "service-level": "Basic",
       #     "environment": "Test",
       #     "security-zone": "_Z1"
       #   }
@@ -208,10 +210,12 @@ components:
           $ref: "#/components/schemas/size"
         role:
           $ref: "#/components/schemas/role"
-        metal-category:
-          $ref: "#/components/schemas/metal-category"
+        service-level:
+          $ref: "#/components/schemas/service-level"
         environment:
           $ref: "#/components/schemas/environment"
+        maintenance-window:
+          $ref: "#/components/schemas/maintenance-window"
         application-id:
           $ref: "#/components/schemas/application-id"
         security-zone:
@@ -226,7 +230,9 @@ components:
         - M2
         - L1
         - L2
+        - L3
         - X1
+        - X2
       example: "S1"
     db.pg.catalog-reference:
       type: string
@@ -255,7 +261,7 @@ components:
         - WEB
         - DB
       example: "APP"
-    metal-category:
+    service-level:
         type: string
         enum:
           - Basic
@@ -271,7 +277,10 @@ components:
       type: array
       items:
         $ref: "#/components/schemas/permission-map"
-
+    maintenance-window:
+      type: string
+      pattern: "^W[1-4]-[A-Z]{2}-[0-9]{4}$"
+      example: "W1-TH-2000"
     jboss-order:
       type: object
       properties:
@@ -292,8 +301,8 @@ components:
         #   $ref: "#/components/schemas/jboss-version"
         size:
           $ref: "#/components/schemas/jboss-size"
-        metal-category:
-          $ref: "#/components/schemas/metal-category"
+        service-level:
+          $ref: "#/components/schemas/service-level"
         environment:
           $ref: "#/components/schemas/environment"
         security-zone:
@@ -337,10 +346,8 @@ components:
           $ref: "#/components/schemas/user-id"
         sbu:
           $ref: "#/components/schemas/sbu"
-        items:
-          type: array
-          items:
-            $ref: "#/components/schemas/vm-order-item"
+        vm-definition:
+          $ref: "#/components/schemas/vm-order-item"
     vm-order-item:
       oneOf:
         - $ref: "#/components/schemas/vm-specifics-linux"
@@ -351,8 +358,8 @@ components:
           $ref: "#/components/schemas/virtual-machine-role"
         size:
           $ref: "#/components/schemas/virtual-machine-size"
-        metal-category:
-          $ref: "#/components/schemas/metal-category"
+        service-level:
+          $ref: "#/components/schemas/service-level"
         environment:
           $ref: "#/components/schemas/environment"
         security-zone:
@@ -361,10 +368,6 @@ components:
           $ref: "#/components/schemas/user-id"
         deputy-id:
           $ref: "#/components/schemas/user-id"
-        group-permissions:
-          type: array
-          items:
-            $ref: "#/components/schemas/permission-map"
     virtual-machine-role:
       type: string
       enum:
@@ -374,17 +377,29 @@ components:
     vm-specifics-linux:
       type: object
       properties:
-        data-disk:
-          $ref: "#/components/schemas/data-disk-linux"
+        data-disks:
+          type: array
+          items: 
+            $ref: "#/components/schemas/data-disk-linux"
         catalog-reference:
           $ref: "#/components/schemas/vm.lin.catalog-reference"
+        group-permissions:
+          type: array
+          items:
+            $ref: "#/components/schemas/permission-map"
     vm-specifics-windows:
       type: object
       properties:
-        data-disk:
-          $ref: "#/components/schemas/data-disk-windows"
+        data-disks:
+          type: array
+          items:
+            $ref: "#/components/schemas/data-disk-windows"
         catalog-reference:
           $ref: "#/components/schemas/vm.win.catalog-reference"
+        group-permissions:
+          type: array
+          items:
+            $ref: "#/components/schemas/permission-map-windows"
     virtual-machine-size:
       type: string
       enum:
@@ -397,6 +412,7 @@ components:
     disk-size-gb:
       type: integer
       minimum: 1
+      maximum: 999
       example: 20
     data-disk-linux:
       type: object
@@ -418,7 +434,7 @@ components:
       properties:
         filesystem:
           type: string
-          pattern: "^[d-zD-Z]:$"
+          pattern: "^[^d-fD-Fh-wH-WzZ]:$"
           example: "D:"
         size-gb:
           $ref: "#/components/schemas/disk-size-gb"
@@ -432,6 +448,21 @@ components:
           type: string
         local-group-name:
           type: string
+    permission-map-windows:
+      type: object
+      required:
+        - ad-group-name
+        - local-group-name
+      properties:
+        ad-group-name:
+          type: string
+        local-group-name:
+          type: string
+          enum:
+            - "Administrators"
+            - "Power Users"
+            - "Remote Desktop Users"
+            - "Users"
     user-id:
       type: string
       pattern: "^[a-zA-Z][0-9]{6}$"
