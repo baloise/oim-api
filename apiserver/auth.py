@@ -206,10 +206,9 @@ def check_ldap_creds(username, password):
     #####
     # STEP Verify credentials by trying a re-bind
     try:
-        rebind_result = conn.rebind(user=username, password=password)
-        log.debug('Raw conn after rebind: '+pformat(conn))
-        log.debug('Rebind result: '+pformat(rebind_result))
-        if not rebind_result:
+        rebind_status, rebind_result, rebind_response, _ = conn.rebind(user=username, password=password)
+        log.debug('Rebind-status: '+pformat(rebind_status))
+        if not rebind_status:
             log.info('Invalid credentials supplied.')
             if conn:
                 conn.unbind()
