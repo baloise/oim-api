@@ -13,6 +13,7 @@ import ldap3
 from ldap3.core.exceptions import LDAPException
 from ldap3.utils.dn import escape_rdn
 from string import Template
+from pprint import pformat
 
 
 DEFAULT_TOKEN_LIFETIME = 3600
@@ -199,15 +200,22 @@ def check_ldap_creds(username, password):
         if conn:
             conn.unbind()
         return False
+    else:
+        log.debug('User located in full LDAP response.')
 
     #####
     # STEP Verify credentials by trying a re-bind
     try:
-        if not conn.rebind(user=username, password=password):
+        rebind_result = conn.rebind(user=username, password=password)
+        log.debug('Raw conn after rebind: '+pformat(conn))
+        log.debug('Rebind result: '+pformat(rebind_result))
+        if not rebind_result:
             log.info('Invalid credentials supplied.')
             if conn:
                 conn.unbind()
             return False
+        else:
+            log.info('Rebind successful for user: "{usr}"'.format(usr=str(username)))
     except LDAPException:
         log.exception('LDAP Exception, cannot verify login.')
         if conn:
@@ -219,6 +227,7 @@ def check_ldap_creds(username, password):
     if conn:
         conn.unbind()
 
+    log.debug('Reached the positive end of the decision.')
     return True
 
 
