@@ -4,7 +4,7 @@ import time
 import connexion
 import sys
 from distutils.util import strtobool
-from connexion.exceptions import Unauthorized, BadRequestProblem
+from connexion.exceptions import BadRequestProblem, OAuthProblem
 # from connexion.decorators.security import validate_scope
 # from connexion.exceptions import OAuthScopeProblem, OAuthProblem
 from werkzeug.exceptions import InternalServerError
@@ -95,7 +95,7 @@ def bearer_auth(token):
     log.debug('Validating token: {tok}'.format(tok=str(token)))
     validation_result = util_validate_token(query_token=token)
     if not validation_result:
-        raise Unauthorized
+        raise OAuthProblem('Invalid token')
     else:
         return util_get_token_info(token)
 
@@ -260,7 +260,10 @@ def token_post():
     # Validate credentials
     validation_results = basic_auth(username=username, password=password, required_scopes=scope)
     if not validation_results:
-        raise Unauthorized
+        log.debug('Call to basic_auth returned false, outputting invalid_grant')
+        # raise Unauthorized
+        return {'error': 'invalid_grant'}, 400
+    log.debug('Call to basic_auth returned positive, creating token....')
 
     created_token = util_create_token(owner=username)
     token_info = util_get_token_info(created_token)
@@ -271,6 +274,7 @@ def token_post():
         log.error('Error creating a token for user {user}'.format(user=str(username)))
         raise InternalServerError
 
+    log.debug('Token created, outputting.')
     return {
         'access_token': created_token,
         'token_type': 'bearer',  # only this type is supported at this time
