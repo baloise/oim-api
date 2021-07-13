@@ -1,7 +1,6 @@
 # This file only contains random hello-world-grade functions so
 # that the demo api endpoints actually do something.
-from connexion.exceptions import OAuthProblem, OAuthScopeProblem
-from connexion.decorators.security import validate_scope
+from connexion.exceptions import OAuthProblem
 from api.OrderHandlerTester import OrderHandler
 
 
@@ -87,13 +86,6 @@ def basic_auth(username, password, required_scopes=None):
     else:
         # optional: raise exception for custom error response
         return None
-
-    # optional
-    if required_scopes is not None and not validate_scope(required_scopes, info['scope']):
-        raise OAuthScopeProblem(description='Provided user doesn\'t have the required access rights',
-                                required_scopes=required_scopes,
-                                token_scopes=info['scope']
-                                )
 
     return info
 
