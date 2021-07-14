@@ -1,5 +1,8 @@
+# _________________________________
 # Orca Request Handler - Version 21
+# _________________________________
 #
+# from typing import ForwardRef
 from abc import ABC, abstractmethod
 from zeep import Client
 from adapter.OrchestraAdapters import cmdb_adapter, environment_adapter, cmdb_performance_adapter, provider_sla_adapter  # noqa E501
@@ -17,7 +20,6 @@ transport = Transport(session=session)
 class OrchestraRequestHandler():        # This class knows SOAP
     def __init__(self, url):
         self.soap_client = Client(url, transport=transport)
-
 
     def list_operations(self):
         print('Namespace: ', self.soap_client.namespaces)
@@ -92,10 +94,10 @@ class GenericCmdbHandler(ABC):
     @abstractmethod
     def insert_component(self, data): pass
 
+
 class OrchestraCmdbHandler(GenericCmdbHandler):     # has no idea of SOAP
     def __init__(self):
-        #self.url = 'https://127.0.0.1:8843/oim_cmdb_soap?wsdl'  
-        self.url = 'https://sandbox-orchestra.balgroupit.com:8843/oim_cmdb_soap?wsdl'
+        self.url = 'https://sandbox-orchestra.balgroupit.com:8843/oim_cmdb_soap?wsdl' # noqa E501
         self.orchestra = OrchestraRequestHandler(self.url)
         self.cmdb_perf = cmdb_performance_adapter().translate(STORAGE_PERFORMANCE_LEVEL.HIGH, TRANSLATE_TARGETS.CMDB)  # noqa E501
         self.cmdb_env_id = environment_adapter().translate(ENVIRONMENT.TEST, TRANSLATE_TARGETS.CMDB)    # noqa E501
@@ -124,7 +126,7 @@ class OrchestraCmdbHandler(GenericCmdbHandler):     # has no idea of SOAP
     def delete_system_full(self, field, pattern):
         xml_filter = {'field': field, 'pattern': pattern}
         return self.orchestra.delete_system_full(xml_filter)
-        
+
     def delete_component(self, field, pattern):
         xml_filter = {'field': field, 'pattern': pattern}
         return self.orchestra.delete_component(xml_filter)
@@ -150,7 +152,7 @@ class OrchestraCmdbHandler(GenericCmdbHandler):     # has no idea of SOAP
         else:
             return None
 
-    def insert_system_full(self, payload=None):  # payload must be a dictionnary
+    def insert_system_full(self, payload=None):  # payload must be a dictionnary # noqa E501
         payload.update(self.cmdb_env_id)
         payload.update(self.cmdb_sla_brz)
         payload.update(self.cmdb_perf)

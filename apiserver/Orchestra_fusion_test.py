@@ -1,6 +1,5 @@
 from orchestra.OrchestraRequestHandler import OrchestraCmdbHandler
 
-
 cmdb_h = OrchestraCmdbHandler()
 
 print('\nList all services:\n')
@@ -79,13 +78,12 @@ print("[SP Result] ", sp_result)
 
 print('\n\nupdate a system\n')
 payload = {
-      "STATUS" : "INACT",
+      "STATUS": "INACT",
       "OIM_TSHIRT_SIZE": "S3"
     }
 cmdb_h.update_system(payload)
 
-cmdb_h.delete_component('STATUS','INACT')
+cmdb_h.delete_component('STATUS', 'INACT')
 
 print('\n\nList all components with where like\n')
 cmdb_h.select_like_component('STATUS', '%ACT')
-
