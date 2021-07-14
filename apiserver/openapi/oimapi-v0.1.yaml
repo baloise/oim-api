@@ -343,7 +343,7 @@ paths:
               $ref: "#/components/schemas/orderdatabase"
 
   /dbpg/list:
-    get:
+    post:
       summary: "Lists all known databases"
       description: "Return a list of databases based on given filter"
       tags:
