@@ -76,7 +76,7 @@ paths:
                   type: integer
                   example: 5847646563843
                 requester_username:
-                  $ref: "#components/schemas/od.username"
+                  $ref: "#/components/schemas/od.username"
 
   /status/create:
     post:

@@ -18,12 +18,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#components/schemas/update_change_response"
+                $ref: "#/components/schemas/update_change_response"
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#components/schemas/update_change"
+              $ref: "#/components/schemas/update_change"
       security:
         - bearer_auth: []
 components:

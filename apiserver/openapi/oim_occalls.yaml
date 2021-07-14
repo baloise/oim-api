@@ -51,7 +51,7 @@ paths:
             content:
               application/json:
                 schema:
-                  $ref: "#components/schemas/create_response"
+                  $ref: "#/components/schemas/create_response"
         204:
             description: "Empty body"
             content:
@@ -62,7 +62,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#components/schemas/create_vm"
+              $ref: "#/components/schemas/create_vm"
   
   /oc/vm/{hostname}:
     parameters:
@@ -106,7 +106,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#components/schemas/request_details"
+              $ref: "#/components/schemas/request_details"
 
   /oc/request/details/{requestno}:
     get:
@@ -127,7 +127,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: "#components/schemas/request_attribute"
+              $ref: "#/components/schemas/request_attribute"
       responses:
         200:
           description: request details
@@ -164,12 +164,12 @@ components:
         details:
           type: array
           items:
-            $ref: "#components/schemas/request_detail"
+            $ref: "#/components/schemas/request_detail"
     request_detail:
       type: object
       properties:
         attribute_name:
-          $ref: "#components/schemas/request_attribute"
+          $ref: "#/components/schemas/request_attribute"
         attribute_value:
           type: string
       required:

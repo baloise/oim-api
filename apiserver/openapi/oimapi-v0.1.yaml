@@ -166,7 +166,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#components/schemas/VM Order"
+              $ref: "#/components/schemas/VM_Order"
 
   /vm/list:
     get:
@@ -340,7 +340,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#components/schemas/orderdatabase"
+              $ref: "#/components/schemas/orderdatabase"
 
   /dbpg/list:
     get:
@@ -369,7 +369,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#components/schemas/listdatabase"
+              $ref: "#/components/schemas/listdatabase"
          
   /dbpg/get/{dbid}:
     get:
@@ -430,7 +430,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#components/schemas/JBoss Order"
+              $ref: "#/components/schemas/JBoss_Order"
 
   # /jb/list:
   #   get:
@@ -478,15 +478,15 @@ components:
             - dedicated
           example: "shared"
         requester-id:
-          $ref: "#components/schemas/od.id"
+          $ref: "#/components/schemas/od.id"
         requester-mail:
-          $ref: "#components/schemas/od.mail"
+          $ref: "#/components/schemas/od.mail"
         database-stuff:
-          $ref: "#components/schemas/dbitem"
+          $ref: "#/components/schemas/dbitem"
         items:
           type: array
           items:
-            $ref: "#components/schemas/ordercommon"
+            $ref: "#/components/schemas/ordercommon"
       example: >
         {
           "items": [
@@ -549,43 +549,43 @@ components:
       type: object
       properties:
         requester-id:
-          $ref: "#components/schemas/od.id"
+          $ref: "#/components/schemas/od.id"
         requester-mail:
-          $ref: "#components/schemas/od.mail"
+          $ref: "#/components/schemas/od.mail"
         items:
           type: array
           items:
-            $ref: "#components/schemas/ordercommon"
+            $ref: "#/components/schemas/ordercommon"
     ordercommon:
       type: object
       properties:
         allOf:
           oneOf:
-            - $ref: "#components/schemas/vmitem"
+            - $ref: "#/components/schemas/vmitem"
         owner-id:
-          $ref: "#components/schemas/od.id"
+          $ref: "#/components/schemas/od.id"
         owner-mail:
-          $ref: "#components/schemas/od.mail"
+          $ref: "#/components/schemas/od.mail"
         deputy-id:
-          $ref: "#components/schemas/od.id"
+          $ref: "#/components/schemas/od.id"
         deputy-mail:
-          $ref: "#components/schemas/od.mail"
+          $ref: "#/components/schemas/od.mail"
         sbu:
-          $ref: "#components/schemas/od.sbu"
+          $ref: "#/components/schemas/od.sbu"
     dbitem:
       type: object
       properties:
         catalog-reference:
           oneOf:
-            - $ref: "#components/schemas/db.pg.catalog-reference"
+            - $ref: "#/components/schemas/db.pg.catalog-reference"
         size:
-          $ref: "#components/schemas/size"
+          $ref: "#/components/schemas/size"
         metal-category:
-          $ref: "#components/schemas/metal-category"
+          $ref: "#/components/schemas/metal-category"
         environment:
-          $ref: "#components/schemas/environment"
+          $ref: "#/components/schemas/environment"
         security-zone:
-          $ref: "#components/schemas/security-zone"
+          $ref: "#/components/schemas/security-zone"
       example: >
         {
           "catalog-reference": "PGSQL01",
@@ -599,22 +599,22 @@ components:
       properties:
         catalog-reference:
           oneOf:
-            - $ref: "#components/schemas/vm.lin.catalog-reference"
-            - $ref: "#components/schemas/vm.win.catalog-reference"
+            - $ref: "#/components/schemas/vm.lin.catalog-reference"
+            - $ref: "#/components/schemas/vm.win.catalog-reference"
         size:
-          $ref: "#components/schemas/size"
+          $ref: "#/components/schemas/size"
         role:
-          $ref: "#components/schemas/role"
+          $ref: "#/components/schemas/role"
         metal-category:
-          $ref: "#components/schemas/metal-category"
+          $ref: "#/components/schemas/metal-category"
         environment:
-          $ref: "#components/schemas/environment"
+          $ref: "#/components/schemas/environment"
         application-id:
-          $ref: "#components/schemas/application-id"
+          $ref: "#/components/schemas/application-id"
         security-zone:
-          $ref: "#components/schemas/security-zone"
+          $ref: "#/components/schemas/security-zone"
         group-permissions:
-          $ref: "#components/schemas/group-permissions"
+          $ref: "#/components/schemas/group-permissions"
       example: >
         {
           "catalog-reference": "L01",
@@ -716,7 +716,7 @@ components:
     group-permissions:
       type: array
       items:
-        $ref: "#components/schemas/group-permission"
+        $ref: "#/components/schemas/group-permission"
     group-permission:
       type: object
       required:
@@ -728,53 +728,53 @@ components:
         local-group-name:
           type: string  
 
-    JBoss Order:
+    JBoss_Order:
       type: object
       properties:
         requester-id:
-          $ref: "#components/schemas/User ID"
+          $ref: "#/components/schemas/User_ID"
         sbu:
-          $ref: "#components/schemas/SBU"
+          $ref: "#/components/schemas/SBU"
         items:
           type: array
           items:
-            $ref: "#components/schemas/JBoss Order Item"
-    JBoss Order Item:
+            $ref: "#/components/schemas/JBoss_Order_Item"
+    JBoss_Order_Item:
       type: object
       properties:
         catalog-reference:
-          $ref: "#components/schemas/JBoss Catalog Reference"
+          $ref: "#/components/schemas/JBoss_Catalog_Reference"
         version:
-          $ref: "#components/schemas/JBoss Version"
+          $ref: "#/components/schemas/JBoss_Version"
         size:
-          $ref: "#components/schemas/JBoss Size"
+          $ref: "#/components/schemas/JBoss_Size"
         metal-category:
-          $ref: "#components/schemas/VM Metal Category"
+          $ref: "#/components/schemas/VM_Metal_Category"
         environment:
-          $ref: "#components/schemas/Environment"
+          $ref: "#/components/schemas/Environment"
         security-zone:
-          $ref: "#components/schemas/Security Zone"
+          $ref: "#/components/schemas/Security_Zone"
         owner-id:
-          $ref: "#components/schemas/User ID"
+          $ref: "#/components/schemas/User_ID"
         deputy-id:
-          $ref: "#components/schemas/User ID"
+          $ref: "#/components/schemas/User_ID"
         group-permissions:
           type: array
           items:
-            $ref: "#components/schemas/Permission Map"
+            $ref: "#/components/schemas/Permission_Map"
         data-disk:
-          $ref: "#components/schemas/Linux Data Disk"
-    JBoss Catalog Reference:
+          $ref: "#/components/schemas/Linux_Data_Disk"
+    JBoss_Catalog_Reference:
       type: string
       enum:
         - MP03
-    JBoss Version:
+    JBoss_Version:
       type: number
       enum:
         - 7.1
         - 7.2
         - 7.3
-    JBoss Size:
+    JBoss_Size:
       type: string
       enum:
         - S1
@@ -784,68 +784,68 @@ components:
         - L2
         - X1
 
-    VM Order:
+    VM_Order:
       type: object
       properties:
         requester-id:
-          $ref: "#components/schemas/User ID"
+          $ref: "#/components/schemas/User_ID"
         sbu:
-          $ref: "#components/schemas/SBU"
+          $ref: "#/components/schemas/SBU"
         items:
           type: array
           items:
-            $ref: "#components/schemas/VM Order Item"
-    VM Order Item:
+            $ref: "#/components/schemas/VM_Order_Item"
+    VM_Order_Item:
       oneOf:
-        - $ref: "#components/schemas/VM Lin Specifics"
-        - $ref: "#components/schemas/VM Win Specifics"
+        - $ref: "#/components/schemas/VM_Lin_Specifics"
+        - $ref: "#/components/schemas/VM_Win_Specifics"
       type: object
       properties:
         role:
-          $ref: "#components/schemas/VM Role"
+          $ref: "#/components/schemas/VM_Role"
         size:
-          $ref: "#components/schemas/VM Size"
+          $ref: "#/components/schemas/VM_Size"
         metal-category:
-          $ref: "#components/schemas/VM Metal Category"
+          $ref: "#/components/schemas/VM_Metal_Category"
         environment:
-          $ref: "#components/schemas/Environment"
+          $ref: "#/components/schemas/Environment"
         security-zone:
-          $ref: "#components/schemas/Security Zone"
+          $ref: "#/components/schemas/Security_Zone"
         owner-id:
-          $ref: "#components/schemas/User ID"
+          $ref: "#/components/schemas/User_ID"
         deputy-id:
-          $ref: "#components/schemas/User ID"
+          $ref: "#/components/schemas/User_ID"
         group-permissions:
           type: array
           items:
-            $ref: "#components/schemas/Permission Map"
-    VM Role:
+            $ref: "#/components/schemas/Permission_Map"
+    VM_Role:
       type: string
       enum:
         - APP
         - WEB
         - DB
-    VM Lin Specifics:
+    VM_Lin_Specifics:
       type: object
       properties:
         data-disk:
-          $ref: "#components/schemas/Linux Data Disk"
+          $ref: "#/components/schemas/Linux_Data_Disk"
         catalog-reference:
           type: string
           enum:
             - L01
             - L02
-    VM Win Specifics:
+    VM_Win_Specifics:
       type: object
       properties:
         data-disk:
-          $ref: "#components/schemas/Windows Data Disk"
+          $ref: "#/components/schemas/Windows_Data_Disk"
         catalog-reference:
           type: string
           enum:
             - W01
             - W02
-    VM Size:
+    VM_Size:
       type: string
       enum:
         - S1
@@ -854,14 +854,14 @@ components:
         - L1
         - L2
         - X1
-    VM Metal Category:
+    VM_Metal_Category:
       type: string
       enum:
         - B
         - S
         - G
         - GP
-    Linux Data Disk:
+    Linux_Data_Disk:
       type: object
       required:
         - filesystem
@@ -873,7 +873,7 @@ components:
         size-gb:
           type: integer
           minimum: 1
-    Windows Data Disk:
+    Windows_Data_Disk:
       type: object
       required:
         - filesystem
@@ -885,7 +885,7 @@ components:
         size-gb:
           type: integer
           minimum: 1
-    Permission Map:
+    Permission_Map:
       type: object
       required:
         - ad-group-name
@@ -897,7 +897,7 @@ components:
           type: string
 
           
-    User ID:
+    User_ID:
       type: string
       pattern: "^[bB][0-9]{6}$"
     SBU:
@@ -919,7 +919,7 @@ components:
           - Int
           - Acc
           - Prod
-    Security Zone:
+    Security_Zone:
       type: string
       enum:
         - PROD

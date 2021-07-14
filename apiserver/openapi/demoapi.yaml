@@ -76,7 +76,7 @@ paths:
           required: true
           description: Name of the person to greet.
           schema:
-            $ref: "#components/schemas/teammember"
+            $ref: "#/components/schemas/teammember"
   /secret/usingapikey:
     get:
       summary: Return secret string protected by a preshared, static token
