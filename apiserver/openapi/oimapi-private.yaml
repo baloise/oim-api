@@ -7,36 +7,6 @@ servers:
   - url: /private/v0.1
 
 paths:
-  # /order/info/{id}:
-  #   get:
-  #     summary: "show the order info"
-  #     description: "is made to display the order info"
-  #     tags:
-  #       - orders
-  #     responses:
-  #       200:
-  #         description: "order info"
-  #         content:
-  #           text/plain:
-  #             schema:
-  #               type: string
-  #               example: "Order status is: pending/done TODO: Convert this response to a json object"
-  #       404:
-  #         description: "Specified order not found"
-  #         content:
-  #           text/plain:
-  #             schema:
-  #               type: string
-  #               example: "Order not found"
-  #     parameters:
-  #       - name: id
-  #         in: path
-  #         description: "the orderid from the original order"
-  #         required: true
-  #         schema:
-  #           type: string
-  #           example: "order123"
-
   /order/createminimal:
     post:
       summary: "manually creates a minimal order" 
@@ -87,7 +57,6 @@ paths:
         content:
           application/json:
             schema:
-              x-body-name: status
               $ref: "#/components/schemas/Status"
       responses:
         '201':
@@ -103,83 +72,6 @@ paths:
                     example: 23596839285
         '400':
           description: "Invalid requestBody"
-
-  # /status/list:
-  #   get:
-  #     summary: Retrieve list of statuses for a given order
-  #     parameters:
-  #       - in: query
-  #         name: orderid
-  #         required: true
-  #         schema:
-  #           type: integer
-  #           example: 3458735773945
-  #     responses:
-  #       '200':
-  #         description: list of statuses found
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/ArrayOfStatuses'
-  #       '404':
-  #         $ref: '#/components/responses/NotFound'
-
-  # /orderitem/list:
-  #   get:
-  #     summary: lists orderitems belonging to specific order
-  #     parameters:
-  #       - in: query
-  #         name: order_id
-  #         required: true
-  #         schema: 
-  #           type: integer
-  #           example: 9475849385747
-  #     responses:
-  #       '200':
-  #         description: 'A list of orderitems belongig to the given order'
-  #         content:
-  #           application/json:
-  #             schema:
-  #               type: array
-  #               items:
-  #                 $ref: '#/components/schemas/Status'
-  #       '401':
-  #         $ref: '#/components/responses/Unauthorized'
-  #       '404':
-  #         $ref: '#/components/responses/NotFound'
-
-
-  # /order/details/{id}:
-  #   get:
-  #     summary: "show the order details"
-  #     description: "is made to display the order details"
-  #     # operationId: api.private.order_details_get
-  #     tags:
-  #       - orders
-  #     responses:
-  #       200:
-  #         description: "order details"
-  #         content:
-  #           text/plain:
-  #             schema:
-  #               type: string
-  #               example: "Order details are: ... TODO: Convert this response to a json object"
-  #       404:
-  #         description: "Specified order not found"
-  #         content:
-  #           text/plain:
-  #             schema:
-  #               type: string
-  #               example: "Order not found"
-  #     parameters:
-  #       - name: id
-  #         in: path
-  #         description: "the orderid from the original order"
-  #         required: true
-  #         schema:
-  #           type: string
-  #           example: "order123"
-
 
 components:
   responses:
@@ -247,25 +139,7 @@ components:
         payload:
           type: string
           description: Freeform text to contain additional status info
-    ArrayOfStatuses:
-      type: array
-      items:
-        $ref: '#/components/schemas/Status'
     od.username:
       type: string
       pattern: "^[bB][0-9]{6}$"
       example: "b000000"
-    od.mail:
-      type: string
-      pattern: "[^@ \t\r\n]+@[^@ \t\r\n]+\\.[^@ \t\r\n]+"
-    od.sbu:
-      type: string
-      enum: 
-        - BE
-        - CH-BCH
-        - CH-SOB
-        - DE
-        - LI
-        - LU-RED
-        - LU-YELLOW
-        - SHARED

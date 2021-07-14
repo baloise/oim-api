@@ -356,41 +356,6 @@ components:
           ],
           "requester-id": "b123456"
         }
-
-    listdatabase:
-      type: object
-      properties:
-        filter:
-          type: string
-          description: "Allows limitation of list result"
-          default: ".*"
-          example: "todo"
-        limit:
-          type: integer
-          description: "Limit the list of elements"
-          default: 10
-          example: "50"
-      example: >
-        {
-          "items": [
-            {
-              "filter": "DB*",
-              "limit": 5
-            }
-          ]
-        }
-
-    order:
-      type: object
-      properties:
-        requester-id:
-          $ref: "#/components/schemas/od.id"
-        requester-mail:
-          $ref: "#/components/schemas/od.mail"
-        items:
-          type: array
-          items:
-            $ref: "#/components/schemas/ordercommon"
     ordercommon:
       type: object
       properties:
