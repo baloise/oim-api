@@ -1,16 +1,16 @@
 {
     "provider_sla": [
     {
-      "level": "bronzi", "orcaid": "Bronze", "ocid": "B"
+      "level": "basic", "orcaid": "Bronze", "ocid": "B"
     },
     {
-      "level": "silver", "orcaid": "Silver", "ocid": "S"
+      "level": "advanced", "orcaid": "Silver", "ocid": "S"
     },
     {
-      "level": "goldi", "orcaid": "Gold", "ocid": "G"
+      "level": "premium", "orcaid": "Gold", "ocid": "G"
     },
     {
-      "level": "goldplus", "orcaid": "Gold+", "ocid": "GP"
+      "level": "elite", "orcaid": "Gold+", "ocid": "GP"
     }
   ]
 }

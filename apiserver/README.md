@@ -31,6 +31,11 @@ This is intended to give an easier start but is in no way a complete and detaile
     * `pip install -r requirements.txt`
     * If you intend to run the production-grade server, also do `pip install -r requirements.uwsgi.txt` (This may need a C compiler!)
 
+* On Windows, Python does not look at the system certificate, it uses its own located at [venv]\lib\site-packages\certifi\cacert.pem. One of the following should
+  solve issues with self-signed certificates (e.g. used by ourCloud):
+  * `pip install python-certifi-win32`
+  * download the certificate as pem/crt file (e.g. using browser) and append to cacert.pem.
+
 * A Git client of your choice
   * Any git client that you prefer goes.
   * If you don't know any, check [this list](https://git-scm.com/downloads/guis/) or ask your colleagues

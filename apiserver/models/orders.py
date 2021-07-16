@@ -2,8 +2,9 @@
 from app import db
 import enum
 from datetime import datetime
-from ourCloud.OcStaticVars import OC_CATALOGOFFERINGS, OC_CATALOGOFFERING_SIZES
+from ourCloud.OcStaticVars import OC_CATALOGOFFERINGS, OC_CATALOGOFFERING_SIZES, SERVICE_LEVEL
 from models.statuspayload import StatusPayload  # noqa: F401
+from ourCloud.OcStaticVars import APPLICATIONS
 
 
 class OrderType(enum.Enum):
@@ -20,7 +21,7 @@ class SbuType(enum.Enum):
     LI = 'LI'
     LURED = 'LU-RED'
     LU_YELLOW = 'LU-YELLOW'
-    SHARED = 'SHARED'
+    BITS = 'BITS'
 
 
 # This is a proposition of possible order states. TODO: Verify with team.
@@ -92,6 +93,9 @@ class Person(db.Model):
 
     def get_id(self):
         return self.id
+    
+    def get_sbu(self):
+        return self.sbu
 
 # class PersonSchema(Schema):
 #     id = fields.Email()
@@ -115,6 +119,8 @@ class OrderItem(db.Model):
     reference = db.Column(db.String(80), nullable=False)
     cataloguename = db.Column(db.String(500), nullable=False)
     size = db.Column(db.String(50), nullable=False)
+    servicelevel = db.Column(db.String(50), nullable=False)
+    appcode = db.Column(db.String(50), nullable=False)
     backend_request_id = db.Column(db.Integer, nullable=True)
     order_id = db.Column(db.Integer, db.ForeignKey('orders.id'))
     order = db.relationship("Order", back_populates="items")
@@ -128,12 +134,21 @@ class OrderItem(db.Model):
 
     def set_backend_request_id(self, reqid):
         self.backend_request_id = reqid
-
+    
     def get_reference(self):
         return self.reference
 
     def get_cataloguename(self) -> OC_CATALOGOFFERINGS:
         return self.cataloguename
+
+    def set_servicelevel(self, servicelevel: SERVICE_LEVEL):
+        self.servicelevel = servicelevel
+
+    def get_servicelevel(self) -> SERVICE_LEVEL:
+        return self.servicelevel
+
+    def get_appcode(self) -> str:
+        return self.appcode
 
     def is_Vm(self) -> bool:
         return self.cataloguename in (OC_CATALOGOFFERINGS.WINS2019.cataloguename,
@@ -144,6 +159,13 @@ class OrderItem(db.Model):
 
     def __repr__(self):
         return f"<OrderItem {self.id!r} for Order {self.order.id!r} has Request ID: {self.backend_request_id}>"
+
+    def get_servertype(self) -> str:
+        if self.appcode in [item.occode for item in APPLICATIONS]:
+            for item in APPLICATIONS:
+                if item.occode == self.appcode:
+                    return item.ocservertype
+        return None
 
 
 # class OrderItemSchema(Schema):

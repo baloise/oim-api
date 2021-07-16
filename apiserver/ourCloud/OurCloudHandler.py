@@ -40,9 +40,10 @@ class OurCloudRequestHandler:
             self.auth = TokenAuthHandler(abstractPath)
             urllib3.disable_warnings()
 
-    def create_vm(self, item: OrderItem, requester: Person):
+    def create_vm(self, item: OrderItem, requester: Person, changeno: str):
         path = CreateVmPath(item)
         path.set_requester(requester)
+        path.set_changeno(changeno)
         path.set_auth_token_handler(self.auth)
         res = path.send_request()
         return res
