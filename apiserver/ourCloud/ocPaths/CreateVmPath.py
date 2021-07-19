@@ -94,7 +94,7 @@ class CreateVmPath(AbstractOcPath):
                     },  # ok
                     self.OC_REQUESTFIELD.SERVICELEVEL.value: {
                         "key": self.OC_REQUESTFIELD.SERVICELEVEL.value,
-                        "value": provider_sla_adapter().translate(self.item.get_servicelevel(), TRANSLATE_TARGETS.OURCLOUD) # TODO: replace with item detail and translate
+                        "value": provider_sla_adapter().translate(self.item.get_servicelevel(), TRANSLATE_TARGETS.OURCLOUD)  # TODO: replace with item detail and translate
                     },  # ok
                     self.OC_REQUESTFIELD.SERVERTYPE.value: {
                         "key": self.OC_REQUESTFIELD.SERVERTYPE.value,
