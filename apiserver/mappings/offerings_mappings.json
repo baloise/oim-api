@@ -1,0 +1,6 @@
+{
+  "offering": [
+    { "name": "PG12", "ocid": "PGSQL01", "occatalogid": 6 },
+    { "name": "WIN2019", "ocid": "VW01", "occatalogid": 3 }
+  ]
+}

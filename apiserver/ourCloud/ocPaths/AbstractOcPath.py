@@ -76,9 +76,6 @@ class AbstractOcPath(ABC):
     def getSubscriptionId(self):
         return "VMWAR"
 
-    def getCatalogueId(self):
-        return "3"
-
     def getPageNo(self):
         return "-1"
 

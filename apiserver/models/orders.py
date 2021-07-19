@@ -139,7 +139,8 @@ class OrderItem(db.Model):
         return self.reference
 
     def get_cataloguename(self) -> OC_CATALOGOFFERINGS:
-        return self.cataloguename
+        cn = OC_CATALOGOFFERINGS.from_str(self.cataloguename)
+        return cn
 
     def set_servicelevel(self, servicelevel: SERVICE_LEVEL):
         self.servicelevel = servicelevel

@@ -5,7 +5,7 @@ from models.orders import OrderItem, Person
 from unittest.mock import Mock
 from exceptions.WorkflowExceptions import TransmitException
 from datetime import datetime
-from adapter.OurCloudAdapters import SbuAdapter
+from adapter.OurCloudAdapters import SbuAdapter, OfferingAdapter
 from adapter.OrchestraAdapters import provider_sla_adapter  # noqa E501
 from ourCloud.OcStaticVars import APPLICATIONS, SBU, TRANSLATE_TARGETS 
 
@@ -85,6 +85,7 @@ class CreateVmPath(AbstractOcPath):
         now = datetime.now()
         now_string = now.strftime("%d/%m/%Y %H:%M:%S")
         sbu = self.get_requester.get_sbu()
+        offering = self.item.get_cataloguename()
         bodyJson["items"].append(
                 {
                     self.OC_REQUESTFIELD.SBUCODE.value: {
@@ -109,7 +110,7 @@ class CreateVmPath(AbstractOcPath):
                     },
                     self.OC_REQUESTFIELD.CATALOGUENAME.value: {
                         "key": self.OC_REQUESTFIELD.CATALOGUENAME.value,
-                        "value": self.item.get_cataloguename()
+                        "value": OfferingAdapter().translate(offering, "ocid") #TODO replace attribute usage
                     },
                     self.OC_REQUESTFIELD.CHANGENUMBER.value: {
                         "key": self.OC_REQUESTFIELD.CHANGENUMBER.value,
@@ -148,7 +149,7 @@ class CreateVmPath(AbstractOcPath):
                     self.OC_REQUESTFIELD.ITEMNO: 1  # always 1
                 })
 
-        bodyJson[self.OC_REQUESTFIELD.SERVICECATALOGUEID.value] = self.getCatalogueId()
+        bodyJson[self.OC_REQUESTFIELD.SERVICECATALOGUEID.value] = OfferingAdapter().translate(offering, "occatalog") #TODO replace attribute usage
         #bodyJson[self.OC_REQUESTFIELD.CATALOGUEENTITYID.value] = self.getCatalogueEntityId()
         #bodyJson[self.OC_REQUESTFIELD.ENVRIONMENTENTITYID.value] = self.getEnvironmentEntityId()
         #bodyJson[self.OC_REQUESTFIELD.SUBSCRIPTIONID.value] = self.getSubscriptionId()

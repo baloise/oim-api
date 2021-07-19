@@ -115,15 +115,14 @@ class OC_CATALOGOFFERING_SIZES(bytes, enum.Enum):
 
 class OC_CATALOGOFFERINGS(bytes, enum.Enum):
 
-    def __new__(cls, value, cataloguename, catalogueid):
+    def __new__(cls, value, cataloguename):
         obj = bytes.__new__(cls)
         obj._value_ = value
         obj.cataloguename = cataloguename
-        obj.catalogueid = catalogueid
         return obj
-    WINS2019 = (1, 'Windows 2019', 1)
-    RHEL7 = (2, 'RHEL7.X', 2)
-    PGRHEL7 = (3, 'RHEL7.X PostgreSQL', 6)
+    WINS2019 = (1, 'Windows 2019')
+    RHEL7 = (2, 'RHEL7.X')
+    PG12 = (3, 'PostgreSQL 12.X')
 
     @classmethod
     def from_str(cls, cataloguename):
@@ -132,7 +131,7 @@ class OC_CATALOGOFFERINGS(bytes, enum.Enum):
         elif cataloguename == 'RHEL7.X':
             return cls.RHEL7
         elif cataloguename == 'RHEL7.X':
-            return cls.PGRHEL7
+            return cls.PG12
         else:
             raise NotImplementedError
 

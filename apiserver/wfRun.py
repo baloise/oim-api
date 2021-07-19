@@ -26,8 +26,9 @@ logging.basicConfig(
 logger.setLevel(logging.DEBUG)
 
 
-ff = OC_CATALOGOFFERINGS.from_str('Windows 2019')
-print("Offering {}".format(ff.name))
+off = OC_CATALOGOFFERINGS.from_str('Windows 2019')
+# off = OC_CATALOGOFFERINGS.WINS2019
+print("Offering {}".format(off.name))
 
 personPeter = Person(
             username='u12345',
@@ -37,16 +38,19 @@ personPeter = Person(
 workflowFactory = WorkflowFactory()
 orderFactory = OrderFactory()
 
-rhel_item = OrderItem(OC_CATALOGOFFERINGS.RHEL7, OC_CATALOGOFFERING_SIZES.S2)
+# init order item and create order
+rhel_item = OrderItem(off, OC_CATALOGOFFERING_SIZES.S2)
 rhel_item.set_reference("ref")
 items = [rhel_item]
 new_order = orderFactory.get_order(OrderType.CREATE_ORDER, items, personPeter)
 
+# init workflow
 wf = workflowFactory.get_workflow(WorkflowTypes.WF_CREATE_VM)
 context = WorkflowContext(personPeter)
 wf.set_context(context)
 wf.set_order(new_order)
 
+# app prep
 app = create_flask_app()
 app_context = app.app_context()
 app_context.push()
@@ -62,14 +66,6 @@ for row in result:
     print(f"{row.id}")
 
 new_order.set_requester(personPeter)
-# print("Insert Item:")
-# db.session.add(rhel_item)
-# db.session.commit()
-
-# print("Query Items:")
-# result = OrderItem.query.all()
-# for row in result:
-#    print(f"{row.id}")
 
 db.session.add(new_order)
 db.session.commit()
@@ -118,7 +114,7 @@ for row in result:
 # wf.add_batch(bat_hov)
 if True:
     print("Executing Workflows...")
-    # wf.execute()
+    wf.execute()
 
     print("Updating status...")
     # create_status()
@@ -138,12 +134,6 @@ for row in result:
 
 db.session.remove()
 db.drop_all()
-# #### Factory example ####
-
-# factory = WorkflowFactory()
-# crwf = factory.get_workflow(WorkflowTypes.WF_CREATE_VM)
-# crwf.add_batch(bat_depl)
-# crwf.execute()
 
 #  ################################### PLAYGROUND, please ignore below code ##########################################
 
