@@ -33,7 +33,7 @@ class CreateVmPath(AbstractOcPath):
         return self.changeno
 
     def get_url(self) -> str:
-        #return '{baseUrl}/Requests/Create'.format(baseUrl=self.get_base_url())
+        # return '{baseUrl}/Requests/Create'.format(baseUrl=self.get_base_url())
         return '{baseUrl}/GenericScripts/Execute/OrgEntityId/{orgEntityId}/Scripts/16'.format(baseUrl=self.get_base_url(), orgEntityId=self.getOrgEntityId())
 
     """def get_body_lab(self) -> str:
@@ -91,26 +91,26 @@ class CreateVmPath(AbstractOcPath):
                     self.OC_REQUESTFIELD.SBUCODE.value: {
                         "key": self.OC_REQUESTFIELD.SBUCODE.value,
                         "value": SbuAdapter().translate(sbu)
-                    }, # ok
+                    },  # ok
                     self.OC_REQUESTFIELD.SERVICELEVEL.value: {
                         "key": self.OC_REQUESTFIELD.SERVICELEVEL.value,
                         "value": provider_sla_adapter().translate(self.item.get_servicelevel(), TRANSLATE_TARGETS.OURCLOUD) # TODO: replace with item detail and translate
-                    }, #ok
+                    },  # ok
                     self.OC_REQUESTFIELD.SERVERTYPE.value: {
                         "key": self.OC_REQUESTFIELD.SERVERTYPE.value,
                         "value": self.item.get_servertype()
-                    }, #ok
+                    },  # ok
                     self.OC_REQUESTFIELD.APPCODE.value: {
                         "key": self.OC_REQUESTFIELD.APPCODE.value,
                         "value": self.item.get_appcode()
-                    }, #ok
+                    },  # ok
                     self.OC_REQUESTFIELD.SERVERROLE.value: {
                         "key": self.OC_REQUESTFIELD.SERVERROLE.value,
-                        "value": "WEB" # TODO: derived from item detail (APP/DB/WEB)
+                        "value": "WEB"  # TODO: derived from item detail (APP/DB/WEB)
                     },
                     self.OC_REQUESTFIELD.CATALOGUENAME.value: {
                         "key": self.OC_REQUESTFIELD.CATALOGUENAME.value,
-                        "value": OfferingAdapter().translate(offering, "ocid") #TODO replace attribute usage
+                        "value": OfferingAdapter().translate(offering, "ocid")  #TODO replace attribute usage
                     },
                     self.OC_REQUESTFIELD.CHANGENUMBER.value: {
                         "key": self.OC_REQUESTFIELD.CHANGENUMBER.value,
@@ -118,16 +118,16 @@ class CreateVmPath(AbstractOcPath):
                     },
                     self.OC_REQUESTFIELD.ENVIRONMENT.value: {
                         "key": self.OC_REQUESTFIELD.ENVIRONMENT.value,
-                        "value": "TEST" # TODO: replace with item detail and translate
+                        "value": "TEST"  # TODO: replace with item detail and translate
                     },
                     #AD Group
                     self.OC_REQUESTFIELD.WINPATCHWINDOW.value: {
                         "key": self.OC_REQUESTFIELD.WINPATCHWINDOW.value,
-                        "value": "H-SERVER-SCCM-BCH-LV50-02-DO-2000" # TODO: replace with item detail and translate
+                        "value": "H-SERVER-SCCM-BCH-LV50-02-DO-2000"  # TODO: replace with item detail and translate
                     },
                     self.OC_REQUESTFIELD.STORAGETYPE.value: {
                         "key": self.OC_REQUESTFIELD.STORAGETYPE.value,
-                        "value": "HPM" # TODO: replace with item detail and translate
+                        "value": "HPM"  # TODO: replace with item detail and translate
                     },
                     self.OC_REQUESTFIELD.SERVERSIZE.value: {
                         "key": self.OC_REQUESTFIELD.SERVERSIZE.value,
@@ -136,7 +136,7 @@ class CreateVmPath(AbstractOcPath):
                     self.OC_REQUESTFIELD.DATADISK.value: {
                         "key": self.OC_REQUESTFIELD.DATADISK.value,
                         "value": {
-                            "I": "30"   # TODO: replace with item detail
+                            "I": "30"  # TODO: replace with item detail
                         }
                     },
                     self.OC_REQUESTFIELD.TAG.value: {
@@ -149,17 +149,17 @@ class CreateVmPath(AbstractOcPath):
                     self.OC_REQUESTFIELD.ITEMNO: 1  # always 1
                 })
 
-        bodyJson[self.OC_REQUESTFIELD.SERVICECATALOGUEID.value] = OfferingAdapter().translate(offering, "occatalog") #TODO replace attribute usage
-        #bodyJson[self.OC_REQUESTFIELD.CATALOGUEENTITYID.value] = self.getCatalogueEntityId()
-        #bodyJson[self.OC_REQUESTFIELD.ENVRIONMENTENTITYID.value] = self.getEnvironmentEntityId()
-        #bodyJson[self.OC_REQUESTFIELD.SUBSCRIPTIONID.value] = self.getSubscriptionId()
-        #bodyJson[self.OC_REQUESTFIELD.ISDRAFT.value] = "N"
+        bodyJson[self.OC_REQUESTFIELD.SERVICECATALOGUEID.value] = OfferingAdapter().translate(offering, "occatalog")  #TODO replace attribute usage
+        # bodyJson[self.OC_REQUESTFIELD.CATALOGUEENTITYID.value] = self.getCatalogueEntityId()
+        # bodyJson[self.OC_REQUESTFIELD.ENVRIONMENTENTITYID.value] = self.getEnvironmentEntityId()
+        # bodyJson[self.OC_REQUESTFIELD.SUBSCRIPTIONID.value] = self.getSubscriptionId()
+        # bodyJson[self.OC_REQUESTFIELD.ISDRAFT.value] = "N"
         bodyJson[self.OC_REQUESTFIELD.ORGENTITYID.value] = self.getOrgEntityId()
         bodyJson[self.OC_REQUESTFIELD.CHANGENUMBER.value] = self.get_changeno()
         bodyJson[self.OC_REQUESTFIELD.PLATFORMCODE.value] = self.getPlatformCode()
-        #bodyJson[self.OC_REQUESTFIELD.LANGUAGE.value] = self.OC_LANGUAGE.EN_US.value
-        #bodyJson[self.OC_REQUESTFIELD.OFFSET.value] = "-330"
-        #bodyJson[self.OC_REQUESTFIELD.REQUESTFOREMAIL.value] = self.get_requester().email   # input fom user
+        # bodyJson[self.OC_REQUESTFIELD.LANGUAGE.value] = self.OC_LANGUAGE.EN_US.value
+        # bodyJson[self.OC_REQUESTFIELD.OFFSET.value] = "-330"
+        # bodyJson[self.OC_REQUESTFIELD.REQUESTFOREMAIL.value] = self.get_requester().email   # input fom user
 
         payload = doubleQuoteDict(bodyJson)
         payloadStr = json.dumps(payload)
