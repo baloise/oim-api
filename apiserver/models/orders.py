@@ -119,7 +119,7 @@ class OrderItem(db.Model):
     reference = db.Column(db.String(80), nullable=False)
     cataloguename = db.Column(db.String(500), nullable=False)
     size = db.Column(db.String(50), nullable=False)
-    servicelevel = db.Column(db.String(50), nullable=False)
+    servicelevel = db.Column(db.String(50), nullable=True)
     appcode = db.Column(db.String(50), nullable=False)
     backend_request_id = db.Column(db.Integer, nullable=True)
     order_id = db.Column(db.Integer, db.ForeignKey('orders.id'))
@@ -147,6 +147,9 @@ class OrderItem(db.Model):
 
     def get_servicelevel(self) -> SERVICE_LEVEL:
         return self.servicelevel
+
+    def set_appcode(self, appcode: APPLICATIONS):
+        self.appcode = appcode
 
     def get_appcode(self) -> str:
         return self.appcode
