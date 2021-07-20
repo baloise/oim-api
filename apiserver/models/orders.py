@@ -93,7 +93,7 @@ class Person(db.Model):
 
     def get_id(self):
         return self.id
-    
+
     def get_sbu(self):
         return self.sbu
 
@@ -134,7 +134,7 @@ class OrderItem(db.Model):
 
     def set_backend_request_id(self, reqid):
         self.backend_request_id = reqid
-    
+
     def get_reference(self):
         return self.reference
 

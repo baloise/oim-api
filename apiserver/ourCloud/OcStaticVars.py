@@ -14,7 +14,7 @@ class OC_RESPONSEFIELD(enum.Enum):
 
 
 class OC_REQUESTFIELD(enum.Enum):
-    #kv from oc docu
+    # kv from oc docu
     ACTIONMAME = "actionName"
     ACTIONPROCESSTEMPLATEID = "actionprocesstemplateid"
     ACTIONREQUESTNO = "actionrequestno"
@@ -42,7 +42,7 @@ class OC_REQUESTFIELD(enum.Enum):
     SUBSCRIPTIONID = "subscriptionid"
     UITEMPLATEID = "uitemplateid"
     VMNAME = "VMName"
-    #kv from example json
+    # kv from example json
     DATADISK = "AdditionalDrivesDetailsInGB"
     APPCODE = "ApplicationCode"
     CATALOGUENAME = "CatalogName"
