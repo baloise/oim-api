@@ -36,7 +36,7 @@ components:
     update_change:
       type: object
       properties:
-        changeno:
+        ticketno:
           type: string
           pattern: "^CH-[0-9]{7}$"
           example: "CH-0032554"
@@ -45,29 +45,26 @@ components:
           enum:
             - CH_CLD
             - CH_IMPF
-        taskname:
-          type: string
-          example: "Task #5"
+            - CH_CHGF
         description:
           type: string
           example: "failed and not complete"
-        supportgroup:
+        changeOwnerGroup:
           type: string
-          pattern: "[^@ \t\r\n]+@[^@ \t\r\n]+\\.[^@ \t\r\n]+"
-          example: "group.foo@foo.com"
+          nullable: true
+          example: "HCL-DCOps"
       example: >
         {
-          "changeno": "CH-0000016",
+          "ticketno": "CH-0000016",
           "status": "CH_IMPF",
-          "taskname": "Task #7",
           "description": "Error on playbook need investigated !",
-          "supportgroup": "group.foo@foo.com"
+          "changeOwnerGroup": "HCL-DCOps"
         }
 
     update_change_response:
       type: object
       properties:
-        changestatus:
+        status:
           type: string
-        changeno:
+        ticketno:
           type: string
