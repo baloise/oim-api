@@ -18,7 +18,7 @@ class TestDbData(unittest.TestCase):
         self.personPeter = Person(
             username='u12345',
             email='peter.parker@test.fake',
-            sbu=SbuType.SHARED
+            sbu=SbuType.BITS
         )
         db.session.add(self.personPeter)
         db.session.commit()

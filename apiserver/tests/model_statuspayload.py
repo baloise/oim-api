@@ -34,7 +34,7 @@ class TestModelStatuspayload(unittest.TestCase):
         self.personPeter = Person(
             username='u12345',
             email='peter.parker@test.fake',
-            sbu=SbuType.SHARED
+            sbu=SbuType.BITS
         )
 
         self.sample_payload_1 = json.dumps(
