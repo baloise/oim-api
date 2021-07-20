@@ -32,7 +32,7 @@ class provider_sla_adapter(AbstractAdapter):
             return {"OIM_PROVIDER_SLA": res[0]}
         elif TRANSLATE_TARGETS.OURCLOUD == target:
             json_query = "{field}[?level=='{apiname}'].{translation}".format(field=self.field, apiname=sla_level.value,
-                                                                            translation="ocid")
+                                                                             translation="ocid")
             res = jmespath.search(json_query, self.json)
             return res[0]   # TODO: format required by ourcloud tbd
         return None

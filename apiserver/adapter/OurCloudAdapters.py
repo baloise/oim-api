@@ -1,6 +1,6 @@
 import json
 import jmespath
-from ourCloud.OcStaticVars import SBU, OC_CATALOGOFFERINGS
+from ourCloud.OcStaticVars import OC_CATALOGOFFERINGS
 
 
 class AbstractAdapter:

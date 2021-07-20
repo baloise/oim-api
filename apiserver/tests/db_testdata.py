@@ -4,7 +4,6 @@ from datetime import datetime
 # from oim_logging import get_oim_logger
 from models.orders import Person, SbuType, OrderStateType, OrderItem, OrderStatus, Order, OrderType, BackendType, OC_CATALOGOFFERING_SIZES, OC_CATALOGOFFERINGS  # noqa: F401,E501
 from app import create_flask_app, db
-from ourCloud.OcStaticVars import SERVICE_LEVEL, APPLICATIONS
 
 
 class TestDbData(unittest.TestCase):
