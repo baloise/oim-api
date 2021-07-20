@@ -75,9 +75,10 @@ class TestOcRequestJson(unittest.TestCase):
         assert query1.count() == 1
         assert query2.count() == 1
 
-
     def test_2_order_json_ok(self):
-        new_order = OrderFactory().get_order(OrderType.CREATE_ORDER, [self.orderItemTest1, self.orderItemTest2], self.personPeter)
+        new_order = OrderFactory().get_order(OrderType.CREATE_ORDER,
+                                             [self.orderItemTest1, self.orderItemTest2],
+                                             self.personPeter)
         new_order.set_requester(self.personPeter)
 
         db.session.add(new_order)
