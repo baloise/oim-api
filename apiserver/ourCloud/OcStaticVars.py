@@ -120,6 +120,7 @@ class OC_CATALOGOFFERINGS(bytes, enum.Enum):
         obj._value_ = value
         obj.cataloguename = cataloguename
         return obj
+    # make sure that names are equal to names in offerings_mappings.json
     WINS2019 = (1, 'Windows 2019')
     RHEL7 = (2, 'RHEL7.X')
     PG12 = (3, 'PostgreSQL 12.X')
@@ -199,7 +200,7 @@ class APPLICATIONS(bytes, enum.Enum):
         obj = bytes.__new__(cls)
         obj._value_ = value
         obj.fullname = fullname
-        obj.occode = occode
+        obj.appcode = occode
         obj.ocservertype = ocservertype
         return obj
     VALUEMATION = (92, "Valuemation", "VALU", "BITS")

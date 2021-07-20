@@ -25,6 +25,10 @@ logging.basicConfig(
 
 logger.setLevel(logging.DEBUG)
 
+app = create_flask_app()
+app_context = app.app_context()
+app_context.push()
+SQLAlchemy(app)
 
 off = OC_CATALOGOFFERINGS.from_str('Windows 2019')
 # off = OC_CATALOGOFFERINGS.WINS2019
@@ -33,7 +37,7 @@ print("Offering {}".format(off.name))
 personPeter = Person(
             username='u12345',
             email='peter.parker@test.fake',
-            sbu=SbuType.SHARED
+            sbu=SbuType.BITS
         )
 workflowFactory = WorkflowFactory()
 orderFactory = OrderFactory()
@@ -43,18 +47,15 @@ rhel_item = OrderItem(off, OC_CATALOGOFFERING_SIZES.S2)
 rhel_item.set_reference("ref")
 items = [rhel_item]
 new_order = orderFactory.get_order(OrderType.CREATE_ORDER, items, personPeter)
+new_order.set_requester(personPeter)
 
 # init workflow
 wf = workflowFactory.get_workflow(WorkflowTypes.WF_CREATE_VM)
-context = WorkflowContext(personPeter)
+context = WorkflowContext(personPeter, "CH-000001")
 wf.set_context(context)
 wf.set_order(new_order)
 
 # app prep
-app = create_flask_app()
-app_context = app.app_context()
-app_context.push()
-SQLAlchemy(app)
 db.create_all()
 
 db.session.add(personPeter)

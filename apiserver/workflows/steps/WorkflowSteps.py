@@ -5,6 +5,7 @@ from workflows.WorkflowContext import WorkflowContext
 from oim_logging import get_oim_logger
 from exceptions.WorkflowExceptions import StepException, RequestHandlerException, TransmitException
 import traceback
+import os
 from app import db
 
 
@@ -60,8 +61,10 @@ class DeployVmStep(AbstractWorkflowStep):
             except Exception as e:
                 track = traceback.extract_stack()
                 logger.debug(track)
-                error = "Failed to create vm: {} with parameters item='{} requester='{}' ".format(e, self.item, context.get_requester())  # noqa 501
+                error = "Failed to create vm: {} with parameters item='{itm} requester='{rster}' ".format(e, itm=self.item, rster=context.get_requester())  # noqa 501
                 logger.error(error)
+                absolute_path = os.path.abspath(__file__)
+                logger.error(absolute_path)
                 raise  # StepException(error, self.item.order_id)  # use custom Exception here
             else:
                 info = f" Step result: {ocRequestId} ({self})"

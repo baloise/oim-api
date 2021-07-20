@@ -116,14 +116,19 @@ class OrderItem(db.Model):
     __tablename__ = 'orderitems'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    type = db.Column(db.String(50))
     reference = db.Column(db.String(80), nullable=False)
     cataloguename = db.Column(db.String(500), nullable=False)
     size = db.Column(db.String(50), nullable=False)
-    servicelevel = db.Column(db.String(50), nullable=True)
-    appcode = db.Column(db.String(50), nullable=False)
     backend_request_id = db.Column(db.Integer, nullable=True)
     order_id = db.Column(db.Integer, db.ForeignKey('orders.id'))
     order = db.relationship("Order", back_populates="items")
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'orderitem',
+        'with_polymorphic': '*',
+        "polymorphic_on": type
+    }
 
     def __init__(self, name: OC_CATALOGOFFERINGS, size: OC_CATALOGOFFERING_SIZES):
         self.cataloguename = name.cataloguename
@@ -142,40 +147,54 @@ class OrderItem(db.Model):
         cn = OC_CATALOGOFFERINGS.from_str(self.cataloguename)
         return cn
 
-    def set_servicelevel(self, servicelevel: SERVICE_LEVEL):
-        self.servicelevel = servicelevel
-
-    def get_servicelevel(self) -> SERVICE_LEVEL:
-        return self.servicelevel
-
-    def set_appcode(self, appcode: APPLICATIONS):
-        self.appcode = appcode
-
-    def get_appcode(self) -> str:
-        return self.appcode
-
     def is_Vm(self) -> bool:
         return self.cataloguename in (OC_CATALOGOFFERINGS.WINS2019.cataloguename,
                                       OC_CATALOGOFFERINGS.RHEL7.cataloguename)
 
     def get_size(self) -> OC_CATALOGOFFERING_SIZES:
-        return self.size
+        sz = OC_CATALOGOFFERING_SIZES.from_str(self.size)
+        return sz
 
     def __repr__(self):
         return f"<OrderItem {self.id!r} for Order {self.order.id!r} has Request ID: {self.backend_request_id}>"
-
-    def get_servertype(self) -> str:
-        if self.appcode in [item.occode for item in APPLICATIONS]:
-            for item in APPLICATIONS:
-                if item.occode == self.appcode:
-                    return item.ocservertype
-        return None
 
 
 # class OrderItemSchema(Schema):
 #     id = fields.Integer()
 #     reference = fields.Str()
 #     item_type = fields.Str()  # TODO: Add validation for the known types
+
+
+class VmOrderItem(OrderItem):
+
+    servicelevel = None
+    appcode = None
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'vmorderitem',
+        'with_polymorphic': '*'
+    }
+
+    def __init__(self, name: OC_CATALOGOFFERINGS, size: OC_CATALOGOFFERING_SIZES):
+        super().__init__(name, size)
+
+    def set_appcode(self, appcode: APPLICATIONS):
+        self.appcode = appcode
+
+    def get_appcode(self) -> APPLICATIONS:
+        return self.appcode
+
+    def set_servicelevel(self, servicelevel: SERVICE_LEVEL):
+        self.servicelevel = servicelevel
+
+    def get_servicelevel(self) -> SERVICE_LEVEL:
+        return self.servicelevel
+
+    def get_servertype(self) -> str:
+        for item in APPLICATIONS:
+            if item == self.appcode:
+                return item.ocservertype
+        return None
 
 
 class OrderStatus(db.Model):

@@ -21,11 +21,11 @@ class SbuAdapter(AbstractAdapter):
     def __init__(self):
         self.json = None
         self.field = "sbu"
-        self.file = 'apiserver/mappings/sbu_mappings.json'
+        self.file = 'mappings/sbu_mappings.json'
         self.read_file()
 
-    def translate(self, sbu: SBU) -> dict:
-        json_query = "{field}[?name=='{apiname}'].{translation}".format(field=self.field, apiname=sbu.value,
+    def translate(self, sbu: str) -> dict:
+        json_query = "{field}[?name=='{apiname}'].{translation}".format(field=self.field, apiname=sbu,
                                                                         translation="ocid")
         res = jmespath.search(json_query, self.json)
         return res[0]
@@ -36,13 +36,13 @@ class OfferingAdapter(AbstractAdapter):
     def __init__(self):
         self.json = None
         self.field = "offering"
-        self.file = 'apiserver/mappings/offerings_mappings.json'
+        self.file = 'mappings/offerings_mappings.json'
         self.read_file()
 
     def translate(self, offering: OC_CATALOGOFFERINGS, attribute: str) -> dict:
-        if attribute not in ['ocid', 'occatalogid']:
+        if attribute not in ['ocid', 'occatalogueid']:
             return None
-        json_query = "{field}[?name=='{apiname}'].{translation}".format(field=self.field, apiname=offering.value,
+        json_query = "{field}[?name=='{apiname}'].{translation}".format(field=self.field, apiname=offering.name,
                                                                         translation=attribute)
         res = jmespath.search(json_query, self.json)
         return res[0]

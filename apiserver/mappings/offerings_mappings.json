@@ -1,6 +1,7 @@
 {
   "offering": [
-    { "name": "PG12", "ocid": "PGSQL01", "occatalogid": 6 },
-    { "name": "WIN2019", "ocid": "VW01", "occatalogid": 3 }
+    { "name": "PG12", "ocid": "PGSQL01", "occatalogueid": 6 },
+    { "name": "WINS2019", "ocid": "VW01", "occatalogueid": 3 },
+    { "name": "RHEL7", "ocid": "VW01", "occatalogueid": 3 }
   ]
 }

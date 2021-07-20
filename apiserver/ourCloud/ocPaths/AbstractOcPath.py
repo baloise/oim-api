@@ -40,10 +40,10 @@ class AbstractOcPath(ABC):
         sim = bool(os.getenv('NOSIM'))
         if sim:
             self.log.info("Simulation disabled, requests will be sent do OC ({})".format(sim))
-            return sim
+            return True
         else:
             self.log.info("Simulation enabled, requests will NOT be sent do OC ({})".format(sim))
-            return True
+            return False
 
     def set_auth_token_handler(self, handler):
         self.auth = handler

@@ -84,8 +84,9 @@ class CreateVmPath(AbstractOcPath):
         bodyJson["items"] = []
         now = datetime.now()
         now_string = now.strftime("%d/%m/%Y %H:%M:%S")
-        sbu = self.get_requester.get_sbu()
+        sbu = self.get_requester().get_sbu()
         offering = self.item.get_cataloguename()
+        self.log.info("Append items {sb}".format(sb=sbu))
         bodyJson["items"].append(
                 {
                     self.OC_REQUESTFIELD.SBUCODE.value: {
@@ -102,7 +103,7 @@ class CreateVmPath(AbstractOcPath):
                     },  # ok
                     self.OC_REQUESTFIELD.APPCODE.value: {
                         "key": self.OC_REQUESTFIELD.APPCODE.value,
-                        "value": self.item.get_appcode()
+                        "value": self.item.get_appcode().appcode
                     },  # ok
                     self.OC_REQUESTFIELD.SERVERROLE.value: {
                         "key": self.OC_REQUESTFIELD.SERVERROLE.value,
@@ -131,7 +132,7 @@ class CreateVmPath(AbstractOcPath):
                     },
                     self.OC_REQUESTFIELD.SERVERSIZE.value: {
                         "key": self.OC_REQUESTFIELD.SERVERSIZE.value,
-                        "value": self.item.get_size().cataloguesize   # TODO: translate
+                        "value": self.item.get_size().catalogueid   # TODO: translate
                     },
                     self.OC_REQUESTFIELD.DATADISK.value: {
                         "key": self.OC_REQUESTFIELD.DATADISK.value,
@@ -146,10 +147,10 @@ class CreateVmPath(AbstractOcPath):
                             "OimComment": "oim test"
                         }
                     },
-                    self.OC_REQUESTFIELD.ITEMNO: 1  # always 1
+                    self.OC_REQUESTFIELD.ITEMNO.value: 1  # always 1
                 })
 
-        bodyJson[self.OC_REQUESTFIELD.SERVICECATALOGUEID.value] = OfferingAdapter().translate(offering, "occatalog")  # TODO replace attribute usage  # noqa E501
+        bodyJson[self.OC_REQUESTFIELD.SERVICECATALOGUEID.value] = OfferingAdapter().translate(offering, "occatalogueid")  # TODO replace attribute usage  # noqa E501
         # bodyJson[self.OC_REQUESTFIELD.CATALOGUEENTITYID.value] = self.getCatalogueEntityId()
         # bodyJson[self.OC_REQUESTFIELD.ENVRIONMENTENTITYID.value] = self.getEnvironmentEntityId()
         # bodyJson[self.OC_REQUESTFIELD.SUBSCRIPTIONID.value] = self.getSubscriptionId()
@@ -171,14 +172,15 @@ class CreateVmPath(AbstractOcPath):
     def send_request(self) -> str:
         response = {}
         if self.no_simulate():
+            response = requests.post(self.get_url(), headers=self.get_header(), data=self.get_body(), verify=False)
+        else:
             self.log.info("Simulate creation of VM")
+            self.log.info("url: {url}, body: {body}".format(url=self.get_url(), body=self.get_body()))
 
             response_mock = Mock()
             response_mock.status_code = 200     # simulate error by changing to != 200
             response_mock.text = "{\"StatusCode\": 200, \"RequestId\": \"99\", \"ErrorMessage\": \"something went wrong\", \"Message\": \"mess\"}"   # noqa 501
             response = response_mock
-        else:
-            response = requests.post(self.get_url(), headers=self.get_header(), data=self.get_body(), verify=False)
 
         # Ensure response looks valid
         if not response.status_code == 200:
