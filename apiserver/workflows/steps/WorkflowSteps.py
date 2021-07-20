@@ -52,7 +52,7 @@ class DeployVmStep(AbstractWorkflowStep):
         try:
             handler = OurCloudRequestHandler.getInstance()
             try:
-                ocRequestId = handler.create_vm(item=self.item, requester=context.get_requester(), changeno=context.get_changeno())
+                ocRequestId = handler.create_vm(item=self.item, requester=context.get_requester(), changeno=context.get_changeno())   # noqa E501
                 self.persist_requestid(self.item, ocRequestId)
             except TransmitException as te:
                 logger.error(te)

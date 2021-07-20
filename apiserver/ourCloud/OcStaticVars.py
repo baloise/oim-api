@@ -142,6 +142,7 @@ class SERVICE_LEVEL(enum.Enum):
     PREMIUM = "premium"
     ELITE = "elite"
 
+
 class SBU(enum.Enum):
     BELGIUM = "BE"
     GERMANY = "DE"
@@ -149,6 +150,7 @@ class SBU(enum.Enum):
     SWISS_SOBA = "SoBa"
     LUXEMBURG = "LU"
     LIECHTENSTEIN = "LI"
+
 
 class TRANSLATE_TARGETS(enum.Enum):
     CMDB = 1
@@ -205,4 +207,3 @@ class APPLICATIONS(bytes, enum.Enum):
     @classmethod
     def get_type(cls):
         return [app.ocservertype for app in cls]
- 

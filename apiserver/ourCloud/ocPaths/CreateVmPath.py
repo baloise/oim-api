@@ -7,7 +7,7 @@ from exceptions.WorkflowExceptions import TransmitException
 from datetime import datetime
 from adapter.OurCloudAdapters import SbuAdapter, OfferingAdapter
 from adapter.OrchestraAdapters import provider_sla_adapter  # noqa E501
-from ourCloud.OcStaticVars import APPLICATIONS, SBU, TRANSLATE_TARGETS 
+from ourCloud.OcStaticVars import TRANSLATE_TARGETS
 
 
 class CreateVmPath(AbstractOcPath):
@@ -34,7 +34,7 @@ class CreateVmPath(AbstractOcPath):
 
     def get_url(self) -> str:
         # return '{baseUrl}/Requests/Create'.format(baseUrl=self.get_base_url())
-        return '{baseUrl}/GenericScripts/Execute/OrgEntityId/{orgEntityId}/Scripts/16'.format(baseUrl=self.get_base_url(), orgEntityId=self.getOrgEntityId())
+        return '{baseUrl}/GenericScripts/Execute/OrgEntityId/{orgEntityId}/Scripts/16'.format(baseUrl=self.get_base_url(), orgEntityId=self.getOrgEntityId())   # noqa E501
 
     """def get_body_lab(self) -> str:
         bodyJson = {}
@@ -94,7 +94,7 @@ class CreateVmPath(AbstractOcPath):
                     },  # ok
                     self.OC_REQUESTFIELD.SERVICELEVEL.value: {
                         "key": self.OC_REQUESTFIELD.SERVICELEVEL.value,
-                        "value": provider_sla_adapter().translate(self.item.get_servicelevel(), TRANSLATE_TARGETS.OURCLOUD)  # TODO: replace with item detail and translate
+                        "value": provider_sla_adapter().translate(self.item.get_servicelevel(), TRANSLATE_TARGETS.OURCLOUD)  # TODO: replace with item detail and translate  # noqa E501
                     },  # ok
                     self.OC_REQUESTFIELD.SERVERTYPE.value: {
                         "key": self.OC_REQUESTFIELD.SERVERTYPE.value,
@@ -110,7 +110,7 @@ class CreateVmPath(AbstractOcPath):
                     },
                     self.OC_REQUESTFIELD.CATALOGUENAME.value: {
                         "key": self.OC_REQUESTFIELD.CATALOGUENAME.value,
-                        "value": OfferingAdapter().translate(offering, "ocid")  #TODO replace attribute usage
+                        "value": OfferingAdapter().translate(offering, "ocid")  # TODO replace attribute usage
                     },
                     self.OC_REQUESTFIELD.CHANGENUMBER.value: {
                         "key": self.OC_REQUESTFIELD.CHANGENUMBER.value,
@@ -120,7 +120,7 @@ class CreateVmPath(AbstractOcPath):
                         "key": self.OC_REQUESTFIELD.ENVIRONMENT.value,
                         "value": "TEST"  # TODO: replace with item detail and translate
                     },
-                    #AD Group
+                    # AD Group
                     self.OC_REQUESTFIELD.WINPATCHWINDOW.value: {
                         "key": self.OC_REQUESTFIELD.WINPATCHWINDOW.value,
                         "value": "H-SERVER-SCCM-BCH-LV50-02-DO-2000"  # TODO: replace with item detail and translate
@@ -144,12 +144,12 @@ class CreateVmPath(AbstractOcPath):
                         "value": {
                             "OimRequestTime": now_string,
                             "OimComment": "oim test"
-                        }   
+                        }
                     },
                     self.OC_REQUESTFIELD.ITEMNO: 1  # always 1
                 })
 
-        bodyJson[self.OC_REQUESTFIELD.SERVICECATALOGUEID.value] = OfferingAdapter().translate(offering, "occatalog")  #TODO replace attribute usage
+        bodyJson[self.OC_REQUESTFIELD.SERVICECATALOGUEID.value] = OfferingAdapter().translate(offering, "occatalog")  # TODO replace attribute usage  # noqa E501
         # bodyJson[self.OC_REQUESTFIELD.CATALOGUEENTITYID.value] = self.getCatalogueEntityId()
         # bodyJson[self.OC_REQUESTFIELD.ENVRIONMENTENTITYID.value] = self.getEnvironmentEntityId()
         # bodyJson[self.OC_REQUESTFIELD.SUBSCRIPTIONID.value] = self.getSubscriptionId()

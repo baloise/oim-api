@@ -30,6 +30,7 @@ class SbuAdapter(AbstractAdapter):
         res = jmespath.search(json_query, self.json)
         return res[0]
 
+
 class OfferingAdapter(AbstractAdapter):
 
     def __init__(self):
@@ -39,7 +40,7 @@ class OfferingAdapter(AbstractAdapter):
         self.read_file()
 
     def translate(self, offering: OC_CATALOGOFFERINGS, attribute: str) -> dict:
-        if attribute not in [ 'ocid', 'occatalogid' ]:
+        if attribute not in ['ocid', 'occatalogid']:
             return None
         json_query = "{field}[?name=='{apiname}'].{translation}".format(field=self.field, apiname=offering.value,
                                                                         translation=attribute)

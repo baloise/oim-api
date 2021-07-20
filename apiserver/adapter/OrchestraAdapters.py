@@ -27,7 +27,7 @@ class provider_sla_adapter(AbstractAdapter):
     def translate(self, sla_level: SERVICE_LEVEL, target: TRANSLATE_TARGETS) -> dict:
         if TRANSLATE_TARGETS.CMDB == target:
             json_query = "{field}[?level=='{apiname}'].{translation}".format(field=self.field, apiname=sla_level.value,
-                                                                            translation="orcaid")
+                                                                             translation="orcaid")
             res = jmespath.search(json_query, self.json)
             return {"OIM_PROVIDER_SLA": res[0]}
         elif TRANSLATE_TARGETS.OURCLOUD == target:
@@ -36,6 +36,7 @@ class provider_sla_adapter(AbstractAdapter):
             res = jmespath.search(json_query, self.json)
             return res[0]   # TODO: format required by ourcloud tbd
         return None
+
 
 class environment_adapter(AbstractAdapter):
 
