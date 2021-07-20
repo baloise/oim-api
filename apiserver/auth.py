@@ -58,10 +58,10 @@ def util_validate_token(query_token):
             log.debug('Valid token found.')
             return True
         else:
-            log.info('Expired token used. Rejecting')
+            log.info('Expired token used.')
             return False
 
-    log.info('Unknown token. Rejecting')
+    log.info('Unknown token.')
     return False
 
 
@@ -121,11 +121,13 @@ def check_ldap_creds(username, password):
 
     untrusted_username = username
     username = escape_rdn(untrusted_username)  # as per ldap3 docs, usernames from untrusted sources must be escaped
-    log.debug('Escaped username "{before}" to "{after}"'.format(before=untrusted_username, after=username))
+    log.debug(f'Escaped username "{str(untrusted_username)}" to "{str(username)}"')
 
     if username == '':  # Empty usernames are a no-go
         return False
 
+    #####
+    # STEP: Retrieve and initialize ldap-specific configuration
     ldap_host = os.getenv('LDAP_HOST') or need_missing_var('LDAP_HOST')
     ldap_port = int(os.getenv('LDAP_PORT', '389'))
     ldap_usessl = os.getenv('LDAP_USESSL', 'false')
@@ -137,8 +139,10 @@ def check_ldap_creds(username, password):
     ldap_scope_user = os.getenv('LDAP_SCOPE_USER', 'SUBTREE')
     def_tpl = '(&(objectclass=user)(|(cn=$user)(samaccountname=$user)(mail=$user))(memberOf=$group))'
     ldap_filter_user_tpl = os.getenv('LDAP_FILTER_USER', def_tpl)
-    ldap_username_attribs = os.getenv('LDAP_USERNAME_ATTRIBS', 'cn,samaccountname,mail')
-    username_attribs = ldap_username_attribs.lower().split(',')
+    ldap_username_search_attribs = os.getenv('LDAP_USERNAME_SEARCH_ATTRIBS', 'cn,samaccountname,mail')
+    username_attribs = ldap_username_search_attribs.lower().split(',')
+    ldap_username_login_attrib = os.getenv('LDAP_USERNAME_LOGIN_ATTRIB', 'samaccountname')
+    ldap_default_domain = os.getenv('LDAP_DEFAULT_DOMAIN', '')
     # Fill in the templates
     try:
         ldap_filter_user_tpl = Template(ldap_filter_user_tpl)
@@ -147,6 +151,8 @@ def check_ldap_creds(username, password):
         log.critical('Error parsing the ldap filter templates. Make sure to escape properly!', exc_info=exc)
         return False
 
+    #####
+    # STEP: Build initial LDAP connection
     try:
         server = ldap3.Server(
             host=ldap_host,
@@ -169,7 +175,7 @@ def check_ldap_creds(username, password):
 
     log.debug('LDAP connection successful')
 
-    ######
+    #####
     # STEP: Search for requesting login user, including group membership
     status, result, response, _ = conn.search(
         search_base=ldap_base,
@@ -184,19 +190,26 @@ def check_ldap_creds(username, password):
             conn.unbind()
         return False
 
-    # Verify that the correct user was found by the ldap query
-    user_found = False
+    #####
+    # STEP: Verify that the correct user was found by the ldap query
+    found_user = False
+    found_user_attribs = None
+    # log.debug('Response of group search: '+pformat(response, compact=False))
     for entry in response:
         attribs = entry.get('attributes', {})
         for current_attrib in username_attribs:
-            if attribs.get(current_attrib, '') == username:
-                user_found = True
+            current_value = attribs.get(current_attrib, '')
+            log.debug(f'Checking attr {str(current_attrib)}: {str(current_value)}')
+            if current_value.lower() == username.lower():
+                found_user = True
+                found_user_attribs = attribs  # Saving for later use...
+                log.debug('Match found!')
                 break  # Stop looping thru attribs
-        if user_found:
+        if found_user:
             break  # Stop looping thru entries
 
-    if not user_found:
-        log.debug('Could not locate use in full LDAP response... Did the LDAP search lie to us?!')
+    if not found_user:
+        log.info('User could not be located in full LDAP response.')
         if conn:
             conn.unbind()
         return False
@@ -204,17 +217,33 @@ def check_ldap_creds(username, password):
         log.debug('User located in full LDAP response.')
 
     #####
-    # STEP Verify credentials by trying a re-bind
+    # STEP: Construct the fully qualified user to try the login as...
+    #  First we determine where to read the AD username from...
+    fq_user = found_user_attribs.get(ldap_username_login_attrib, None)
+    if not fq_user:
+        log.warning('Found the user but cannot find the expected login attribute!')
+        if conn:
+            conn.unbind()
+        return False
+    #  Second we check if we need to add a default domain to the previous value...
+    if ldap_default_domain:
+        fq_user += '@'+ldap_default_domain.replace('@', '')
+    log.debug(f'Computed fq_user is {str(fq_user)}')
+
+    #####
+    # STEP: Verify credentials by trying a re-bind
     try:
-        rebind_status, rebind_result, rebind_response, _ = conn.rebind(user=username, password=password)
+        rebind_status, rebind_result, rebind_response, _ = conn.rebind(user=fq_user, password=password)
         log.debug('Rebind-status: '+pformat(rebind_status))
+        # log.debug('Rebind-result: '+pformat(rebind_result))
+        # log.debug('Rebind-response: '+pformat(rebind_response))
         if not rebind_status:
             log.info('Invalid credentials supplied.')
             if conn:
                 conn.unbind()
             return False
         else:
-            log.info('Rebind successful for user: "{usr}"'.format(usr=str(username)))
+            log.info(f'Rebind successful for user: "{str(fq_user)}"')
     except LDAPException:
         log.exception('LDAP Exception, cannot verify login.')
         if conn:
