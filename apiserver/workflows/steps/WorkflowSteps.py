@@ -4,6 +4,7 @@ from ourCloud.OurCloudHandler import OurCloudRequestHandler
 from workflows.WorkflowContext import WorkflowContext
 from oim_logging import get_oim_logger
 from exceptions.WorkflowExceptions import StepException, RequestHandlerException, TransmitException
+from random import randint, sample
 import traceback
 import os
 from app import db
@@ -32,6 +33,24 @@ class DummyStep(AbstractWorkflowStep):
         info = "  Execute step: {} for user {}".format(self.action, context.get_requester().email)
         logger = get_oim_logger()
         logger.info(info)
+
+
+class CreateCrStep(AbstractWorkflowStep):
+    def __init__(self, item: OrderItem):
+        self.action = "createcr"
+        self.item = item
+
+    def execute(self, context: WorkflowContext):
+        info = "  Execute step: {ac} for item {itm}".format(ac=self.action, itm=self.item)
+        logger = get_oim_logger()
+        logger.info(info)
+        crnr = self.getRandomChangeNr()
+        context.set_changeno(crnr)
+        logger.info("CR {nr} has been created".format(nr=crnr))
+        
+    def getRandomChangeNr(self) -> str:
+        c = "{s}{i}".format(s="CH-", i=''.join(sample("123456789", 7)))
+        return c
 
 
 class DeployVmStep(AbstractWorkflowStep):

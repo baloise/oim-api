@@ -171,9 +171,7 @@ class CreateVmPath(AbstractOcPath):
 
     def send_request(self) -> str:
         response = {}
-        if self.no_simulate():
-            response = requests.post(self.get_url(), headers=self.get_header(), data=self.get_body(), verify=False)
-        else:
+        if self.do_simulate():
             self.log.info("Simulate creation of VM")
             self.log.info("url: {url}, body: {body}".format(url=self.get_url(), body=self.get_body()))
 
@@ -181,7 +179,9 @@ class CreateVmPath(AbstractOcPath):
             response_mock.status_code = 200     # simulate error by changing to != 200
             response_mock.text = "{\"StatusCode\": 200, \"RequestId\": \"99\", \"ErrorMessage\": \"something went wrong\", \"Message\": \"mess\"}"   # noqa 501
             response = response_mock
-
+        else:
+            response = requests.post(self.get_url(), headers=self.get_header(), data=self.get_body(), verify=False)
+        
         # Ensure response looks valid
         if not response.status_code == 200:
             error = "An error occured while transmitting request ({code}): {txt}".format(

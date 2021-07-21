@@ -51,7 +51,7 @@ new_order.set_requester(personPeter)
 
 # init workflow
 wf = workflowFactory.get_workflow(WorkflowTypes.WF_CREATE_VM)
-context = WorkflowContext(personPeter, "CH-000001")
+context = WorkflowContext(personPeter)
 wf.set_context(context)
 wf.set_order(new_order)
 

@@ -36,13 +36,13 @@ class AbstractOcPath(ABC):
         }
         return headers
 
-    def no_simulate(self) -> bool:
-        sim = bool(os.getenv('NOSIM'))
-        if sim:
-            self.log.info("Simulation disabled, requests will be sent do OC ({})".format(sim))
+    def do_simulate(self) -> bool:
+        doSimulate = bool(os.getenv('SIMULATEOC', True))
+        if doSimulate:
+            self.log.info("Simulation enabled, requests will NOT be sent do OC ({})".format(doSimulate))
             return True
         else:
-            self.log.info("Simulation enabled, requests will NOT be sent do OC ({})".format(sim))
+            self.log.info("Simulation disabled, requests will be sent do OC ({})".format(doSimulate))
             return False
 
     def set_auth_token_handler(self, handler):

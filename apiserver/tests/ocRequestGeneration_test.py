@@ -87,7 +87,7 @@ class TestOcRequestJson(unittest.TestCase):
         db.session.commit()
 
         wf = WorkflowFactory().get_workflow(WorkflowTypes.WF_CREATE_VM)
-        context = WorkflowContext(self.personPeter, "CH-000001")
+        context = WorkflowContext(self.personPeter)
         wf.set_context(context)
         wf.set_order(new_order)
         wf.execute()
