@@ -1,0 +1,19 @@
+{
+    "sbu": [
+    {
+      "name": "BE", "ocid": "BE"
+    },
+    {
+      "name": "DE", "ocid": "DE"
+    },
+    {
+      "name": "BITS", "ocid": "BITS"
+    },
+    {
+      "name": "CH", "ocid": "CH-BCH"
+    },
+    {
+      "name": "SoBa", "ocid": "CH-SOB"
+    }
+  ]
+}

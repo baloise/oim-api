@@ -15,7 +15,7 @@ class TestModelOrder(unittest.TestCase):
         self.personPeter = Person(
             username='u12345',
             email='peter.parker@test.fake',
-            sbu=SbuType.SHARED
+            sbu=SbuType.BITS
         )
 
     def tearDown(self):

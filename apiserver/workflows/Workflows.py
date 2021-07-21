@@ -1,7 +1,7 @@
 from typing import List
 import collections
 import enum
-from workflows.steps.WorkflowSteps import AbstractWorkflowStep
+from workflows.steps.WorkflowSteps import AbstractWorkflowStep, CreateCrStep
 from models.orders import Order, OrderStateType, OrderType, BackendType
 from workflows.steps.WorkflowSteps import DeployVmStep, DummyStep
 from workflows.WorkflowContext import WorkflowContext
@@ -196,7 +196,7 @@ class GenericWorkflow:
                 statusJson = self.get_json(batch.get_target_state(), BackendType.OURCLOUD.name, currentOrder)
                 create_status(statusJson)
             except Exception as e:
-                error = "Error while executing batch:: {} item ".format(e)
+                error = "Error while executing batch: {} item ".format(e)
                 logger.error(error)
                 statusJson = self.get_json(batch.get_fail_state(), BackendType.OURCLOUD.name, currentOrder)
                 create_status(statusJson)
@@ -242,6 +242,8 @@ class CreateVmWorkflow(GenericWorkflow):
             dBatch = Batch("deploy", OrderStateType.BE_DONE.state, False)
             for item in super().get_order().get_items():
                 if item.is_Vm():
+                    stepCr = CreateCrStep(item)
+                    dBatch.add_step(stepCr)
                     step = DeployVmStep(item)
                     dBatch.add_step(step)
             self.add_batch(dBatch)

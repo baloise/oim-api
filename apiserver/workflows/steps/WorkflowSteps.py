@@ -4,7 +4,9 @@ from ourCloud.OurCloudHandler import OurCloudRequestHandler
 from workflows.WorkflowContext import WorkflowContext
 from oim_logging import get_oim_logger
 from exceptions.WorkflowExceptions import StepException, RequestHandlerException, TransmitException
+from random import sample
 import traceback
+import os
 from app import db
 
 
@@ -33,6 +35,24 @@ class DummyStep(AbstractWorkflowStep):
         logger.info(info)
 
 
+class CreateCrStep(AbstractWorkflowStep):
+    def __init__(self, item: OrderItem):
+        self.action = "createcr"
+        self.item = item
+
+    def execute(self, context: WorkflowContext):
+        info = "  Execute step: {ac} for item {itm}".format(ac=self.action, itm=self.item)
+        logger = get_oim_logger()
+        logger.info(info)
+        crnr = self.getRandomChangeNr()
+        context.set_changeno(crnr)
+        logger.info("CR {nr} has been created".format(nr=crnr))
+
+    def getRandomChangeNr(self) -> str:
+        c = "{s}{i}".format(s="CH-", i=''.join(sample("123456789", 7)))
+        return c
+
+
 class DeployVmStep(AbstractWorkflowStep):
     def __init__(self, item: OrderItem):
         self.item = item
@@ -52,7 +72,7 @@ class DeployVmStep(AbstractWorkflowStep):
         try:
             handler = OurCloudRequestHandler.getInstance()
             try:
-                ocRequestId = handler.create_vm(item=self.item, requester=context.get_requester())
+                ocRequestId = handler.create_vm(item=self.item, requester=context.get_requester(), changeno=context.get_changeno())   # noqa E501
                 self.persist_requestid(self.item, ocRequestId)
             except TransmitException as te:
                 logger.error(te)
@@ -60,8 +80,10 @@ class DeployVmStep(AbstractWorkflowStep):
             except Exception as e:
                 track = traceback.extract_stack()
                 logger.debug(track)
-                error = "Failed to create vm: {} with parameters item='{} requester='{}' ".format(e, self.item, context.get_requester())  # noqa 501
+                error = "Failed to create vm: {} with parameters item='{itm} requester='{rster}' ".format(e, itm=self.item, rster=context.get_requester())  # noqa 501
                 logger.error(error)
+                absolute_path = os.path.abspath(__file__)
+                logger.error(absolute_path)
                 raise  # StepException(error, self.item.order_id)  # use custom Exception here
             else:
                 info = f" Step result: {ocRequestId} ({self})"

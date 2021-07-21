@@ -36,14 +36,14 @@ class AbstractOcPath(ABC):
         }
         return headers
 
-    def no_simulate(self) -> bool:
-        sim = bool(os.getenv('NOSIM'))
-        if sim:
-            self.log.info("Simulation disabled, requests will be sent do OC ({})".format(sim))
-            return sim
-        else:
-            self.log.info("Simulation enabled, requests will NOT be sent do OC ({})".format(sim))
+    def do_simulate(self) -> bool:
+        doSimulate = bool(os.getenv('SIMULATEOC', True))
+        if doSimulate:
+            self.log.info("Simulation enabled, requests will NOT be sent do OC ({})".format(doSimulate))
             return True
+        else:
+            self.log.info("Simulation disabled, requests will be sent do OC ({})".format(doSimulate))
+            return False
 
     def set_auth_token_handler(self, handler):
         self.auth = handler
@@ -61,7 +61,8 @@ class AbstractOcPath(ABC):
         return "MyCloudCIMaster"
 
     def getOrgEntityId(self):
-        return "ORG-26DCF7FF-D05B-4932-AB94-543FA32888BB"
+        # return "ORG-26DCF7FF-D05B-4932-AB94-543FA32888BB"
+        return "ORG-F4960B51-21C2-4CAC-997C-974B15111EB6"
 
     def getEnvironmentEntityId(self):
         return "VMWAR-15CFFB35-7FC6-449C-9F7F-1CF83A8A6237"
@@ -74,9 +75,6 @@ class AbstractOcPath(ABC):
 
     def getSubscriptionId(self):
         return "VMWAR"
-
-    def getCatalogueId(self):
-        return "3"
 
     def getPageNo(self):
         return "-1"

@@ -1,6 +1,6 @@
 import json
 import jmespath
-from ourCloud.OcStaticVars import ENVIRONMENT, TRANSLATE_TARGETS, METAL_CLASS, STORAGE_PERFORMANCE_LEVEL
+from ourCloud.OcStaticVars import ENVIRONMENT, TRANSLATE_TARGETS, SERVICE_LEVEL, STORAGE_PERFORMANCE_LEVEL
 
 
 class AbstractAdapter:
@@ -21,14 +21,21 @@ class provider_sla_adapter(AbstractAdapter):
     def __init__(self):
         self.json = None
         self.field = "provider_sla"
-        self.file = 'apiserver/mappings/sla_mappings.json'
+        self.file = 'mappings/sla_mappings.json'
         self.read_file()
 
-    def translate(self, sla_level: METAL_CLASS) -> dict:
-        json_query = "{field}[?level=='{apiname}'].{translation}".format(field=self.field, apiname=sla_level.value,
-                                                                         translation="orcaid")
-        res = jmespath.search(json_query, self.json)
-        return {"OIM_PROVIDER_SLA": res[0]}
+    def translate(self, sla_level: SERVICE_LEVEL, target: TRANSLATE_TARGETS) -> dict:
+        if TRANSLATE_TARGETS.CMDB == target:
+            json_query = "{field}[?level=='{apiname}'].{translation}".format(field=self.field, apiname=sla_level.value,
+                                                                             translation="orcaid")
+            res = jmespath.search(json_query, self.json)
+            return {"OIM_PROVIDER_SLA": res[0]}
+        elif TRANSLATE_TARGETS.OURCLOUD == target:
+            json_query = "{field}[?level=='{apiname}'].{translation}".format(field=self.field, apiname=sla_level.value,
+                                                                             translation="ocid")
+            res = jmespath.search(json_query, self.json)
+            return res[0]   # TODO: format required by ourcloud tbd
+        return None
 
 
 class environment_adapter(AbstractAdapter):
@@ -36,7 +43,7 @@ class environment_adapter(AbstractAdapter):
     def __init__(self):
         self.json = None
         self.field = "environment"
-        self.file = 'apiserver/mappings/environment_mappings.json'
+        self.file = 'mappings/environment_mappings.json'
         self.read_file()
 
     # def get_apinames(self):
@@ -69,7 +76,7 @@ class cmdb_adapter(AbstractAdapter):
 
     def __init__(self):
         self.json = None
-        self.file = 'apiserver/mappings/cmdb_mappings.json'
+        self.file = 'mappings/cmdb_mappings.json'
 
 
 class cmdb_status_adapter(cmdb_adapter):

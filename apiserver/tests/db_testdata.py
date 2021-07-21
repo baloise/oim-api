@@ -18,7 +18,7 @@ class TestDbData(unittest.TestCase):
         self.personPeter = Person(
             username='u12345',
             email='peter.parker@test.fake',
-            sbu=SbuType.SHARED
+            sbu=SbuType.BITS
         )
         db.session.add(self.personPeter)
         db.session.commit()
@@ -44,7 +44,6 @@ class TestDbData(unittest.TestCase):
             size=OC_CATALOGOFFERING_SIZES.L1
         )
         self.orderItemTest2.set_reference('TestItem2 reference')
-
         # add Order
         self.orderTest = Order(
             requester=self.personPeter,
