@@ -181,7 +181,7 @@ class CreateVmPath(AbstractOcPath):
             response = response_mock
         else:
             response = requests.post(self.get_url(), headers=self.get_header(), data=self.get_body(), verify=False)
-        
+
         # Ensure response looks valid
         if not response.status_code == 200:
             error = "An error occured while transmitting request ({code}): {txt}".format(
