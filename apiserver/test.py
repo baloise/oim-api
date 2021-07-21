@@ -14,7 +14,7 @@ load_dotenv(dotenv_path='.env.unittests', override=True)
 
 
 class DemoTests(flask_unittest.ClientTestCase):
-    url_base = '/v1.0'
+    url_base = '/demoapi/v1'
     app = create_flask_app(config_name='unittests')  # Required by the parent class
 
     def test_1_hello(self, client):

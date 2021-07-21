@@ -2,9 +2,9 @@ openapi: "3.0.0"
 
 info:
   title: OpenAPI Demo
-  version: "1.0"
+  version: "1.0.1"
 servers:
-  - url: /v1.0
+  - url: /demoapi/v1
 
 paths:
   /hello:
