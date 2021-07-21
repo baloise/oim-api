@@ -34,7 +34,8 @@ class CreateVmPath(AbstractOcPath):
 
     def get_url(self) -> str:
         # return '{baseUrl}/Requests/Create'.format(baseUrl=self.get_base_url())
-        return '{baseUrl}/GenericScripts/Execute/OrgEntityId/{orgEntityId}/Scripts/16'.format(baseUrl=self.get_base_url(), orgEntityId=self.getOrgEntityId())   # noqa E501
+        s = self.get_base_url()
+        return '{baseUrl}/GenericScripts/Execute/OrgEntityId/{orgEntityId}/ScriptID/16'.format(baseUrl=self.get_base_url(), orgEntityId=self.getOrgEntityId())   # noqa E501
 
     """def get_body_lab(self) -> str:
         bodyJson = {}
@@ -180,6 +181,7 @@ class CreateVmPath(AbstractOcPath):
             response_mock.text = "{\"StatusCode\": 200, \"RequestId\": \"99\", \"ErrorMessage\": \"something went wrong\", \"Message\": \"mess\"}"   # noqa 501
             response = response_mock
         else:
+            self.log.info("url: {url}, body: {body}".format(url=self.get_url(), body=self.get_body()))
             response = requests.post(self.get_url(), headers=self.get_header(), data=self.get_body(), verify=False)
 
         # Ensure response looks valid
@@ -190,10 +192,12 @@ class CreateVmPath(AbstractOcPath):
             raise TransmitException(error)
 
         responseJson = json.loads(response.text)
-        if responseJson[self.OC_RESPONSEFIELD.STATUSCODE.value] == 200:
+        # check Status and collect Result if oc answered
+        if responseJson[self.OC_RESPONSEFIELD.STATUS.value] == 'Success':
             self.log.info("New request has been created successfully. OC request ID={code}".format(
-                code=responseJson[self.OC_RESPONSEFIELD.REQUESTID.value]))
-            return responseJson[self.OC_RESPONSEFIELD.REQUESTID.value]
+                code=responseJson[self.OC_RESPONSEFIELD.RESULT.value]))
+            return responseJson[self.OC_RESPONSEFIELD.RESULT.value]
+        # check different keys if oc failed
         else:
             error = "Failed to create request: {code}".format(
                     code=responseJson[self.OC_RESPONSEFIELD.ERRORMESSAGE.value])

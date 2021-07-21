@@ -9,8 +9,9 @@ class OC_STATUS(enum.Enum):
 class OC_RESPONSEFIELD(enum.Enum):
     MESSAGE = "Message"
     ERRORMESSAGE = "ErrorMessage"
-    STATUSCODE = "StatusCode"
+    STATUS = "Status"
     REQUESTID = "RequestId"
+    RESULT = "Result"
 
 
 class OC_REQUESTFIELD(enum.Enum):

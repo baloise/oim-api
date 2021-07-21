@@ -63,9 +63,9 @@ class DeployVmStep(AbstractWorkflowStep):
         # build request path
         # send request
         # handle response
-        info = " Execute step: {} item {} size '{}' for user {}".format(self.action, self.item.get_cataloguename(),
-                                                                        self.item.get_size(),
-                                                                        context.get_requester().email)
+        info = " Execute step: {ac} item {it} size '{si}' for user {us}".format(ac=self.action, it=self.item.get_cataloguename(),   # noqa E501
+                                                                                si=self.item.get_size().catalogueid,
+                                                                                us=context.get_requester().email)
         logger = get_oim_logger()
         logger.info(info)
 
@@ -80,7 +80,7 @@ class DeployVmStep(AbstractWorkflowStep):
             except Exception as e:
                 track = traceback.extract_stack()
                 logger.debug(track)
-                error = "Failed to create vm: {} with parameters item='{itm} requester='{rster}' ".format(e, itm=self.item, rster=context.get_requester())  # noqa 501
+                error = "Failed to create vm: {err} with parameters item='{itm}' requester='{rster}' ".format(err=e, itm=self.item.get_cataloguename().cataloguename, rster=context.get_requester())  # noqa 501
                 logger.error(error)
                 absolute_path = os.path.abspath(__file__)
                 logger.error(absolute_path)

@@ -37,7 +37,10 @@ class AbstractOcPath(ABC):
         return headers
 
     def do_simulate(self) -> bool:
-        doSimulate = bool(os.getenv('SIMULATEOC', True))
+        mystring = os.getenv('OC_SIMULATE', True)
+        doSimulate = True
+        if mystring.lower() == 'false':
+            doSimulate = False
         if doSimulate:
             self.log.info("Simulation enabled, requests will NOT be sent do OC ({})".format(doSimulate))
             return True
