@@ -120,12 +120,11 @@ class CreateVmPath(AbstractOcPath):
         # bodyJson[self.OC_REQUESTFIELD.OFFSET.value] = "-330"
         # bodyJson[self.OC_REQUESTFIELD.REQUESTFOREMAIL.value] = self.get_requester().email   # input fom user
 
-        payload = doubleQuoteDict(bodyJson)
-        payloadStr = json.dumps(payload)
-        payload = payloadStr
-        self.log.info(payload)
+        payloadDict = doubleQuoteDict(bodyJson)
+        payloadStr = json.dumps(payloadDict)
+        self.log.info(payloadStr)
 
-        return payload
+        return payloadStr
 
     def send_request(self) -> str:
         response = {}
@@ -143,20 +142,20 @@ class CreateVmPath(AbstractOcPath):
 
         # Ensure response looks valid
         if not response.status_code == 200:
-            error = "An error occured while transmitting request ({code}): {txt}".format(
-                    code=response.status_code,
+            errorMsg = "An error occured while transmitting request ({reqCode}): {txt}".format(
+                    reqCode=response.status_code,
                     txt=response.text)
-            raise TransmitException(error)
+            raise TransmitException(errorMsg)
 
         responseJson = json.loads(response.text)
         # check Status and collect Result if oc answered
         if responseJson[self.OC_RESPONSEFIELD.STATUS.value] == 'Success':
-            self.log.info("New request has been created successfully. OC request ID={code}".format(
-                code=responseJson[self.OC_RESPONSEFIELD.RESULT.value]))
+            self.log.info("New request has been created successfully. OC request ID={reqCode}".format(
+                reqCode=responseJson[self.OC_RESPONSEFIELD.RESULT.value]))
             return responseJson[self.OC_RESPONSEFIELD.RESULT.value]
         # check different keys if oc failed
         else:
-            error = "Failed to create request: {code}".format(
-                    code=responseJson[self.OC_RESPONSEFIELD.ERRORMESSAGE.value])
-            self.log.error(error)
-            raise Exception(error)
+            errorMsg = "Failed to create request: {reqCode}".format(
+                    reqCode=responseJson[self.OC_RESPONSEFIELD.ERRORMESSAGE.value])
+            self.log.error(errorMsg)
+            raise Exception(errorMsg)

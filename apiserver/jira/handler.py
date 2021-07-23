@@ -53,22 +53,12 @@ class JiraHandler:
 
         body = {
             "fields": {
-                "project":
-                    {
-                        "key": "SIAM"
-                    },
+                "project": {"key": "SIAM"},
                 "summary": summary,
                 "description": description,
-                "issuetype": {
-                    "name": "Task"
-                },
+                "issuetype": {"name": "Task"},
                 "labels": [label],
-                "reporter": {
-                    "id": "b041091"
-                },
-                "customfield_24250": {
-                        "value": board.value
-                    }
+                "customfield_24250": {"value": board.value}
             }
         }
 
