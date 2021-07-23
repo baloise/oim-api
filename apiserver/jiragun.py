@@ -35,7 +35,7 @@ myJira = JiraHandler()
 jsonStr = app.get_json()
 for issue in jsonStr['issues']:
     desc = issue['description']
-    syst=issue['system']
+    syst = issue['system']
 
     intro = "Issue: {iss}\nAffected system: {sys}\nIn order to remedy this issue, please take the following measure(s):\n".format(iss=desc, sys=syst)  # noqa F501
     li = []
