@@ -61,7 +61,7 @@ class JiraHandler:
                 "customfield_24250": {"value": board.value}
             }
         }
-        
+
         # Jira will use the JIRA_AUTH_USER as reporter, but it will be overwritten if parameter 'reporter' is set
         if reporter is not None:
             body["fields"]["reporter"] = {
