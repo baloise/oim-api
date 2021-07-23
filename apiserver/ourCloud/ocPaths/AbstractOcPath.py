@@ -37,7 +37,7 @@ class AbstractOcPath(ABC):
         return headers
 
     def do_simulate(self) -> bool:
-        mystring = os.getenv('OC_SIMULATE', True)
+        mystring = os.getenv('OC_SIMULATE', "True")
         doSimulate = True
         if mystring.lower() == 'false':
             doSimulate = False
