@@ -1,9 +1,9 @@
-from logging import error
 from oim_logging import get_oim_logger
 import os
 import requests
 from requests.auth import HTTPBasicAuth
 import enum
+
 
 class JIRABOARD(enum.Enum):
     # kv from oc docu
@@ -47,7 +47,7 @@ class JiraHandler:
 
     def create_issue_siamsid(self, summary, description):
         self.create_issue_generic(summary, description, "", JIRABOARD.SIAMSID)
-    
+
     def create_issue_generic(self, summary, description, label, board: JIRABOARD):
         logger = get_oim_logger()
 
