@@ -80,20 +80,18 @@ class DeployVmStep(AbstractWorkflowStep):
             except Exception as e:
                 track = traceback.extract_stack()
                 logger.debug(track)
-                error = "Failed to create vm: {err} with parameters item='{itm}' requester='{rster}' ".format(err=e, itm=self.item.get_cataloguename().cataloguename, rster=context.get_requester())  # noqa 501
-                logger.error(error)
-                absolute_path = os.path.abspath(__file__)
-                logger.error(absolute_path)
-                raise  # StepException(error, self.item.order_id)  # use custom Exception here
+                errorStr = "Failed to create vm: {err} with parameters item='{itm}' requester='{rster}' ".format(err=e, itm=self.item.get_cataloguename().cataloguename, rster=context.get_requester())  # noqa 501
+                logger.error(errorStr)
+                raise  # StepException(errorStr, self.item.order_id)  # use custom Exception here
             else:
-                info = f" Step result: {ocRequestId} ({self})"
+                info = f" Step result: {ocRequestId} ({self.action})"
                 logger.info(info)
         except RequestHandlerException as e:
-            error = "Failed to instantiate request handler: {}".format(e)
-            logger.error(error)
-            raise Exception(error)
+            errorStr = "Failed to instantiate request handler: {}".format(e)
+            logger.error(errorStr)
+            raise Exception(errorStr)
         else:
-            logger.debug("Step completed ({})".format(self))
+            logger.debug("Step completed ({})".format(self.action))
 
     def persist_requestid(self, item, reqid):
         anOrderItem = OrderItem.query.get(item.id)
@@ -108,8 +106,8 @@ class VerifyItemStep(AbstractWorkflowStep):
 
     def execute(self, context: WorkflowContext):
         # check
-        info = "  Execute step: {} item {} size '{}' for user {}".format(self.action, self.item.get_cataloguename(),
+        infoStr = "  Execute step: {} item {} size '{}' for user {}".format(self.action, self.item.get_cataloguename(),
                                                                          self.item.get_size().cataloguesize,
                                                                          context.get_requester().email)
         logger = get_oim_logger()
-        logger.info(info)
+        logger.info(infoStr)

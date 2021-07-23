@@ -134,7 +134,7 @@ class CreateVmPath(AbstractOcPath):
 
             response_mock = Mock()
             response_mock.status_code = 200     # simulate error by changing to != 200
-            response_mock.text = "{\"StatusCode\": 200, \"RequestId\": \"99\", \"ErrorMessage\": \"something went wrong\", \"Message\": \"mess\"}"   # noqa 501
+            response_mock.text = "{\"Status\": \"Success\", \"Result\": \"99\", \"ErrorMessage\": \"something went wrong\", \"Message\": \"mess\"}"   # noqa 501
             response = response_mock
         else:
             self.log.info("url: {url}, body: {body}".format(url=self.get_url(), body=self.get_body()))
