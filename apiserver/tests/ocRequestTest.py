@@ -2,8 +2,11 @@ import flask_unittest
 from app import create_flask_app
 from unittest import mock
 
+
 # This method will be used by the mock to replace requests.get
 def mocked_requests_get(*args, **kwargs):
+
+
     class MockResponse:
         def __init__(self, json_data, status_code):
             self.json_data = json_data

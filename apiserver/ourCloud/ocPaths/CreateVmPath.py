@@ -34,8 +34,8 @@ class CreateVmPath(AbstractOcPath):
 
     def get_url(self) -> str:
         # return '{baseUrl}/Requests/Create'.format(baseUrl=self.get_base_url())
-        s = self.get_base_url()
-        return '{baseUrl}/GenericScripts/Execute/OrgEntityId/{orgEntityId}/ScriptID/16'.format(baseUrl=self.get_base_url(), orgEntityId=self.getOrgEntityId())   # noqa E501
+        surl = self.get_base_url()
+        return '{baseUrl}/GenericScripts/Execute/OrgEntityId/{orgEntityId}/ScriptID/16'.format(baseUrl=surl), orgEntityId=self.getOrgEntityId())   # noqa E501
 
     """def get_body_lab(self) -> str:
         bodyJson = {}
