@@ -6,7 +6,6 @@ from oim_logging import get_oim_logger
 from exceptions.WorkflowExceptions import StepException, RequestHandlerException, TransmitException
 from random import sample
 import traceback
-import os
 from app import db
 
 
@@ -107,7 +106,7 @@ class VerifyItemStep(AbstractWorkflowStep):
     def execute(self, context: WorkflowContext):
         # check
         infoStr = "  Execute step: {} item {} size '{}' for user {}".format(self.action, self.item.get_cataloguename(),
-                                                                         self.item.get_size().cataloguesize,
-                                                                         context.get_requester().email)
+                                                                            self.item.get_size().cataloguesize,
+                                                                            context.get_requester().email)
         logger = get_oim_logger()
         logger.info(infoStr)
