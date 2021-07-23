@@ -3,6 +3,7 @@ import logging
 from jira.handler import JiraHandler
 from dotenv import load_dotenv
 
+
 class IssueReader:
 
     def __init__(self):
@@ -17,6 +18,7 @@ class IssueReader:
     def get_json(self):
         return self.json
 
+
 load_dotenv()
 logger = logging.getLogger()
 logging.basicConfig(
@@ -30,18 +32,18 @@ app = IssueReader()
 app.read_file()
 myJira = JiraHandler()
 
-json = app.get_json()
-for issue in json['issues']:
-  desc = issue['description']
-  syst=issue['system']
+jsonStr = app.get_json()
+for issue in jsonStr['issues']:
+    desc = issue['description']
+    syst=issue['system']
 
-  intro = "Issue: {iss}\nAffected system: {sys}\nIn order to remedy this issue, please take the following measure(s):\n".format(iss=desc, sys=syst)
-  li = []
-  for mes in issue['measures']:
-    li.append('  * '+mes+'\n')
-  measures = intro+(''.join(li))
+    intro = "Issue: {iss}\nAffected system: {sys}\nIn order to remedy this issue, please take the following measure(s):\n".format(iss=desc, sys=syst)  # noqa F501
+    li = []
+    for mes in issue['measures']:
+        li.append('  * '+mes+'\n')
+    measures = intro+(''.join(li))
 
-  desc = 'PostgreSQL Service Review Finding: '+desc
-  print(desc)
-  print(measures)
-  logger.info(myJira.create_issue_withlabel(desc, measures))
+    desc = 'PostgreSQL Service Review Finding: '+desc
+    print(desc)
+    print(measures)
+    logger.info(myJira.create_issue_withlabel(desc, measures))

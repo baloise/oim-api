@@ -1,8 +1,5 @@
 import unittest
-import flask_unittest
 from app import create_flask_app
-import re
-from unittest import mock
 from dotenv import load_dotenv
 from tests.ocRequestGeneration_test import TestOcRequestJson  # noqa: F401
 

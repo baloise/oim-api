@@ -37,49 +37,6 @@ class CreateVmPath(AbstractOcPath):
         surl = self.get_base_url()
         return '{baseUrl}/GenericScripts/Execute/OrgEntityId/{orgEntityId}/ScriptID/16'.format(baseUrl=surl), orgEntityId=self.getOrgEntityId())   # noqa E501
 
-    """def get_body_lab(self) -> str:
-        bodyJson = {}
-        bodyJson["items"] = []
-        bodyJson["items"].append(
-                {
-                    self.OC_REQUESTFIELD.REGIONNAME.value: {
-                        "key": self.OC_REQUESTFIELD.REGIONNAME.value,
-                        "value": "UK"
-                    },
-                    self.OC_REQUESTFIELD.ORGNAME.value: {
-                        "key": self.OC_REQUESTFIELD.ORGNAME.value,
-                        "value": "Baloise"
-                    },
-                    self.OC_REQUESTFIELD.INSTANCESIZE.value: {
-                        "key": self.OC_REQUESTFIELD.INSTANCESIZE.value,
-                        "value": self.item.get_size().cataloguesize   # "Small (S2) - Cores: 1, Memory: 4"     # input from user # noqa: E501
-                    },
-                    "itemno": 1
-                })
-
-        bodyJson[self.OC_REQUESTFIELD.ORDERNO.value] = "0"
-        bodyJson[self.OC_REQUESTFIELD.UITEMPLATEID.value] = "1"
-        bodyJson[self.OC_REQUESTFIELD.SERVICECATALOGID.value] = self.getCatalogueId()
-        bodyJson[self.OC_REQUESTFIELD.CATALOGUEENTITYID.value] = self.getCatalogueEntityId()
-        bodyJson[self.OC_REQUESTFIELD.ENVRIONMENTENTITYID.value] = self.getEnvironmentEntityId()
-        bodyJson[self.OC_REQUESTFIELD.CATALOGUENAME.value] = self.item.get_cataloguename()  # OC_CATALOGOFFERINGS.RHEL7.cataloguename        # input fom user # noqa: E501
-        bodyJson[self.OC_REQUESTFIELD.SERVICECATALOGID.value] = "0"
-        bodyJson[self.OC_REQUESTFIELD.SUBSCRIPTIONID.value] = self.getSubscriptionId()
-        bodyJson[self.OC_REQUESTFIELD.PLATFORMCODE.value] = self.getPlatformCode()
-        bodyJson[self.OC_REQUESTFIELD.ISDRAFT.value] = "N"
-        bodyJson[self.OC_REQUESTFIELD.ORGENTITYID.value] = self.getOrgEntityId()
-        bodyJson[self.OC_REQUESTFIELD.LANGUAGE.value] = self.OC_LANGUAGE.EN_US.value
-        bodyJson[self.OC_REQUESTFIELD.OFFSET.value] = "-330"
-        bodyJson[self.OC_REQUESTFIELD.CHANGENUMBER.value] = ""
-        bodyJson[self.OC_REQUESTFIELD.REQUESTFOREMAIL.value] = self.get_requester().email   # input fom user
-
-        payload = doubleQuoteDict(bodyJson)
-        payloadStr = json.dumps(payload)
-        payload = payloadStr
-        self.log.info(payload)
-
-        return payload"""
-
     def get_body(self) -> str:
         bodyJson = {}
         bodyJson["items"] = []
