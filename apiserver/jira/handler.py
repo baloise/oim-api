@@ -14,25 +14,23 @@ class JIRABOARD(enum.Enum):
 class JiraHandler:
 
     def __init__(self):
-
-        logger = get_oim_logger()
-        logger.debug("JiraHandler initialized")
+        self.logger = get_oim_logger()
+        self.logger.debug("JiraHandler initialized")
 
         self.jira_baseurl = os.getenv('JIRA_BASEURL')
         if not self.jira_baseurl:
-            logger.error("No JIRA_BASEURL defined")
+            self.logger.error("No JIRA_BASEURL defined")
 
         self.jira_auth_user = os.getenv('JIRA_AUTH_USER')
         if not self.jira_auth_user:
-            logger.error("No JIRA_AUTH_USER defined")
+            self.logger.error("No JIRA_AUTH_USER defined")
 
         self.jira_auth_pass = os.getenv('JIRA_AUTH_PASS')
         if not self.jira_auth_pass:
-            logger.error("No JIRA_AUTH_PASS defined")
+            self.logger.error("No JIRA_AUTH_PASS defined")
 
     def get_issue_json(self, jira_key):
-        logger = get_oim_logger()
-        logger.debug("Searching for {0}".format(jira_key))
+        self.logger.debug("Searching for {0}".format(jira_key))
 
         response = requests.get(
             "{0}/issue/{1}".format(self.jira_baseurl, jira_key),
@@ -43,14 +41,15 @@ class JiraHandler:
 
     def create_issue_withlabel(self, summary, description):
         label = "hcl"
-        self.create_issue_generic(summary, description, label, JIRABOARD.SIAMSID)
+        issuenr = self.create_issue_generic(summary, description, label, JIRABOARD.SIAMSID)
+        ky = issuenr['key']
+        if issuenr:
+            self.set_reporter(ky, "B041091")
 
     def create_issue_siamsid(self, summary, description):
         self.create_issue_generic(summary, description, "", JIRABOARD.SIAMSID)
 
     def create_issue_generic(self, summary, description, label, board: JIRABOARD):
-        logger = get_oim_logger()
-
         body = {
             "fields": {
                 "project": {"key": "SIAM"},
@@ -67,11 +66,40 @@ class JiraHandler:
             if response.status_code in [404, 400]:
                 raise Exception(response.text)
         except Exception as e:
-            logger.error("Creating jira failed with error {err}".format(err=e))
+            self.logger.error("Creating jira failed with error {err}".format(err=getattr(e, 'message', repr(e))))
+            self.logger.debug(body)
         else:
-            logger.info("Jira {0} created".format(response.json()['key']))
+            self.logger.info("Jira {0} created".format(response.json()['key']))
 
         return response.json()
+
+    def set_reporter(self, jira_key: str, name: str):
+        body = {
+            "fields": {
+             "reporter": {"name": name}
+            }
+        }
+
+        try:
+            response = self.update_issue(jira_key, body)
+            if response.status_code in [404, 400]:
+                raise Exception(response.text)
+        except Exception as e:
+            self.logger.error("Updating jira failed with error {err}".format(err=getattr(e, 'message', repr(e))))
+            self.logger.debug(body)
+        else:
+            self.logger.info("Jira {0} updated".format(jira_key))
+
+        return response.json()
+
+    def update_issue(self, jira_key, body):
+        response = requests.put(
+            "{baseurl}/issue/{jira_key}".format(baseurl=self.jira_baseurl, jira_key=jira_key),
+            json=body,
+            auth=HTTPBasicAuth(self.jira_auth_user,
+                               self.jira_auth_pass)
+        )
+        return response
 
     def create_issue(self, body):
         response = requests.post(
@@ -96,12 +124,10 @@ class JiraHandler:
         return response
 
     def upload_attachment(self, jira_key, path_to_file):
-        logger = get_oim_logger()
-
-        logger.debug("Reading file '{0}'".format(path_to_file))
+        self.logger.debug("Reading file '{0}'".format(path_to_file))
         uploadfile = open(path_to_file, "rb")
 
-        logger.debug("Uploading '{0}' for {1}".format(path_to_file, jira_key))
+        self.logger.debug("Uploading '{0}' for {1}".format(path_to_file, jira_key))
         response = requests.post(
             "{0}/issue/{1}/attachments".format(self.jira_baseurl, jira_key),
             files={"file": uploadfile},

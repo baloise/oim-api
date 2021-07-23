@@ -46,4 +46,5 @@ for issue in jsonStr['issues']:
     desc = 'PostgreSQL Service Review Finding: '+desc
     print(desc)
     print(measures)
-    logger.info(myJira.create_issue_withlabel(desc, measures))
+    res = myJira.create_issue_withlabel(desc, measures)
+    logger.info("Jira Create Issue Result: " + ('' if res is None else str(res)))
