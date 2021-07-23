@@ -48,7 +48,7 @@ class JiraHandler:
     def create_issue_siamsid(self, summary, description):
         self.create_issue_generic(summary, description, "", JIRABOARD.SIAMSID)
 
-    def create_issue_generic(self, summary, description, label, board: JIRABOARD):
+    def create_issue_generic(self, summary, description, label, board: JIRABOARD, reporter=None):
         logger = get_oim_logger()
 
         body = {
@@ -61,6 +61,12 @@ class JiraHandler:
                 "customfield_24250": {"value": board.value}
             }
         }
+        
+        # Jira will use the JIRA_AUTH_USER as reporter, but it will be overwritten if parameter 'reporter' is set
+        if reporter is not None:
+            body["fields"]["reporter"] = {
+                "name": reporter
+            }
 
         try:
             response = self.create_issue(body)
