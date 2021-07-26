@@ -5,10 +5,16 @@ from requests.auth import HTTPBasicAuth
 import enum
 
 
-class JIRABOARD(enum.Enum):
+class JIRABOARD(bytes, enum.Enum):
+    def __new__(cls, value, jiraproject, jiraboard):
+        obj = bytes.__new__(cls)
+        obj._value_ = value
+        obj.project = jiraproject
+        obj.boardname = jiraboard
+        return obj
     # kv from oc docu
-    SIAMSID = "SIAM SID"
-    HCLDIS = "DIS Overview"
+    SIAMSID = (0, "SIAM", "SIAM SID")
+    HCLDIS = (1, "DIS", "DIS Overview")
 
 
 class JiraHandler:
@@ -41,35 +47,41 @@ class JiraHandler:
 
         return response.json()
 
-    def create_issue_withlabel(self, summary, description):
-        label = "hcl"
-        self.create_issue_generic(summary, description, label,
-                                  JIRABOARD.SIAMSID)
-
-    def create_issue_siamsid(self, summary, description):
-        self.create_issue_generic(summary, description, "",
-                                  JIRABOARD.SIAMSID)
-
     def create_issue_generic(self, summary, description, label,
-                             board: JIRABOARD, reporter=None):
+                             board: JIRABOARD, reporter=None, order=None, service=None):
         logger = get_oim_logger()
 
         body = {
             "fields": {
-                "project": {"key": "SIAM"},
+                "project": {"key": board.project},
                 "summary": summary,
                 "description": description,
                 "issuetype": {"name": "Task"},
-                "labels": [label],
-                "customfield_24250": {"value": board.value}
+                "labels": [label]
             }
         }
+
+        # assign to team in case SIAM project
+        if board.project == JIRABOARD.SIAMSID.project:
+            body["fields"]["customfield_24250"] = {
+                "value": board.boardname
+            }
+
+        if board.project == JIRABOARD.HCLDIS.project:
+            if service is not None:
+                # Change Service
+                body["fields"]["customfield_27053"] = service
+            if order is not None:
+                # Order
+                body["fields"]["customfield_24350"] = {
+                    "value": order
+                }
 
         # Jira will use the JIRA_AUTH_USER as reporter,
         # but it will be overwritten if parameter 'reporter' is set
         if reporter is not None:
             body["fields"]["reporter"] = {
-                "name": reporter
+                "accountId": reporter
             }
 
         try:
