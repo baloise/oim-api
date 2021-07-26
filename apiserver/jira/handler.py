@@ -2,6 +2,13 @@ from oim_logging import get_oim_logger
 import os
 import requests
 from requests.auth import HTTPBasicAuth
+import enum
+
+
+class JIRABOARD(enum.Enum):
+    # kv from oc docu
+    SIAMSID = "SIAM SID"
+    HCLDIS = "DIS Overview"
 
 
 class JiraHandler:
@@ -34,29 +41,45 @@ class JiraHandler:
 
         return response.json()
 
+    def create_issue_withlabel(self, summary, description):
+        label = "hcl"
+        self.create_issue_generic(summary, description, label,
+                                  JIRABOARD.SIAMSID)
+
     def create_issue_siamsid(self, summary, description):
+        self.create_issue_generic(summary, description, "",
+                                  JIRABOARD.SIAMSID)
+
+    def create_issue_generic(self, summary, description, label,
+                             board: JIRABOARD, reporter=None):
         logger = get_oim_logger()
 
         body = {
             "fields": {
-                "project":
-                    {
-                        "key": "SIAM"
-                    },
+                "project": {"key": "SIAM"},
                 "summary": summary,
-                    "description": description,
-                    "issuetype": {
-                        "name": "Task"
-                    },
-                "customfield_24250": {
-                        "value": "SIAM SID"
-                    }
+                "description": description,
+                "issuetype": {"name": "Task"},
+                "labels": [label],
+                "customfield_24250": {"value": board.value}
             }
         }
 
-        response = self.create_issue(body)
+        # Jira will use the JIRA_AUTH_USER as reporter,
+        # but it will be overwritten if parameter 'reporter' is set
+        if reporter is not None:
+            body["fields"]["reporter"] = {
+                "name": reporter
+            }
 
-        logger.info("Jira {0} created".format(response.json()['key']))
+        try:
+            response = self.create_issue(body)
+            if response.status_code in [404, 400]:
+                raise Exception(response.text)
+        except Exception as e:
+            logger.error("Creating jira failed with error {err}".format(err=e))
+        else:
+            logger.info("Jira {0} created".format(response.json()['key']))
 
         return response.json()
 
