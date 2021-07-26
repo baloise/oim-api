@@ -6,7 +6,7 @@
 from abc import ABC, abstractmethod
 from zeep import Client
 from adapter.OrchestraAdapters import cmdb_adapter, environment_adapter, cmdb_performance_adapter, provider_sla_adapter  # noqa E501
-from ourCloud.OcStaticVars import ENVIRONMENT, TRANSLATE_TARGETS, STORAGE_PERFORMANCE_LEVEL , SERVICE_LEVEL                # noqa E501
+from ourCloud.OcStaticVars import ENVIRONMENT, TRANSLATE_TARGETS, METAL_CLASS, STORAGE_PERFORMANCE_LEVEL , SERVICE_LEVEL                # noqa E501
 
 from zeep.transports import Transport
 from requests import Session
@@ -227,7 +227,7 @@ class OrchestraChangeHandler(GenericChangeHandler):     # has no idea of SOAP
         xml_filter = {'field': field, 'pattern': pattern}
         return self.orchestra.deactivate_system(xml_filter)
 
-    # Maybe not needed for the change, not sure if we need to delete a change or a task
+    # Maybe not needed for the change, not sure if we need to delete a change or a task # noqa E501
     def delete_change(self, field, pattern):
         xml_filter = {'field': field, 'pattern': pattern}
         return self.orchestra.delete_system(xml_filter)
