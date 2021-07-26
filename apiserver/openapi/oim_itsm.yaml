@@ -49,6 +49,9 @@ components:
         description:
           type: string
           example: "failed and not complete"
+        taskname:
+          type: string
+          example: "Cloning"
         changeOwnerGroup:
           type: string
           nullable: true
@@ -58,6 +61,7 @@ components:
           "ticketno": "CH-0000016",
           "status": "CH_IMPF",
           "description": "Error on playbook need investigated !",
+          "taskname": "Cloning",
           "changeOwnerGroup": "HCL-DCOps"
         }
 

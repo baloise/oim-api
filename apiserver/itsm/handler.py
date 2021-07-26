@@ -1,6 +1,6 @@
 from oim_logging import get_oim_logger
 import os
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 import requests
 import json
 
@@ -8,7 +8,7 @@ import json
 class ValuemationHandler:
 
     def __init__(self):
-        load_dotenv()
+        # load_dotenv()
         logger = get_oim_logger()
         logger.debug("ValuemationHandler initialized")
 
