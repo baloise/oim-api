@@ -9,8 +9,9 @@ def update_change(body):
     mytaskname = body.get("taskname")
     mysupportgroup = body.get("changeOwnerGroup")
 
-    info = "Update change : {stat}, {tck}, {desc}, {tskn} {supg}".format(stat=mystatus, tck=myticketno, desc=mydescription,
-                                                                         tskn=mytaskname, supg=mysupportgroup)
+    info = "Update change : {stat}, {tck}, {desc}, {tskn} {supg}".format(stat=mystatus, tck=myticketno,
+                                                                         desc=mydescription, tskn=mytaskname,
+                                                                         supg=mysupportgroup)
     logger.info(info)
 
     retStr = {"ticketno": myticketno, "changestatus": mystatus}

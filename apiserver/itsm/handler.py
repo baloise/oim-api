@@ -37,31 +37,31 @@ class ValuemationHandler:
     def create_change(self, params: json):
         self.logger = get_oim_logger()
 
-        body = {
-            "accessToken": self.valuemation_access_token,
-            "username": self.valuemation_auth_user,
-            "password": self.valuemation_auth_password,
-            "encrypted": "N",
-            "service": "CreateBAStandardChange",
-            "params": {
-                "ticketclass": "RFC/Change",
-                "tickettype": "Standard Change",
-                "status": "CH_REC",
-                "tckShorttext": "Standard Change: Testing the workflow from OIM(Georges)",
-                "description": "Standard Change: Testing the workflow from OIM(Georges)",
-                "statementtype": "Information",
-                "persnoReqBy": "B037158",
-                "persnoAffected": self.valuemation_auth_user,
-                "category": "Linux",
-                "servicesid": "560",
-                "system": "CHZ1-TS-01",
-                "dueDate": "2021-07-26",
-                "environmentId": "3",
-                "actualUser": self.valuemation_auth_user,
-                "changeOwnerPersonNo": "",
-                "changeOwnerGroup": "HCL-DCOps"
-            }
-        }
+        # body = {
+        #     "accessToken": self.valuemation_access_token,
+        #     "username": self.valuemation_auth_user,
+        #     "password": self.valuemation_auth_password,
+        #     "encrypted": "N",
+        #     "service": "CreateBAStandardChange",
+        #     "params": {
+        #         "ticketclass": "RFC/Change",
+        #         "tickettype": "Standard Change",
+        #         "status": "CH_REC",
+        #         "tckShorttext": "Standard Change: Testing the workflow from OIM(Georges)",
+        #         "description": "Standard Change: Testing the workflow from OIM(Georges)",
+        #         "statementtype": "Information",
+        #         "persnoReqBy": "B037158",
+        #         "persnoAffected": self.valuemation_auth_user,
+        #         "category": "Linux",
+        #         "servicesid": "560",
+        #         "system": "CHZ1-TS-01",
+        #         "dueDate": "2021-07-26",
+        #         "environmentId": "3",
+        #         "actualUser": self.valuemation_auth_user,
+        #         "changeOwnerPersonNo": "",
+        #         "changeOwnerGroup": "HCL-DCOps"
+        #     }
+        # }
 
         new_body = {
             "accessToken": self.valuemation_access_token,
@@ -72,7 +72,7 @@ class ValuemationHandler:
             "params": params
         }
         try:
-            response = requests.post(self.valuemation_baseurl, json=body)
+            response = requests.post(self.valuemation_baseurl, json=new_body)
             response.raise_for_status()
 
         except requests.exceptions.HTTPError as errh:
