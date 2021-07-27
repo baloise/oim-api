@@ -50,7 +50,7 @@ class AwaitDeployStep(AbstractWorkflowStep):
             try:
                 chstatus = self.getTicketStatus(chno)
             except Exception as re:
-                error = "Error while reading status of change nr {cnr}: {err}".format(cnr=chno,err=re)
+                error = "Error while reading status of change nr {cnr}: {err}".format(cnr=chno, err=re)
                 self.logger.error(error)
             self.logger.info("Poll status of change {nr}: {chs}".format(nr=chno, chs=chstatus))
             if chstatus is None:
