@@ -1,12 +1,14 @@
 from abc import ABC, abstractmethod
 from models.orders import OrderItem
 from ourCloud.OurCloudHandler import OurCloudRequestHandler
+from orchestra.OrchestraRequestHandler import OrchestraChangeHandler
 from workflows.WorkflowContext import WorkflowContext
 from oim_logging import get_oim_logger
 from exceptions.WorkflowExceptions import StepException, RequestHandlerException, TransmitException
 from random import sample
 import traceback
 from app import db
+import time
 
 
 class AbstractWorkflowStep(ABC):
@@ -32,6 +34,28 @@ class DummyStep(AbstractWorkflowStep):
         info = "  Execute step: {} for user {}".format(self.action, context.get_requester().email)
         logger = get_oim_logger()
         logger.info(info)
+
+
+class AwaitDeployStep(AbstractWorkflowStep):
+    def __init__(self):
+        self.action = "awaitdeploy"
+
+    def execute(self, context: WorkflowContext):
+        info = "  Execute step: {ac} for change {chg}".format(ac=self.action, chg=context.get_changeno())
+        logger = get_oim_logger()
+        logger.info(info)
+        while True:
+            # chstatus = self.getTicketStatus(context.get_changeno())
+            chno = 'CH-0000014'  # chno = context.get_changeno()
+            chstatus = self.getTicketStatus(chno)
+            logger.info("Poll status of change {nr}: {chs}".format(nr=chno, chs=chstatus))
+            if chstatus == "CH_REC":
+                break
+            time.sleep(10)
+
+    def getTicketStatus(self, changeno: str):
+        handler = OrchestraChangeHandler()
+        return handler.select_change("TICKETNO", changeno)
 
 
 class CreateCrStep(AbstractWorkflowStep):

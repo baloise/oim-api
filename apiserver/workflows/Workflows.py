@@ -246,6 +246,8 @@ class CreateVmWorkflow(GenericWorkflow):
                     dBatch.add_step(stepCr)
                     step = DeployVmStep(item)
                     dBatch.add_step(step)
+                    step = AwaitDeployStep()
+                    dBatch.add_step(step)
             self.add_batch(dBatch)
 
             tBatch = Batch("test", OrderStateType.TEST_SUCCEEDED.state, True)
