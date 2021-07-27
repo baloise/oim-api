@@ -1,7 +1,7 @@
 from typing import List
 import collections
 import enum
-from workflows.steps.WorkflowSteps import AbstractWorkflowStep, CreateCrStep
+from workflows.steps.WorkflowSteps import AbstractWorkflowStep, CreateCrStep, AwaitDeployStep
 from models.orders import Order, OrderStateType, OrderType, BackendType
 from workflows.steps.WorkflowSteps import DeployVmStep, DummyStep
 from workflows.WorkflowContext import WorkflowContext

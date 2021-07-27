@@ -5,8 +5,8 @@
 # from typing import ForwardRef
 from abc import ABC, abstractmethod
 from zeep import Client
-from adapter.OrchestraAdapters import cmdb_adapter, environment_adapter, cmdb_performance_adapter, provider_sla_adapter  # noqa E501
-from ourCloud.OcStaticVars import ENVIRONMENT, TRANSLATE_TARGETS, METAL_CLASS, STORAGE_PERFORMANCE_LEVEL , SERVICE_LEVEL                # noqa E501
+from adapter.OrchestraAdapters import environment_adapter, cmdb_performance_adapter, provider_sla_adapter  # noqa E501
+from ourCloud.OcStaticVars import ENVIRONMENT, TRANSLATE_TARGETS, STORAGE_PERFORMANCE_LEVEL , SERVICE_LEVEL                # noqa E501
 
 from zeep.transports import Transport
 from requests import Session
@@ -113,7 +113,7 @@ class OrchestraCmdbHandler(GenericCmdbHandler):     # has no idea of SOAP
         self.orchestra = OrchestraRequestHandler(self.url)
         self.cmdb_perf = cmdb_performance_adapter().translate(STORAGE_PERFORMANCE_LEVEL.HIGH, TRANSLATE_TARGETS.CMDB)  # noqa E501
         self.cmdb_env_id = environment_adapter().translate(ENVIRONMENT.TEST, TRANSLATE_TARGETS.CMDB)    # noqa E501
-        self.cmdb_sla_brz = provider_sla_adapter().translate(METAL_CLASS.GOLD)
+        self.cmdb_sla_brz = provider_sla_adapter().translate(SERVICE_LEVEL.PREMIUM)
 
     def select_system(self, field, pattern):
         xml_filter = {'field': field, 'pattern': pattern}
@@ -194,9 +194,6 @@ class GenericChangeHandler(ABC):
 
     @abstractmethod
     def delete_change(self, filter): pass
-
-    @abstractmethod
-    def insert_system(self, data): pass
 
     @abstractmethod
     def select_like_change(self, filter): pass
