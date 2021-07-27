@@ -239,6 +239,13 @@ class CreateVmWorkflow(GenericWorkflow):
                     vBatch.add_step(step)
             self.add_batch(vBatch)
 
+            croBatch = Batch("crcopen", OrderStateType.CR_CREATED.state, False)
+            for item in super().get_order().get_items():
+                if item.is_Vm():
+                    crStep = DummyStep("open cr")
+                    croBatch.add_step(crStep)
+            self.add_batch(croBatch)
+
             dBatch = Batch("deploy", OrderStateType.BE_DONE.state, False)
             for item in super().get_order().get_items():
                 if item.is_Vm():
@@ -248,9 +255,7 @@ class CreateVmWorkflow(GenericWorkflow):
                     dBatch.add_step(step)
                     step = AwaitDeployStep()  # one item per change nr, items will be deployed sequentially only
                     dBatch.add_step(step)
-                    cmdbStep = DummyStep("update cmdb")
-                    dBatch.add_step(cmdbStep)
-                    closeCrStep = DummyStep("close cr")
+                    closeCrStep = DummyStep("update cr")
                     dBatch.add_step(closeCrStep)
             self.add_batch(dBatch)
 
@@ -264,9 +269,16 @@ class CreateVmWorkflow(GenericWorkflow):
             cBatch = Batch("cmdb", OrderStateType.CMDB_DONE.state, False)
             for item in super().get_order().get_items():
                 if item.is_Vm():
-                    step = DummyStep()
-                    cBatch.add_step(step)
+                    cmdbStep = DummyStep("update cmdb")
+                    cBatch.add_step(cmdbStep)
             self.add_batch(cBatch)
+
+            crcBatch = Batch("crclose", OrderStateType.CR_CLOSED.state, False)
+            for item in super().get_order().get_items():
+                if item.is_Vm():
+                    crStep = DummyStep("close cr")
+                    crcBatch.add_step(crStep)
+            self.add_batch(crcBatch)
 
             hBatch = Batch("handover", OrderStateType.HANDOVER_DONE.state, False)
             for item in super().get_order().get_items():

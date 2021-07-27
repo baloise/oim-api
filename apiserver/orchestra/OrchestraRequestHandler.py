@@ -220,18 +220,6 @@ class OrchestraChangeHandler(GenericChangeHandler):     # has no idea of SOAP
         st = amsTicketObj.STATUS
         return st
 
-    def do_simulate(self) -> bool:
-        mystring = os.getenv('ORCA_SIMULATE', "True")
-        doSimulate = True
-        if mystring.lower() == 'false':
-            doSimulate = False
-        if doSimulate:
-            self.logger.info("Simulation enabled, requests will NOT be sent do ORCA ({})".format(doSimulate))
-            return True
-        else:
-            self.logger.info("Simulation disabled, requests will be sent do ORCA ({})".format(doSimulate))
-            return False
-
     # Maybe not needed for the change
     def select_like_change(self, field, pattern):
         xml_filter = {'field': field, 'pattern': pattern}
