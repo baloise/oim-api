@@ -246,8 +246,12 @@ class CreateVmWorkflow(GenericWorkflow):
                     dBatch.add_step(stepCr)
                     step = DeployVmStep(item)
                     dBatch.add_step(step)
-                    step = AwaitDeployStep()
+                    step = AwaitDeployStep()  # one item per change nr, items will be deployed sequentially only
                     dBatch.add_step(step)
+                    cmdbStep = DummyStep("update cmdb")
+                    dBatch.add_step(cmdbStep)
+                    closeCrStep = DummyStep("close cr")
+                    dBatch.add_step(closeCrStep)
             self.add_batch(dBatch)
 
             tBatch = Batch("test", OrderStateType.TEST_SUCCEEDED.state, True)

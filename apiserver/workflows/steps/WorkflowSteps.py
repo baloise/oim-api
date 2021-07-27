@@ -27,11 +27,12 @@ class AbstractWorkflowStep(ABC):
 
 
 class DummyStep(AbstractWorkflowStep):
-    def __init__(self):
+    def __init__(self, message="no message"):
         self.action = "dummy"
+        self.message = message
 
     def execute(self, context: WorkflowContext):
-        info = "  Execute step: {} for user {}".format(self.action, context.get_requester().email)
+        info = "  Execute step {} for user {}: {ms}".format(self.action, context.get_requester().email, ms=self.message)
         logger = get_oim_logger()
         logger.info(info)
 
@@ -40,30 +41,32 @@ class AwaitDeployStep(AbstractWorkflowStep):
     def __init__(self):
         self.action = "awaitdeploy"
         self.logger = get_oim_logger()
+        self.STATUS_CLOSED = "CH_CLD"
 
     def execute(self, context: WorkflowContext):
-        info = "  Execute step: {ac} for change {chg}".format(ac=self.action, chg=context.get_changeno())
+        info = "  Execute step: {ac} for change {chg}".format(ac=self.action,
+                                                              chg=context.get_changeno())
         self.logger.info(info)
         while True:
-            # chstatus = self.getTicketStatus(context.get_changeno())
-            chno = 'CH-0000014'  # chno = context.get_changeno()
             try:
-                chstatus = self.getTicketStatus(chno)
+                chstatus = self.getTicketStatus(context.get_changeno())
             except Exception as re:
-                error = "Error while reading status of change nr {cnr}: {err}".format(cnr=chno, err=re)
+                error = "Error while reading status of change nr {cnr}: {err}".format(cnr=context.get_changeno(),
+                                                                                      err=re)
                 self.logger.error(error)
-            self.logger.info("Poll status of change {nr}: {chs}".format(nr=chno, chs=chstatus))
+            self.logger.info("Poll status of change {nr}: {chs}".format(nr=context.get_changeno(),
+                                                                        chs=chstatus))
             if chstatus is None:
-                self.logger.error("Error while trying to poll status of change nr {nr}: change unknown".format(nr=chno))
+                self.logger.error("Error while trying to poll status of change nr {nr}: change unknown".format(nr=context.get_changeno()))   # noqa E501
                 break
-            if chstatus == "CH_REC":
+            if chstatus == self.STATUS_CLOSED:
+                # we're done, let's continue the workflow
                 break
             time.sleep(10)
 
     def getTicketStatus(self, changeno: str):
         handler = OrchestraChangeHandler()
-        ret = handler.select_change("TICKETNO", changeno)
-        retStat = ret.STATUS
+        retStat = handler.select_change("TICKETNO", changeno)
         return retStat
 
 

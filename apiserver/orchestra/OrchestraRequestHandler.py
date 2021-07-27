@@ -5,8 +5,10 @@
 # from typing import ForwardRef
 from abc import ABC, abstractmethod
 from zeep import Client
-from adapter.OrchestraAdapters import environment_adapter, cmdb_performance_adapter, provider_sla_adapter  # noqa E501
-from ourCloud.OcStaticVars import ENVIRONMENT, TRANSLATE_TARGETS, STORAGE_PERFORMANCE_LEVEL , SERVICE_LEVEL                # noqa E501
+from adapter.OrchestraAdapters import environment_adapter, cmdb_performance_adapter, provider_sla_adapter
+from oim_logging import get_oim_logger  # noqa E501
+from ourCloud.OcStaticVars import ENVIRONMENT, TRANSLATE_TARGETS, STORAGE_PERFORMANCE_LEVEL , SERVICE_LEVEL  # noqa E501
+import os
 
 from zeep.transports import Transport
 from requests import Session
@@ -209,11 +211,34 @@ class OrchestraChangeHandler(GenericChangeHandler):     # has no idea of SOAP
         self.cmdb_perf = cmdb_performance_adapter().translate(STORAGE_PERFORMANCE_LEVEL.HIGH, TRANSLATE_TARGETS.CMDB)  # noqa E501
         self.cmdb_env_id = environment_adapter().translate(ENVIRONMENT.TEST, TRANSLATE_TARGETS.CMDB)    # noqa E501
         self.cmdb_sla_brz = {"OIM_PROVIDER_SLA": provider_sla_adapter().translate(SERVICE_LEVEL.ELITE, TRANSLATE_TARGETS.CMDB) }    # noqa E501
+        self.logger = get_oim_logger()
 
     def select_change(self, field, pattern):
         xml_filter = {'field': field, 'pattern': pattern}
-        ticketList = self.orchestra.select_ticket(xml_filter)
-        return ticketList[0]
+        ticketList = []
+        if self.do_simulate():
+            self.logger.info("Simulate orca ticket api")
+            # create a dummy object
+            obj = lambda: None  # noqa E731
+            obj.STATUS = 'CH_CLD'
+            ticketList.append(obj)
+        else:
+            ticketList = self.orchestra.select_ticket(xml_filter)
+        amsTicketObj = ticketList[0]
+        st = amsTicketObj.STATUS
+        return st
+
+    def do_simulate(self) -> bool:
+        mystring = os.getenv('ORCA_SIMULATE', "True")
+        doSimulate = True
+        if mystring.lower() == 'false':
+            doSimulate = False
+        if doSimulate:
+            self.logger.info("Simulation enabled, requests will NOT be sent do ORCA ({})".format(doSimulate))
+            return True
+        else:
+            self.logger.info("Simulation disabled, requests will be sent do ORCA ({})".format(doSimulate))
+            return False
 
     # Maybe not needed for the change
     def select_like_change(self, field, pattern):
