@@ -8,7 +8,6 @@ from zeep import Client
 from adapter.OrchestraAdapters import environment_adapter, cmdb_performance_adapter, provider_sla_adapter
 from oim_logging import get_oim_logger  # noqa E501
 from ourCloud.OcStaticVars import ENVIRONMENT, TRANSLATE_TARGETS, STORAGE_PERFORMANCE_LEVEL , SERVICE_LEVEL  # noqa E501
-import os
 
 from zeep.transports import Transport
 from requests import Session
