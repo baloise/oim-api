@@ -15,11 +15,27 @@ myChange = ValuemationHandler()
 # Show ENV
 # x = myChange.showEnv()
 # print("Return:[", x, "]")
+
 # Test Update
-update_string = '{"status":"", "description":"Free text can place hier", "ticketno":"", "changeOwnerGroup":""}'
-lRet = myChange.update_change()
+# params = {
+#     "params": {
+#         "status":"CH_IMPF",
+#         "description":"Free text can place hier",
+#         "ticketno":"CH-0000016",
+#         "changeOwnerGroup":"HCL-Windows"
+#     }
+# }
+params = {
+        "status": "CH_IMPF",
+        "description": "Free text can place hier, final version(Georges)",
+        "ticketno": "CH-0000016",
+        "changeOwnerGroup": "HCL-Linux"
+    }
+
+lRet = myChange.update_change(params)
 print("Return:[", lRet, "]")
 
-create_string = '{"":"", "":"", "":"", "":""}'
-lRet = myChange.create_change()
-print("Return:[", lRet, "]")
+# Test Create
+# create_string = '{"":"", "":"", "":"", "":""}'
+# lRet = myChange.create_change()
+# print("Return:[", lRet, "]")

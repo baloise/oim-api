@@ -1,14 +1,15 @@
 from oim_logging import get_oim_logger
 import os
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 import requests
 import json
+import pprint
 
 
 class ValuemationHandler:
 
     def __init__(self):
-        # load_dotenv()
+        load_dotenv()
         logger = get_oim_logger()
         logger.debug("ValuemationHandler initialized")
 
@@ -63,7 +64,7 @@ class ValuemationHandler:
         #     }
         # }
 
-        new_body = {
+        body = {
             "accessToken": self.valuemation_access_token,
             "username": self.valuemation_auth_user,
             "password": self.valuemation_auth_password,
@@ -72,7 +73,7 @@ class ValuemationHandler:
             "params": params
         }
         try:
-            response = requests.post(self.valuemation_baseurl, json=new_body)
+            response = requests.post(self.valuemation_baseurl, json=body)
             response.raise_for_status()
 
         except requests.exceptions.HTTPError as errh:
@@ -88,24 +89,37 @@ class ValuemationHandler:
         # return response.json()
         return response.status_code
 
-    def update_change(self, ticketNr: str, status: str, changeOwnerGroup: str, description: str):
+    # def update_change(self, ticketNr: str, status: str, changeOwnerGroup: str, description: str):
+    def update_change(self, params: dict):
         self.logger = get_oim_logger()
 
-        body = {
+        # body = {
+        #     "accessToken": self.valuemation_access_token,
+        #     "username": self.valuemation_auth_user,
+        #     "password": self.valuemation_auth_password,
+        #     "encrypted": "N",
+        #     "service": "UpdateBAStandardChange",
+        #     "params": {
+        #         "status": status,
+        #         "description": description,
+        #         "ticketno": ticketNr,
+        #         "changeOwnerGroup": changeOwnerGroup
+        #     }
+        # }
+        body_t1 = {
             "accessToken": self.valuemation_access_token,
             "username": self.valuemation_auth_user,
             "password": self.valuemation_auth_password,
             "encrypted": "N",
             "service": "UpdateBAStandardChange",
-            "params": {
-                "status": status,
-                "description": description,
-                "ticketno": ticketNr,
-                "changeOwnerGroup": changeOwnerGroup
+            "params": {}
             }
-        }
+
+        body_final = json.loads(json.dumps(body_t1))
+        body_final["params"].update(params)
+
         try:
-            response = requests.post(self.valuemation_baseurl, json=body)
+            response = requests.post(self.valuemation_baseurl, json=body_final)
             response.raise_for_status()
 
         except requests.exceptions.HTTPError as errh:
