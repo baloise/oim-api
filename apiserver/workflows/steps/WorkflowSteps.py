@@ -9,6 +9,7 @@ from random import sample
 import traceback
 from app import db
 import time
+import os
 
 
 class AbstractWorkflowStep(ABC):
@@ -65,9 +66,25 @@ class AwaitDeployStep(AbstractWorkflowStep):
             time.sleep(10)
 
     def getTicketStatus(self, changeno: str):
-        handler = OrchestraChangeHandler()
-        retStat = handler.select_change("TICKETNO", changeno)
+        if self.do_simulate():
+            self.logger.info("Simulate orca ticket api")
+            retStat = "CH_CLD"
+        else:
+            handler = OrchestraChangeHandler()
+            retStat = handler.select_change("TICKETNO", changeno)
         return retStat
+
+    def do_simulate(self) -> bool:
+        mystring = os.getenv('ORCA_SIMULATE', "True")
+        doSimulate = True
+        if mystring.lower() == 'false':
+            doSimulate = False
+        if doSimulate:
+            self.logger.info("Simulation enabled, requests will NOT be sent do ORCA ({})".format(doSimulate))
+            return True
+        else:
+            self.logger.info("Simulation disabled, requests will be sent do ORCA ({})".format(doSimulate))
+            return False
 
 
 class CreateCrStep(AbstractWorkflowStep):

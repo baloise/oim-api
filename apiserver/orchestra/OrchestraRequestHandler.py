@@ -215,15 +215,7 @@ class OrchestraChangeHandler(GenericChangeHandler):     # has no idea of SOAP
 
     def select_change(self, field, pattern):
         xml_filter = {'field': field, 'pattern': pattern}
-        ticketList = []
-        if self.do_simulate():
-            self.logger.info("Simulate orca ticket api")
-            # create a dummy object
-            obj = lambda: None  # noqa E731
-            obj.STATUS = 'CH_CLD'
-            ticketList.append(obj)
-        else:
-            ticketList = self.orchestra.select_ticket(xml_filter)
+        ticketList = self.orchestra.select_ticket(xml_filter)
         amsTicketObj = ticketList[0]
         st = amsTicketObj.STATUS
         return st
