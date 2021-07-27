@@ -39,23 +39,32 @@ class DummyStep(AbstractWorkflowStep):
 class AwaitDeployStep(AbstractWorkflowStep):
     def __init__(self):
         self.action = "awaitdeploy"
+        self.logger = get_oim_logger()
 
     def execute(self, context: WorkflowContext):
         info = "  Execute step: {ac} for change {chg}".format(ac=self.action, chg=context.get_changeno())
-        logger = get_oim_logger()
-        logger.info(info)
+        self.logger.info(info)
         while True:
             # chstatus = self.getTicketStatus(context.get_changeno())
             chno = 'CH-0000014'  # chno = context.get_changeno()
-            chstatus = self.getTicketStatus(chno)
-            logger.info("Poll status of change {nr}: {chs}".format(nr=chno, chs=chstatus))
+            try:
+                chstatus = self.getTicketStatus(chno)
+            except Exception as re:
+                error = "Error while reading status of change nr {cnr}: {err}".format(cnr=chno,err=re)
+                self.logger.error(error)
+            self.logger.info("Poll status of change {nr}: {chs}".format(nr=chno, chs=chstatus))
+            if chstatus is None:
+                self.logger.error("Error while trying to poll status of change nr {nr}: change unknown".format(nr=chno))
+                break
             if chstatus == "CH_REC":
                 break
             time.sleep(10)
 
     def getTicketStatus(self, changeno: str):
         handler = OrchestraChangeHandler()
-        return handler.select_change("TICKETNO", changeno)
+        ret = handler.select_change("TICKETNO", changeno)
+        retStat = ret.STATUS
+        return retStat
 
 
 class CreateCrStep(AbstractWorkflowStep):
