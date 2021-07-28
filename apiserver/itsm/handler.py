@@ -9,24 +9,24 @@ class ValuemationHandler:
 
     def __init__(self):
         load_dotenv()
-        logger = get_oim_logger()
-        logger.debug("ValuemationHandler initialized")
+        self.logger = get_oim_logger()
+        self.logger.debug("ValuemationHandler initialized")
 
         self.valuemation_baseurl = os.getenv('VALUEMATION_BASEURL')
         if not self.valuemation_baseurl:
-            logger.error("No VALUEMATION_BASEURL defined")
+            self.logger.error("No VALUEMATION_BASEURL defined")
 
         self.valuemation_access_token = os.getenv('VALUEMATION_ACCESS_TOKEN')
         if not self.valuemation_access_token:
-            logger.error("No VALUEMATION_ACCESS_TOKEN defined")
+            self.logger.error("No VALUEMATION_ACCESS_TOKEN defined")
 
         self.valuemation_auth_user = os.getenv('VALUEMATION_AUTH_USER')
         if not self.valuemation_auth_user:
-            logger.error("No VALUEMATION_AUTH_USER defined")
+            self.logger.error("No VALUEMATION_AUTH_USER defined")
 
         self.valuemation_auth_password = os.getenv('VALUEMATION_AUTH_PASSWORD')
         if not self.valuemation_auth_password:
-            logger.error("No VALUEMATION_AUTH_PASSWORD defined")
+            self.logger.error("No VALUEMATION_AUTH_PASSWORD defined")
 
     def showEnv(self):
         print("URL:[", self.valuemation_baseurl, "]")
@@ -34,8 +34,7 @@ class ValuemationHandler:
         print("AuthUser:[", self.valuemation_auth_user, "]")
         print("AuthPW:[", self.valuemation_auth_password, "]")
 
-    def create_change(self, params: dict):
-        self.logger = get_oim_logger()
+    def create_change(self, params: dict) -> json:
 
         body_base = {
             "accessToken": self.valuemation_access_token,
@@ -64,12 +63,15 @@ class ValuemationHandler:
             self.logger.error("Valuemation REST Api error(Timeout):[" + errt + "]")
         except requests.exceptions.RequestException as err:
             self.logger.error("Valuemation REST Api error(RequestException):[" + err + "]")
+        else:
+            self.logger.info("StandardChange {0} created".format(response.json()['result']))
 
-        self.logger.info("StandardChange {0} created".format(response.json()))
-        return response.json()
+        return response.json()['result']
 
-    def update_change(self, params: dict):
-        self.logger = get_oim_logger()
+    def close_change(self, params: dict) -> json:
+        pass
+
+    def update_change(self, params: dict) -> json:
 
         body_base = {
             "accessToken": self.valuemation_access_token,
@@ -95,6 +97,7 @@ class ValuemationHandler:
             self.logger.error("Valuemation REST Api error(Timeout):[" + errt + "]")
         except requests.exceptions.RequestException as err:
             self.logger.error("Valuemation REST Api error(RequestException):[" + err + "]")
+        else:
+            self.logger.info("StandardChange {0} updated".format(response.json()['result']))
 
-        self.logger.info("StandardChange {0} updated".format(response.json()))
-        return response.json()
+        return response.json()['result']
