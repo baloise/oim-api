@@ -1,6 +1,5 @@
 from oim_logging import get_oim_logger
 from orchestra.OrchestraRequestHandler import OrchestraServiceInfoHandler
-from pprint import pformat
 
 
 def util_strip_services_list(services={},
