@@ -1,12 +1,15 @@
 from abc import ABC, abstractmethod
 from models.orders import OrderItem
 from ourCloud.OurCloudHandler import OurCloudRequestHandler
+from orchestra.OrchestraRequestHandler import OrchestraChangeHandler
 from workflows.WorkflowContext import WorkflowContext
 from oim_logging import get_oim_logger
 from exceptions.WorkflowExceptions import StepException, RequestHandlerException, TransmitException
 from random import sample
 import traceback
 from app import db
+import time
+import os
 
 
 class AbstractWorkflowStep(ABC):
@@ -25,13 +28,73 @@ class AbstractWorkflowStep(ABC):
 
 
 class DummyStep(AbstractWorkflowStep):
-    def __init__(self):
+    def __init__(self, message="no message"):
         self.action = "dummy"
+        self.message = message
 
     def execute(self, context: WorkflowContext):
-        info = "  Execute step: {} for user {}".format(self.action, context.get_requester().email)
+        info = "  Execute step {} for user {}: {ms}".format(self.action, context.get_requester().email, ms=self.message)
         logger = get_oim_logger()
         logger.info(info)
+
+
+class AwaitDeployStep(AbstractWorkflowStep):
+    def __init__(self, item: OrderItem):
+        self.action = "awaitdeploy"
+        self.logger = get_oim_logger()
+        self.STATUS_CLOSED = "CH_CLD"
+        self.item = item
+
+    def execute(self, context: WorkflowContext):
+        crnr = context.getItemChangeno(self.item)
+        info = "  Execute step: {ac} for change {chg} for item {itm}".format(ac=self.action,
+                                                                             chg=crnr,
+                                                                             itm=self.item.get_cataloguename())
+        self.logger.info(info)
+        while True:
+            if self.isDeploymentDone(context):
+                break
+            time.sleep(10)
+
+    def isDeploymentDone(self, context: WorkflowContext):
+        crnr = context.getItemChangeno(self.item)
+        try:
+            chstatus = self.getTicketStatus(context.get_changeno())
+        except Exception as re:
+            error = "Error while reading status of change nr {cnr}: {err}".format(cnr=crnr,
+                                                                                  err=re)
+            self.logger.error(error)
+            return False
+        self.logger.info("Poll status of change {nr}: {chs}".format(nr=crnr,
+                                                                    chs=chstatus))
+        if chstatus is None:
+            self.logger.error("Error while trying to poll status of change nr {nr}: change unknown".format(nr=crnr))   # noqa E501
+            return False
+        if chstatus == self.STATUS_CLOSED:  # TODO: we only check the STATUS for now, more fields might be relevant later on # noqa E501
+            # we're done, let's continue the workflow
+            return True
+        return False
+
+    def getTicketStatus(self, changeno: str):
+        if self.do_simulate():
+            self.logger.info("Simulate orca ticket api")
+            retStat = self.STATUS_CLOSED  # TODO: CH_CLD means "deployment done", adjust if more fields might be relevant later on # noqa E501
+        else:
+            handler = OrchestraChangeHandler()
+            retStat = handler.select_change("TICKETNO", changeno)
+        return retStat
+
+    def do_simulate(self) -> bool:
+        mystring = os.getenv('ORCA_SIMULATE', "True")
+        doSimulate = True
+        if mystring.lower() == 'false':
+            doSimulate = False
+        if doSimulate:
+            self.logger.info("Simulation enabled, requests will NOT be sent do ORCA ({})".format(doSimulate))
+            return True
+        else:
+            self.logger.info("Simulation disabled, requests will be sent do ORCA ({})".format(doSimulate))
+            return False
 
 
 class CreateCrStep(AbstractWorkflowStep):
@@ -40,11 +103,11 @@ class CreateCrStep(AbstractWorkflowStep):
         self.item = item
 
     def execute(self, context: WorkflowContext):
-        info = "  Execute step: {ac} for item {itm}".format(ac=self.action, itm=self.item)
+        info = "  Execute step: {ac} for item {itm}".format(ac=self.action, itm=self.item.get_cataloguename())
         logger = get_oim_logger()
         logger.info(info)
         crnr = self.getRandomChangeNr()
-        context.set_changeno(crnr)
+        context.add_item(self.item, crnr)
         logger.info("CR {nr} has been created".format(nr=crnr))
 
     def getRandomChangeNr(self) -> str:
@@ -71,7 +134,8 @@ class DeployVmStep(AbstractWorkflowStep):
         try:
             handler = OurCloudRequestHandler.getInstance()
             try:
-                ocRequestId = handler.create_vm(item=self.item, requester=context.get_requester(), changeno=context.get_changeno())   # noqa E501
+                crnr = context.getItemChangeno(self.item)
+                ocRequestId = handler.create_vm(item=self.item, requester=context.get_requester(), changeno=crnr)   # noqa E501
                 self.persist_requestid(self.item, ocRequestId)
             except TransmitException as te:
                 logger.error(te)

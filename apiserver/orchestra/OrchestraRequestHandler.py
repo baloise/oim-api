@@ -240,9 +240,6 @@ class GenericChangeHandler(ABC):
     def delete_change(self, filter): pass
 
     @abstractmethod
-    def insert_system(self, data): pass
-
-    @abstractmethod
     def select_like_change(self, filter): pass
 
     @abstractmethod
@@ -251,20 +248,24 @@ class GenericChangeHandler(ABC):
 
 class OrchestraChangeHandler(GenericChangeHandler):     # has no idea of SOAP
     def __init__(self):
-        self.url = 'http://127.0.0.1:8819/sp_cmdb_soap?wsdl'
+        self.url = 'https://127.0.0.1:8843/oim_cmdb_soap?wsdl'
         self.orchestra = OrchestraRequestHandler(self.url)
         self.cmdb_perf = cmdb_performance_adapter().translate(STORAGE_PERFORMANCE_LEVEL.HIGH, TRANSLATE_TARGETS.CMDB)  # noqa E501
         self.cmdb_env_id = environment_adapter().translate(ENVIRONMENT.TEST, TRANSLATE_TARGETS.CMDB)    # noqa E501
         self.cmdb_sla_brz = {"OIM_PROVIDER_SLA": provider_sla_adapter().translate(SERVICE_LEVEL.ELITE, TRANSLATE_TARGETS.CMDB) }    # noqa E501
+        self.logger = get_oim_logger()
 
     def select_change(self, field, pattern):
         xml_filter = {'field': field, 'pattern': pattern}
-        return self.orchestra.select_system(xml_filter)
+        ticketList = self.orchestra.select_ticket(xml_filter)
+        amsTicketObj = ticketList[0]
+        st = amsTicketObj.STATUS
+        return st
 
     # Maybe not needed for the change
     def select_like_change(self, field, pattern):
         xml_filter = {'field': field, 'pattern': pattern}
-        return self.orchestra.select_like_system(xml_filter)
+        return self.orchestra.select_like_ticket(xml_filter)
 
     # Maybe not needed for the change
     def deactivate_change(self, field, pattern):

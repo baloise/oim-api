@@ -1,7 +1,7 @@
 from typing import List
 import collections
 import enum
-from workflows.steps.WorkflowSteps import AbstractWorkflowStep, CreateCrStep
+from workflows.steps.WorkflowSteps import AbstractWorkflowStep, CreateCrStep, AwaitDeployStep
 from models.orders import Order, OrderStateType, OrderType, BackendType
 from workflows.steps.WorkflowSteps import DeployVmStep, DummyStep
 from workflows.WorkflowContext import WorkflowContext
@@ -239,13 +239,22 @@ class CreateVmWorkflow(GenericWorkflow):
                     vBatch.add_step(step)
             self.add_batch(vBatch)
 
-            dBatch = Batch("deploy", OrderStateType.BE_DONE.state, False)
+            croBatch = Batch("crcopen", OrderStateType.CR_CREATED.state, False)
             for item in super().get_order().get_items():
                 if item.is_Vm():
                     stepCr = CreateCrStep(item)
-                    dBatch.add_step(stepCr)
+                    croBatch.add_step(stepCr)
+            self.add_batch(croBatch)
+
+            dBatch = Batch("deploy", OrderStateType.BE_DONE.state, False)
+            for item in super().get_order().get_items():
+                if item.is_Vm():
                     step = DeployVmStep(item)
                     dBatch.add_step(step)
+                    step = AwaitDeployStep(item)  # one item per change nr, items will be deployed sequentially only
+                    dBatch.add_step(step)
+                    closeCrStep = DummyStep("update cr")
+                    dBatch.add_step(closeCrStep)
             self.add_batch(dBatch)
 
             tBatch = Batch("test", OrderStateType.TEST_SUCCEEDED.state, True)
@@ -258,9 +267,16 @@ class CreateVmWorkflow(GenericWorkflow):
             cBatch = Batch("cmdb", OrderStateType.CMDB_DONE.state, False)
             for item in super().get_order().get_items():
                 if item.is_Vm():
-                    step = DummyStep()
-                    cBatch.add_step(step)
+                    cmdbStep = DummyStep("update cmdb")
+                    cBatch.add_step(cmdbStep)
             self.add_batch(cBatch)
+
+            crcBatch = Batch("crclose", OrderStateType.CR_CLOSED.state, False)
+            for item in super().get_order().get_items():
+                if item.is_Vm():
+                    crStep = DummyStep("close cr")
+                    crcBatch.add_step(crStep)
+            self.add_batch(crcBatch)
 
             hBatch = Batch("handover", OrderStateType.HANDOVER_DONE.state, False)
             for item in super().get_order().get_items():
