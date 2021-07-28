@@ -1,4 +1,3 @@
-from zeep.xsd.types.collection import ListType
 from oim_logging import get_oim_logger
 from orchestra.OrchestraRequestHandler import OrchestraServiceInfoHandler
 from pprint import pformat
