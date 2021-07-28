@@ -81,7 +81,7 @@ paths:
   /orchestra/getServicesByName:
     post:
       summary: Retrieves services from orchestra
-      operationId: api.calls_orchrequests.get_orchestra_services_by_name
+      operationId: api.calls_orchrequests.post_orchestra_services_by_name
       tags:
         - info
       requestBody:
@@ -98,6 +98,24 @@ paths:
       responses:
         '200':
           description: Found results
+
+  /orchestra/getPersonById/{id}:
+    get:
+      summary: Retrieves person by given ID
+      operationId: api.calls_orchrequests.get_orchestra_person_by_id
+      tags:
+        - info
+      parameters:
+        - name: id
+          in: path
+          description: "The person ID to search for"
+          required: true
+          schema:
+            type: integer
+            example: 12345
+      responses:
+        '200':
+          description: Found result
 
   /status/create:
     post:

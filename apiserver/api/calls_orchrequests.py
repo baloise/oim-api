@@ -29,21 +29,35 @@ def util_strip_services_list(services={},
     return output
 
 
-def get_orchestra_services_by_name(requestbody):
+def post_orchestra_services_by_name(requestbody):
     log = get_oim_logger()
     pattern = requestbody['pattern']
     log.debug(f'Pattern is "{pattern}"')
     serviceinfo = OrchestraServiceInfoHandler()
     results = serviceinfo.retrieveServicesByName(pattern=pattern)
-    if results and results.get('result', None) and results.get('error', False) is False:
+    if not results or results.get('error', False) is False:
+        log.error('retrieveServicesByName yielded error')
+        return "Internal Server Error", 500
+    if results.get('result', None):
         retval = util_strip_services_list(results.get('result', {}))
+
     # log.debug(f'Results: {pformat(retval)}')
     return retval, 200
 
 
-def get_orchestra_person_by_id(person_id):
+def get_orchestra_person_by_id(id):
     log = get_oim_logger()
     serviceinfo = OrchestraServiceInfoHandler()
-    results = serviceinfo.retrievePersonById(person_id=person_id)
-    log.debug(f'Results: {pformat(results)}')
-    return results, 200
+    results = serviceinfo.retrievePersonById(id=id)
+
+    if not results or results.get('error', True) is True:
+        log.error('retrievePersonById yielded error')
+        return "Internal Server Error", 500
+
+    person_entry = results.get('person_entry', {})
+    person_entry = person_entry.get('Person', {})
+    person_entry = person_entry[0] if type(person_entry) is list else person_entry
+    if not person_entry:
+        return "Not Found", 404
+
+    return person_entry, 200

@@ -331,7 +331,9 @@ class OrchestraServiceInfoHandler():
             self.log.error('Called method before successful constructor?!')
             return False
 
-        results = self.orchestra.soap_client.service.getPersonById(person_id=int(id))
+        results = self.orchestra.soap_client.service.getPersonById(id)
+        if results:
+            results = helpers.serialize_object(results, dict)
 
         self.log.debug(f'SOAP Results: {pformat(results)}')
         return results
