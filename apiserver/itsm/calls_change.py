@@ -1,4 +1,5 @@
 from oim_logging import get_oim_logger
+from itsm.handler import ValuemationHandler
 
 
 def update_change(body):
@@ -14,5 +15,19 @@ def update_change(body):
                                                                          supg=mysupportgroup)
     logger.info(info)
 
-    retStr = {"ticketno": myticketno, "changestatus": mystatus}
+    # Concatinate taskname + description
+    sNewDescription = mytaskname + " | " + mydescription
+
+    MyChange = ValuemationHandler()
+
+    params = {
+        "status": mystatus,
+        "description": sNewDescription,
+        "ticketno": myticketno,
+        "changeOwnerGroup": mysupportgroup
+    }
+
+    lRet = MyChange.update_change(params)
+
+    retStr = {"ticketno": lRet['data']['ticketno'], "changestatus": lRet['score']}
     return retStr, 200
