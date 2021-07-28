@@ -3,7 +3,6 @@ import os
 from dotenv import load_dotenv
 import requests
 import json
-import pprint
 
 
 class ValuemationHandler:
@@ -35,45 +34,26 @@ class ValuemationHandler:
         print("AuthUser:[", self.valuemation_auth_user, "]")
         print("AuthPW:[", self.valuemation_auth_password, "]")
 
-    def create_change(self, params: json):
+    def create_change(self, params: dict):
         self.logger = get_oim_logger()
 
-        # body = {
-        #     "accessToken": self.valuemation_access_token,
-        #     "username": self.valuemation_auth_user,
-        #     "password": self.valuemation_auth_password,
-        #     "encrypted": "N",
-        #     "service": "CreateBAStandardChange",
-        #     "params": {
-        #         "ticketclass": "RFC/Change",
-        #         "tickettype": "Standard Change",
-        #         "status": "CH_REC",
-        #         "tckShorttext": "Standard Change: Testing the workflow from OIM(Georges)",
-        #         "description": "Standard Change: Testing the workflow from OIM(Georges)",
-        #         "statementtype": "Information",
-        #         "persnoReqBy": "B037158",
-        #         "persnoAffected": self.valuemation_auth_user,
-        #         "category": "Linux",
-        #         "servicesid": "560",
-        #         "system": "CHZ1-TS-01",
-        #         "dueDate": "2021-07-26",
-        #         "environmentId": "3",
-        #         "actualUser": self.valuemation_auth_user,
-        #         "changeOwnerPersonNo": "",
-        #         "changeOwnerGroup": "HCL-DCOps"
-        #     }
-        # }
-
-        body = {
+        body_base = {
             "accessToken": self.valuemation_access_token,
             "username": self.valuemation_auth_user,
             "password": self.valuemation_auth_password,
             "encrypted": "N",
             "service": "CreateBAStandardChange",
-            "params": params
+            "params": {
+                "persnoAffected": self.valuemation_auth_user,
+                "actualUser": self.valuemation_auth_user
+            }
         }
+
+        body_final = json.loads(json.dumps(body_base))
+        body_final["params"].update(params)
+
         try:
-            response = requests.post(self.valuemation_baseurl, json=body)
+            response = requests.post(self.valuemation_baseurl, json=body_final)
             response.raise_for_status()
 
         except requests.exceptions.HTTPError as errh:
@@ -86,27 +66,12 @@ class ValuemationHandler:
             self.logger.error("Valuemation REST Api error(RequestException):[" + err + "]")
 
         self.logger.info("StandardChange {0} created".format(response.json()))
-        # return response.json()
-        return response.status_code
+        return response.json()
 
-    # def update_change(self, ticketNr: str, status: str, changeOwnerGroup: str, description: str):
     def update_change(self, params: dict):
         self.logger = get_oim_logger()
 
-        # body = {
-        #     "accessToken": self.valuemation_access_token,
-        #     "username": self.valuemation_auth_user,
-        #     "password": self.valuemation_auth_password,
-        #     "encrypted": "N",
-        #     "service": "UpdateBAStandardChange",
-        #     "params": {
-        #         "status": status,
-        #         "description": description,
-        #         "ticketno": ticketNr,
-        #         "changeOwnerGroup": changeOwnerGroup
-        #     }
-        # }
-        body_t1 = {
+        body_base = {
             "accessToken": self.valuemation_access_token,
             "username": self.valuemation_auth_user,
             "password": self.valuemation_auth_password,
@@ -115,7 +80,7 @@ class ValuemationHandler:
             "params": {}
             }
 
-        body_final = json.loads(json.dumps(body_t1))
+        body_final = json.loads(json.dumps(body_base))
         body_final["params"].update(params)
 
         try:
@@ -132,5 +97,4 @@ class ValuemationHandler:
             self.logger.error("Valuemation REST Api error(RequestException):[" + err + "]")
 
         self.logger.info("StandardChange {0} updated".format(response.json()))
-        # return response.json()
-        return response.status_code
+        return response.json()
