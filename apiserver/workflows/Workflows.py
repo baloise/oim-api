@@ -242,18 +242,16 @@ class CreateVmWorkflow(GenericWorkflow):
             croBatch = Batch("crcopen", OrderStateType.CR_CREATED.state, False)
             for item in super().get_order().get_items():
                 if item.is_Vm():
-                    crStep = DummyStep("open cr")
-                    croBatch.add_step(crStep)
+                    stepCr = CreateCrStep(item)
+                    croBatch.add_step(stepCr)
             self.add_batch(croBatch)
 
             dBatch = Batch("deploy", OrderStateType.BE_DONE.state, False)
             for item in super().get_order().get_items():
                 if item.is_Vm():
-                    stepCr = CreateCrStep(item)
-                    dBatch.add_step(stepCr)
                     step = DeployVmStep(item)
                     dBatch.add_step(step)
-                    step = AwaitDeployStep()  # one item per change nr, items will be deployed sequentially only
+                    step = AwaitDeployStep(item)  # one item per change nr, items will be deployed sequentially only
                     dBatch.add_step(step)
                     closeCrStep = DummyStep("update cr")
                     dBatch.add_step(closeCrStep)
