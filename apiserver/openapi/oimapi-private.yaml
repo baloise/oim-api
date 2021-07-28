@@ -78,6 +78,27 @@ paths:
                 requester_username:
                   $ref: "#components/schemas/od.username"
 
+  /orchestra/getServicesByName:
+    post:
+      summary: Retrieves services from orchestra
+      operationId: api.calls_orchrequests.get_orchestra_services_by_name
+      tags:
+        - info
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              x-body-name: requestbody
+              type: object
+              properties:
+                pattern:
+                  type: string
+                  example: "%Windows%"
+      responses:
+        '200':
+          description: Found results
+
   /status/create:
     post:
       summary: Create a new status entry
