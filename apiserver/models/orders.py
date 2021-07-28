@@ -34,6 +34,7 @@ class OrderStateType(enum.Enum):
 
     NEW = (0, 'NEW')  # Order just created
     VERIFIED = (100, 'VERIFIED')  # Order has completed verification
+    CR_CREATED = (150, 'CR_CREATED')  # Change Request has been created per item
     BE_PROCESSING = (200, 'BE_PROCESSING')  # Accepted by backends, implementation in progress
     BE_FAILED = (300, 'BE_FAILED')  # Backends reported failure
     BE_DONE = (400, 'BE_DONE')  # Backend done, tests can start
@@ -41,6 +42,7 @@ class OrderStateType(enum.Enum):
     TEST_FAILED = (600, 'TEST_FAILED')  # Testing unsuccessful
     TEST_SUCCEEDED = (700, 'TEST_SUCCEEDED')  # Testing successful
     CMDB_DONE = (800, 'CMDB_DONE')
+    CR_CLOSED = (850, 'CR_CLOSED')  # Change Request has been closed per item
     HANDOVER_DONE = (900, 'HANDOVER_DONE')
     DONE = (1000, 'DONE')  # Order fully completed
 
@@ -50,6 +52,8 @@ class OrderStateType(enum.Enum):
             return cls.NEW.value
         elif state == 'VERIFIED':
             return cls.VERIFIED.value
+        elif state == 'CR_CREATED':
+            return cls.CR_CREATED.value
         elif state == 'BE_PROCESSING':
             return cls.BE_PROCESSING.value
         elif state == 'BE_FAILED':
@@ -64,6 +68,8 @@ class OrderStateType(enum.Enum):
             return cls.TEST_SUCCEEDED.value
         elif state == 'CMDB_DONE':
             return cls.CMDB_DONE.value
+        elif state == 'CR_CLOSED':
+            return cls.CR_CLOSED.value
         elif state == 'HANDOVER_DONE':
             return cls.HANDOVER_DONE.value
         elif state == 'DONE':
