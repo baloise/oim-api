@@ -99,6 +99,27 @@ paths:
         '200':
           description: Found results
 
+  /orchestra/getResponsiblesByServicename:
+    post:
+      summary: Retrieves a list of responsible usernames for a given service name
+      operationId: api.calls_orchrequests.post_orchestra_responsibles_by_servicename
+      tags:
+        - info
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              x-body-name: requestbody
+              type: object
+              properties:
+                servicename:
+                  type: string
+                  example: "Windows"
+      responses:
+        '200':
+          description: Found results
+
   /orchestra/getPersonById/{id}:
     get:
       summary: Retrieves person by given ID
@@ -112,7 +133,7 @@ paths:
           required: true
           schema:
             type: integer
-            example: 12345
+            example: 21508
       responses:
         '200':
           description: Found result
