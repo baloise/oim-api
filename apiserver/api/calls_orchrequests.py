@@ -43,6 +43,7 @@ def util_strip_services_list(services={},
 
 def util_retrieve_services_by_name(pattern):
     log = get_oim_logger()
+    retval = {}
     serviceinfo = OrchestraServiceInfoHandler()
     results = serviceinfo.retrieveServicesByName(pattern=pattern)
     error = results.get('error', False)
@@ -76,14 +77,12 @@ def util_retrieve_person_by_id(id):
 
 def util_retrieve_responsibles_of_service(service_info, required_roles=['R']):
     log = get_oim_logger()
-
     result = {}
 
     if not service_info:
         return result
 
     service_name = service_info.get('servicename', '<unknown service name>')
-
     service_persons = service_info.get('ServicePerson', None)
     if not service_persons:
         log.warn(f'Could not retrieve ServicePerson for service {service_name}')
@@ -92,9 +91,13 @@ def util_retrieve_responsibles_of_service(service_info, required_roles=['R']):
     for current_person in service_persons:
         # First we check if the person is even relevant (what role does he have in the service)
         is_considered = False
+        current_roles = []
         for current_rr in current_person.get('ResponsibilityRole'):
-            if current_rr.get('rolecode') in required_roles:
+            rolecode = current_rr.get('rolecode')
+            current_roles.append(rolecode)
+            if rolecode in required_roles:
                 is_considered = True
+
         if not is_considered:
             continue  # None of the the resproles match the required ones, NEEEEEEEEXT
 
@@ -117,9 +120,11 @@ def util_retrieve_responsibles_of_service(service_info, required_roles=['R']):
         current_email = person_lookup.get('email', None)
         log.debug(f'Adding {current_username} to result set of responsible users')
         result[current_username] = {
+            'username': current_username,  # redundant information but makes later parsing easier
             'lastname': current_lastname,
             'firstname': current_firstname,
-            'email': current_email
+            'email': current_email,
+            'rolecodes': current_roles,
         }
 
     return result
