@@ -1,6 +1,5 @@
 from oim_logging import get_oim_logger
 from orchestra.OrchestraRequestHandler import OrchestraServiceInfoHandler
-from zeep import helpers
 
 
 def util_find_entry_in_list(list, keyname, expected_value):

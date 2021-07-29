@@ -19,7 +19,16 @@ from pprint import pformat
 
 
 class OrchestraRequestHandler():        # This class knows SOAP
-    def __init__(self, url, username=None, password=None, timeout=10, zeep_cache_ttl=300, strict=True, xml_huge_tree=False):
+    def __init__(
+        self,
+        url,
+        username=None,
+        password=None,
+        timeout=10,
+        zeep_cache_ttl=300,
+        strict=True,
+        xml_huge_tree=False,
+    ):
         self.log = get_oim_logger()
         self.log.debug('Creating Orchestra RequestHandler...')
 
