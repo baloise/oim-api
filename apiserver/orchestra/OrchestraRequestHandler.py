@@ -19,7 +19,7 @@ from pprint import pformat
 
 
 class OrchestraRequestHandler():        # This class knows SOAP
-    def __init__(self, url, username=None, password=None, timeout=10, zeep_cache_ttl=300):
+    def __init__(self, url, username=None, password=None, timeout=10, zeep_cache_ttl=300, strict=True, xml_huge_tree=False):
         self.log = get_oim_logger()
         self.log.debug('Creating Orchestra RequestHandler...')
 
@@ -61,7 +61,10 @@ class OrchestraRequestHandler():        # This class knows SOAP
             cache=self._cache,  # Reduce the remote calls to the WSDL
         )
 
-        zeep_settings = Settings(strict=True)
+        zeep_settings = Settings(
+            strict=strict,
+            xml_huge_tree=xml_huge_tree,
+        )
         self.soap_client = Client(url, transport=self._transport, settings=zeep_settings)
         self.log.debug('Creating Orchestra RequestHandler...done.')
 
@@ -311,6 +314,8 @@ class OrchestraServiceInfoHandler():
             self.url,
             username=os.getenv('ORCHESTRA_SERVICEINFO_USER', None),
             password=os.getenv('ORCHESTRA_SERVICEINFO_PASS', None),
+            strict=False,
+            xml_huge_tree=True,
         )
         if not self.orchestra.soap_client:
             self.log.error('Something went wrong creating the SOAP client. Failing...')
