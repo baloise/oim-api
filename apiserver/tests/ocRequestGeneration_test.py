@@ -4,7 +4,7 @@ from datetime import datetime
 # from oim_logging import get_oim_logger
 from models.orders import Person, SbuType, OrderStateType, VmOrderItem, OrderItem, OrderStatus, Order, OrderType, BackendType, OC_CATALOGOFFERING_SIZES, OC_CATALOGOFFERINGS  # noqa: F401,E501
 from app import create_flask_app, db
-from ourCloud.OcStaticVars import SERVICE_LEVEL, APPLICATIONS
+from ourCloud.OcStaticVars import SERVICE_LEVEL, APPLICATIONS, ENVIRONMENT
 from workflows.Factory import WorkflowFactory, OrderFactory
 from workflows.WorkflowContext import WorkflowContext
 from workflows.Workflows import WorkflowTypes
@@ -39,19 +39,23 @@ class TestOcRequestJson(unittest.TestCase):
         # add OrderItem1
         self.orderItemTest1 = VmOrderItem(
             name=OC_CATALOGOFFERINGS.RHEL7,
-            size=OC_CATALOGOFFERING_SIZES.S1
+            size=OC_CATALOGOFFERING_SIZES.S1,
+            environment=ENVIRONMENT.TEST
         )
         self.orderItemTest1.set_reference('VmTestItem1 reference')
         self.orderItemTest1.set_servicelevel(SERVICE_LEVEL.BASIC)
         self.orderItemTest1.set_appcode(APPLICATIONS.VALUEMATION)
+        self.orderItemTest1.setBusinessService("SIAM-SID (Test) prod - SA")  # servicesid = 1360
         # add OrderItem2
         self.orderItemTest2 = VmOrderItem(
             name=OC_CATALOGOFFERINGS.WINS2019,
-            size=OC_CATALOGOFFERING_SIZES.L1
+            size=OC_CATALOGOFFERING_SIZES.L1,
+            environment=ENVIRONMENT.TEST
         )
         self.orderItemTest2.set_reference('VmTestItem2 reference')
         self.orderItemTest2.set_servicelevel(SERVICE_LEVEL.BASIC)
         self.orderItemTest2.set_appcode(APPLICATIONS.VALUEMATION)
+        self.orderItemTest2.setBusinessService("SIAM-SID (Test) prod - SA")  # servicesid = 1360
         # add Order
         self.testOrder = Order(
             requester=self.personPeter,

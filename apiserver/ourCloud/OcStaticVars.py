@@ -169,15 +169,17 @@ class ENVIRONMENT(bytes, enum.Enum):
     def __new__(cls, value, apiname, orcaid, ocid):
         obj = bytes.__new__(cls)
         obj._value_ = value
-        obj.apiname = apiname
+        obj.oimname = apiname
         obj.orcaid = orcaid
         obj.ocid = ocid
         return obj
+    # orcaid and ocid need to be in sync with mapping file environment_mappings.json # noqa 501
+    # TODO: migrate to mapping file environment_mappings.json
     DEVELOPMENT = (1, 'development', 1, 'DEV')
     TEST = (2, 'test', 2, 'TEST')
-    INTEGRATION = (3, 'intgegration', 3, 'INT')
-    ACCEPTANCE = (4, 'acceptance', 4, 'ACC')
-    PRODUCTION = (5, 'production', 5, 'PROD')
+    INTEGRATION = (6, 'intgegration', 6, 'INT')
+    ACCEPTANCE = (7, 'acceptance', 7, 'ACC')
+    PRODUCTION = (3, 'production', 3, 'PROD')
 
     @classmethod
     def get_id(cls, val):
@@ -191,6 +193,21 @@ class ENVIRONMENT(bytes, enum.Enum):
             return cls.ACCEPTANCE.orcaid
         elif val == cls.PRODUCTION:
             return cls.PRODUCTION.orcaid
+        else:
+            raise NotImplementedError
+
+    @classmethod
+    def from_str(cls, envString):
+        if envString == cls.DEVELOPMENT.oimname:
+            return cls.DEVELOPMENT
+        elif envString == cls.TEST.oimname:
+            return cls.TEST
+        elif envString == cls.INTEGRATION.oimname:
+            return cls.INTEGRATION
+        elif envString == cls.ACCEPTANCE.oimname:
+            return cls.ACCEPTANCE
+        elif envString == cls.PRODUCTION.oimname:
+            return cls.PRODUCTION
         else:
             raise NotImplementedError
 
