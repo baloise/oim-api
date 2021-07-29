@@ -15,7 +15,7 @@ from zeep.transports import Transport
 from adapter.OrchestraAdapters import cmdb_adapter, environment_adapter, cmdb_performance_adapter, provider_sla_adapter  # noqa E501
 from ourCloud.OcStaticVars import ENVIRONMENT, TRANSLATE_TARGETS, SERVICE_LEVEL, STORAGE_PERFORMANCE_LEVEL  # noqa E501
 from oim_logging import get_oim_logger
-from pprint import pformat
+# from pprint import pformat
 
 
 class OrchestraRequestHandler():        # This class knows SOAP
@@ -338,7 +338,7 @@ class OrchestraServiceInfoHandler():
         results = self.orchestra.soap_client.service.getServicesByName(pattern)
         if results:
             results = helpers.serialize_object(results, dict)  # We serialize to a more portable data structure
-        self.log.debug(f'SOAP Results: {pformat(results)}')
+        # self.log.debug(f'SOAP Results: {pformat(results)}')
         return results
 
     def retrievePersonById(self, id):
@@ -350,5 +350,5 @@ class OrchestraServiceInfoHandler():
         if results:
             results = helpers.serialize_object(results, dict)
 
-        self.log.debug(f'SOAP Results: {pformat(results)}')
+        # self.log.debug(f'SOAP Results: {pformat(results)}')
         return results

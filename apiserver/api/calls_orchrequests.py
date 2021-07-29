@@ -156,9 +156,10 @@ def post_orchestra_responsibles_by_servicename(requestbody):
         return "Bad request. (No servicename)", 400
     service_result = util_retrieve_services_by_name(pattern=service_name)
     if not service_result:
+        log.warn(f'Requested service {service_name} not found.')
         return "Not found", 404
     # Reduce service results to first service if multiple were delivered
-    log.debug(f'service_Resut is: {service_result}')
+    # log.debug(f'service_Resut is: {service_result}')
     if len(service_result) > 1:
         service_result = service_result[0]
     if type(service_result) is list:
