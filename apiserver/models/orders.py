@@ -127,7 +127,7 @@ class OrderItem(db.Model):
     cataloguename = db.Column(db.String(500), nullable=False)
     size = db.Column(db.String(50), nullable=False)
     environment = db.Column(db.String(50), nullable=False)
-    businessService = db.Column(db.String(50), nullable=True)
+    businessServiceId = db.Column(db.Integer, nullable=True)
     backend_request_id = db.Column(db.Integer, nullable=True)
     order_id = db.Column(db.Integer, db.ForeignKey('orders.id'))
     order = db.relationship("Order", back_populates="items")
@@ -149,8 +149,8 @@ class OrderItem(db.Model):
     def set_backend_request_id(self, reqid):
         self.backend_request_id = reqid
 
-    def setBusinessService(self, serviceName):
-        self.businessService = serviceName
+    def setBusinessServiceId(self, serviceId):
+        self.businessServiceId = serviceId
 
     def get_reference(self):
         return self.reference
@@ -171,10 +171,10 @@ class OrderItem(db.Model):
         env = ENVIRONMENT.from_str(self.environment)
         return env
 
-    def getBusinessService(self) -> str:
-        if self.businessService is None:
-            return "SIAM-SID (Test) prod - SA"  # servicesid = 1360
-        return self.businessService
+    def getBusinessServiceId(self) -> int:
+        if self.businessServiceId is None:
+            return 560  # dummy id only for testing
+        return self.businessServiceId
 
     def __repr__(self):
         return f"<OrderItem {self.id!r} for Order {self.order.id!r} has Request ID: {self.backend_request_id}>"

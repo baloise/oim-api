@@ -21,7 +21,8 @@ class TestOcRequestJson(unittest.TestCase):
 
         # add Person
         self.personPeter = Person(
-            username='u12345',
+            # username='u12345',
+            username='B037158',
             email='peter.parker@test.fake',
             sbu=SbuType.BITS
         )
@@ -46,7 +47,7 @@ class TestOcRequestJson(unittest.TestCase):
         self.orderItemTest1.set_reference('VmTestItem1 reference')
         self.orderItemTest1.set_servicelevel(SERVICE_LEVEL.BASIC)
         self.orderItemTest1.set_appcode(APPLICATIONS.VALUEMATION)
-        self.orderItemTest1.setBusinessService("SIAM-SID (Test) prod - SA")  # servicesid = 1360
+        self.orderItemTest1.setBusinessServiceId(560)  # servicesid = 1360
         # add OrderItem2
         self.orderItemTest2 = VmOrderItem(
             name=OC_CATALOGOFFERINGS.WINS2019,
@@ -56,7 +57,7 @@ class TestOcRequestJson(unittest.TestCase):
         self.orderItemTest2.set_reference('VmTestItem2 reference')
         self.orderItemTest2.set_servicelevel(SERVICE_LEVEL.BASIC)
         self.orderItemTest2.set_appcode(APPLICATIONS.VALUEMATION)
-        self.orderItemTest2.setBusinessService("SIAM-SID (Test) prod - SA")  # servicesid = 1360
+        self.orderItemTest2.setBusinessServiceId(560)  # servicesid = 1360
         # add Order
         self.testOrder = Order(
             requester=self.personPeter,

@@ -1,6 +1,8 @@
 import logging
 import json
 from itsm.handler import ValuemationHandler
+from itsm.handler import CreateChangeDetails
+from datetime import datetime
 
 
 # Test Update Standard Change
@@ -9,6 +11,7 @@ def updateChange(myChange, ticketNr: str) -> json:
             "status": "CH_IMPF",
             "description": "Clone | Update by GGR!",
             "ticketno": ticketNr,
+            "system": "CHZ1-TS-01",
             "changeOwnerGroup": "HCL-Linux"
         }
 
@@ -17,27 +20,37 @@ def updateChange(myChange, ticketNr: str) -> json:
     return lRet
 
 
-# Test Create Standard Change
-def createChange(myChange) -> json:
+# Test Create Standard Change List
+def createChangeList() -> json:
     params = {
-            "ticketclass": "RFC/Change",
-            "tickettype": "Standard Change",
-            "status": "CH_REC",
-            "tckShorttext": "Testing Standard Change from OIM(Georges)",
-            "description": "Testing Standard Change from OIM(Georges)",
-            "statementtype": "Information",
+            "tckShorttext": "OIM Testing Standard Change (Georges)",
+            "description": "OIM Testing Standard Change (Georges)",
             "persnoReqBy": "B037158",
             "category": "Linux",
             "servicesid": "560",
-            "system": "CHZ1-TS-01",
-            "dueDate": "2021-07-26",
-            "environmentId": "3",
-            "changeOwnerPersonNo": "",
-            "changeOwnerGroup": "HCL-DCOps"
+            "dueDate": "2021-07-29",
+            "environmentId": "3"
         }
 
-    lRet = myChange.create_change(params)
-    # print("Return:[", lRet, "]")
+    myChange = ValuemationHandler(params)
+    lRet = myChange.create_change()
+    return lRet
+
+
+# Test Create Standard Change Object
+def createChangeObj() -> json:
+    myChangeDetails = CreateChangeDetails()
+    myChangeDetails.setShorttext("OIM Testing Standard Change (Georges)")
+    myChangeDetails.setDescription("OIM Testing Standard Change (Georges)")
+    myChangeDetails.setReqPerson("B037158")
+    myChangeDetails.setCategory("Linux")
+    myChangeDetails.setServicesId("560")
+    # myChangeDetails.setServicesId("1360")
+    myChangeDetails.setdueDate(datetime.now().strftime("%Y-%m-%d"))
+    myChangeDetails.setEnvironmentId("3")
+
+    myChange = ValuemationHandler(myChangeDetails)
+    lRet = myChange.create_change()
     return lRet
 
 
@@ -50,10 +63,14 @@ if __name__ == '__main__':
         format="{asctime} {levelname}: {message}"
     )
 
-    myChange = ValuemationHandler()
+    lRet = createChangeObj()
 
-    # lRet = createChange(myChange)
-    # retStr = {"ticketno": lRet['data']['ticketno'], "status": lRet['score']}
-    lRet = updateChange(myChange, 'CH-0000022')
-    retStr = {"ticketno": lRet['data']['ticketno'], "changestatus": lRet['score']}
+    if lRet == "11":
+        retStr = lRet
+    else:
+        retStr = {"ticketno": lRet['data']['ticketno'], "status": lRet['score']}
+
+    # lRet = createChangeList()
+    # lRet = updateChange(myChange, 'CH-0000025')
+    # retStr = {"ticketno": lRet['data']['ticketno'], "changestatus": lRet['score']}
     print(retStr)
