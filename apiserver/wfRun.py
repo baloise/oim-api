@@ -5,7 +5,7 @@ from workflows.Factory import WorkflowFactory, OrderFactory
 from workflows.Workflows import WorkflowTypes
 from workflows.WorkflowContext import WorkflowContext
 # from models.orderTypes.OrderTypes import OrderType
-from ourCloud.OcStaticVars import OC_CATALOGOFFERINGS, OC_CATALOGOFFERING_SIZES  # noqa F401
+from ourCloud.OcStaticVars import ENVIRONMENT, OC_CATALOGOFFERINGS, OC_CATALOGOFFERING_SIZES  # noqa F401
 import logging
 from dotenv import load_dotenv
 from api.calls_status import create_status
@@ -43,7 +43,7 @@ workflowFactory = WorkflowFactory()
 orderFactory = OrderFactory()
 
 # init order item and create order
-rhel_item = OrderItem(off, OC_CATALOGOFFERING_SIZES.S2)
+rhel_item = OrderItem(off, OC_CATALOGOFFERING_SIZES.S2, ENVIRONMENT.TEST)
 rhel_item.set_reference("ref")
 items = [rhel_item]
 new_order = orderFactory.get_order(OrderType.CREATE_ORDER, items, personPeter)

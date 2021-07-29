@@ -2,7 +2,7 @@
 from app import db
 import enum
 from datetime import datetime
-from ourCloud.OcStaticVars import OC_CATALOGOFFERINGS, OC_CATALOGOFFERING_SIZES, SERVICE_LEVEL
+from ourCloud.OcStaticVars import ENVIRONMENT, OC_CATALOGOFFERINGS, OC_CATALOGOFFERING_SIZES, SERVICE_LEVEL
 from models.statuspayload import StatusPayload  # noqa: F401
 from ourCloud.OcStaticVars import APPLICATIONS
 
@@ -126,6 +126,8 @@ class OrderItem(db.Model):
     reference = db.Column(db.String(80), nullable=False)
     cataloguename = db.Column(db.String(500), nullable=False)
     size = db.Column(db.String(50), nullable=False)
+    environment = db.Column(db.String(50), nullable=False)
+    businessService = db.Column(db.String(50), nullable=True)
     backend_request_id = db.Column(db.Integer, nullable=True)
     order_id = db.Column(db.Integer, db.ForeignKey('orders.id'))
     order = db.relationship("Order", back_populates="items")
@@ -136,15 +138,19 @@ class OrderItem(db.Model):
         "polymorphic_on": type
     }
 
-    def __init__(self, name: OC_CATALOGOFFERINGS, size: OC_CATALOGOFFERING_SIZES):
+    def __init__(self, name: OC_CATALOGOFFERINGS, size: OC_CATALOGOFFERING_SIZES, environment: ENVIRONMENT):
         self.cataloguename = name.cataloguename
         self.size = size.cataloguesize
+        self.environment = environment.oimname
 
     def set_reference(self, reference):
         self.reference = reference
 
     def set_backend_request_id(self, reqid):
         self.backend_request_id = reqid
+
+    def setBusinessService(self, serviceName):
+        self.businessService = serviceName
 
     def get_reference(self):
         return self.reference
@@ -160,6 +166,15 @@ class OrderItem(db.Model):
     def get_size(self) -> OC_CATALOGOFFERING_SIZES:
         sz = OC_CATALOGOFFERING_SIZES.from_str(self.size)
         return sz
+
+    def getEnvironment(self) -> ENVIRONMENT:
+        env = ENVIRONMENT.from_str(self.environment)
+        return env
+
+    def getBusinessService(self) -> str:
+        if self.businessService is None:
+            return "SIAM-SID (Test) prod - SA"  # servicesid = 1360
+        return self.businessService
 
     def __repr__(self):
         return f"<OrderItem {self.id!r} for Order {self.order.id!r} has Request ID: {self.backend_request_id}>"
@@ -181,8 +196,8 @@ class VmOrderItem(OrderItem):
         'with_polymorphic': '*'
     }
 
-    def __init__(self, name: OC_CATALOGOFFERINGS, size: OC_CATALOGOFFERING_SIZES):
-        super().__init__(name, size)
+    def __init__(self, name: OC_CATALOGOFFERINGS, size: OC_CATALOGOFFERING_SIZES, environment: ENVIRONMENT):
+        super().__init__(name, size, environment)
 
     def set_appcode(self, appcode: APPLICATIONS):
         self.appcode = appcode

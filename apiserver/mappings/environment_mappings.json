@@ -7,13 +7,13 @@
       "name": "test", "orcaid": 2, "ocid": "TEST"
     },
     {
-      "name": "integration", "orcaid": 3, "ocid": "INT"
+      "name": "integration", "orcaid": 6, "ocid": "INT"
     },
     {
-      "name": "acceptance", "orcaid": 4, "ocid": "ACC"
+      "name": "acceptance", "orcaid": 7, "ocid": "ACC"
     },
     {
-      "name": "production", "orcaid": 5, "ocid": "PROD"
+      "name": "production", "orcaid": 3, "ocid": "PROD"
     }
   ]
 }

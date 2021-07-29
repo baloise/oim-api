@@ -5,7 +5,7 @@ from workflows.Workflows import WorkflowTypes
 from models.orders import OrderItem
 from models.orders import OrderType
 from workflows.WorkflowContext import WorkflowContext
-from ourCloud.OcStaticVars import OC_CATALOGOFFERINGS, OC_CATALOGOFFERING_SIZES  # noqa F401
+from ourCloud.OcStaticVars import ENVIRONMENT, OC_CATALOGOFFERINGS, OC_CATALOGOFFERING_SIZES  # noqa F401
 from app import db
 from api.calls_helpers import persist_person
 from exceptions.WorkflowExceptions import WorkflowIncompleteException
@@ -53,7 +53,10 @@ def createvm(body):
     catSize = body.get("size")
     size = OC_CATALOGOFFERING_SIZES.from_str(catSize)
 
-    rhel_item = OrderItem(offering, size)
+    envStr = body.get("environment")
+    env = ENVIRONMENT.from_str(envStr)
+
+    rhel_item = OrderItem(offering, size, env)
 
     tag = body.get("tag")
     rhel_item.set_reference(tag)
