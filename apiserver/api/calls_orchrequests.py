@@ -130,6 +130,37 @@ def util_retrieve_responsibles_of_service(service_info, required_roles=['R']):
     return result
 
 
+def util_can_username_modify_service(service_name, username_to_check):
+    log = get_oim_logger()
+    if not service_name or not username_to_check:
+        return False
+    service_result = util_retrieve_services_by_name(pattern=service_name)
+    if not service_result:
+        log.warn(f'Requested service {service_name} not found.')
+        return False
+    # Reduce service results to first service if multiple were delivered
+    # log.debug(f'service_Resut is: {service_result}')
+    if len(service_result) > 1:
+        service_result = service_result[0]
+    if type(service_result) is list:
+        service_result = service_result[0]  # ugly unpacking, TODO prettify me
+
+    responsibles = util_retrieve_responsibles_of_service(service_result)
+    if not responsibles:
+        log.info(f'No matching responsibles found for service {service_name}.')
+        return False
+
+    loop_count = 0
+    for entry in responsibles.values():
+        loop_count += 1
+        if entry.get('username', '').lower() == username_to_check.lower():
+            # Match found. Exiting successfully
+            return True
+
+    # If we reach this point, no matching user found.
+    return False
+
+
 def post_orchestra_services_by_name(requestbody):
     log = get_oim_logger()
     pattern = requestbody['pattern']
@@ -167,3 +198,14 @@ def post_orchestra_responsibles_by_servicename(requestbody):
 
     responsibles = util_retrieve_responsibles_of_service(service_result)
     return responsibles, 200
+
+
+def post_can_user_modify_service(requestbody):
+    response = {}
+    service_name = requestbody['servicename']
+    username_to_check = requestbody['username']
+    if not service_name or not username_to_check:
+        return "Bad request", 400
+    result = util_can_username_modify_service(service_name, username_to_check)
+    response['result'] = result
+    return response, 200

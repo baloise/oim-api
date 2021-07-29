@@ -81,6 +81,7 @@ paths:
   /orchestra/getServicesByName:
     post:
       summary: Retrieves services from orchestra
+      description: Retrieves services from orchestra. This can be used to retrieve multiple services at once using percent wildcards.
       operationId: api.calls_orchrequests.post_orchestra_services_by_name
       tags:
         - info
@@ -101,7 +102,8 @@ paths:
 
   /orchestra/getResponsiblesByServicename:
     post:
-      summary: Retrieves a list of responsible usernames for a given service name
+      summary: Gets list of responsibles for a service
+      description: Retrieves a list of responsible usernames for a given service name
       operationId: api.calls_orchrequests.post_orchestra_responsibles_by_servicename
       tags:
         - info
@@ -119,10 +121,46 @@ paths:
       responses:
         '200':
           description: Found results
+        '404':
+          description: Not Found
+
+  /orchestra/canUserModifyService:
+    post:
+      summary: Checkes if a user is allowed to modify a service
+      operationId: api.calls_orchrequests.post_can_user_modify_service
+      tags:
+        - info
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              x-body-name: requestbody
+              type: object
+              properties:
+                servicename:
+                  type: string
+                  example: "Windows"
+                username:
+                  type: string
+                  example: "B12345"
+      responses:
+        '200':
+          description: Result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+                    example: true
+        '404':
+          description: Not Found
 
   /orchestra/getPersonById/{id}:
     get:
-      summary: Retrieves person by given ID
+      summary: Retrieves person by given VaMa ID (not username)
       operationId: api.calls_orchrequests.get_orchestra_person_by_id
       tags:
         - info
