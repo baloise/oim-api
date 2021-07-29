@@ -9,7 +9,12 @@ from random import sample
 import traceback
 from app import db
 import time
+from datetime import datetime
 import os
+from ourCloud.OcStaticVars import TRANSLATE_TARGETS
+from adapter.OrchestraAdapters import environment_adapter
+from itsm.handler import ValuemationHandler
+from itsm.handler import CreateChangeDetails
 
 
 class AbstractWorkflowStep(ABC):
@@ -106,6 +111,29 @@ class CreateCrStep(AbstractWorkflowStep):
         info = "  Execute step: {ac} for item {itm}".format(ac=self.action, itm=self.item.get_cataloguename())
         logger = get_oim_logger()
         logger.info(info)
+        myRequestor = context.get_requester().username
+        myEnv = environment_adapter().translate(self.item.getEnvironment(), TRANSLATE_TARGETS.VAL)
+
+        # env_adapter = environment_adapter()
+        myDuedate = datetime.now().strftime("%Y-%m-%d")
+        # myValenv_id = env_adapter.translate(myEnv, TRANSLATE_TARGETS.CMDB)
+        myValenv_id = myEnv
+        myService_id = self.item.getBusinessServiceId()
+        myCategory = "Linux"
+
+        myChangeDetails = CreateChangeDetails()
+        myChangeDetails.setShorttext("OIM Testing Standard Change (Georges)")
+        myChangeDetails.setDescription("OIM Testing Standard Change (Georges)")
+        myChangeDetails.setReqPerson(myRequestor)
+        myChangeDetails.setCategory(myCategory)
+        myChangeDetails.setServicesId(myService_id)
+        myChangeDetails.setdueDate(myDuedate)
+        myChangeDetails.setEnvironmentId(myValenv_id)
+
+        myChange = ValuemationHandler(myChangeDetails)
+        lRet = myChange.create_change()
+        print("lRet:[", lRet, "]")
+
         crnr = self.getRandomChangeNr()
         context.add_item(self.item, crnr)
         logger.info("CR {nr} has been created".format(nr=crnr))

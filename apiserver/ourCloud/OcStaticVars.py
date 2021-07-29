@@ -157,6 +157,7 @@ class SBU(enum.Enum):
 class TRANSLATE_TARGETS(enum.Enum):
     CMDB = 1
     OURCLOUD = 2
+    VAL = 3
 
 
 class STORAGE_PERFORMANCE_LEVEL(enum.Enum):
