@@ -29,7 +29,7 @@ def init_logging(config: dict):
                                         'toaddrs': 'foo@foo.ch'})
     running_logger = get_oim_logger()
 
-    if config.get('DEBUG') == 'True':
+    if str(config.get('DEBUG')).lower() == 'true':
         # set DEBUG als level on all oim_logger LOGGING
         running_logger.info('Found config DEBUG=True -> set log level DEBUG')
         running_logger.setLevel('DEBUG')

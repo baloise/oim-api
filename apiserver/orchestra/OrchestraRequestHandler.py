@@ -3,24 +3,79 @@
 # _________________________________
 #
 # from typing import ForwardRef
+import logging
+import os
 from abc import ABC, abstractmethod
-from zeep import Client
-from adapter.OrchestraAdapters import environment_adapter, cmdb_performance_adapter, provider_sla_adapter
-from oim_logging import get_oim_logger  # noqa E501
-from ourCloud.OcStaticVars import ENVIRONMENT, TRANSLATE_TARGETS, STORAGE_PERFORMANCE_LEVEL , SERVICE_LEVEL  # noqa E501
-
-from zeep.transports import Transport
+import sqlite3
 from requests import Session
-# from requests.auth import HTTPBasicAuth
-session = Session()
-session.verify = False
-transport = Transport(session=session)
-# session.auth = HTTPBasicAuth('user', 'pass')
+from requests.auth import HTTPBasicAuth
+from zeep import Client, Settings, helpers
+from zeep.cache import InMemoryCache, SqliteCache
+from zeep.transports import Transport
+from adapter.OrchestraAdapters import cmdb_adapter, environment_adapter, cmdb_performance_adapter, provider_sla_adapter  # noqa E501
+from ourCloud.OcStaticVars import ENVIRONMENT, TRANSLATE_TARGETS, SERVICE_LEVEL, STORAGE_PERFORMANCE_LEVEL  # noqa E501
+from oim_logging import get_oim_logger
+# from pprint import pformat
 
 
 class OrchestraRequestHandler():        # This class knows SOAP
-    def __init__(self, url):
-        self.soap_client = Client(url, transport=transport)
+    def __init__(
+        self,
+        url,
+        username=None,
+        password=None,
+        timeout=10,
+        zeep_cache_ttl=300,
+        strict=True,
+        xml_huge_tree=False,
+    ):
+        self.log = get_oim_logger()
+        self.log.debug('Creating Orchestra RequestHandler...')
+
+        # Detect debug mode and force zeep into it aswell
+        if os.getenv('DEBUG', '').lower() == 'true':
+            zeep_logger = logging.getLogger('zeep.transports')
+            if zeep_logger:
+                zeep_logger.setLevel(logging.DEBUG)
+
+        self._session = Session()
+
+        if os.getenv('TLS_NO_VERIFY', '').lower() == 'true':
+            self._session.verify = False
+
+        if username and password:
+            # Authentication params given, setting it up
+            self._session.auth = HTTPBasicAuth(username=username, password=password)
+
+        self._cache = None
+        zeep_cache_file = os.getenv('SOAP_CACHEDB', None)
+        if zeep_cache_file:  # This fails on None (never set) and on empty (unset) alike
+            try:
+                self._cache = SqliteCache(path=zeep_cache_file, timeout=zeep_cache_ttl)
+            except sqlite3.OperationalError as exc:
+                self.log.warn(f'Error creating cache db file {zeep_cache_file}: {exc}')
+                self.log.warn('Falling back to in-memory cache.')
+                self._cache = InMemoryCache(timeout=zeep_cache_ttl)
+            except RuntimeError:
+                self.log.warn('The required sqlite dependency was not found.')
+            except ValueError:
+                self.log.warn('In-memory sqlite not supported for cache, ignoring')
+        if not self._cache:  # If we reach this point without a valid _cache we fall back to in-memory
+            self.log.debug('Creating in-memory cache for SOAP requests.')
+            self._cache = InMemoryCache(timeout=zeep_cache_ttl)
+
+        self._transport = Transport(
+            session=self._session,
+            timeout=timeout,  # Session timeout in seconds
+            cache=self._cache,  # Reduce the remote calls to the WSDL
+        )
+
+        zeep_settings = Settings(
+            strict=strict,
+            xml_huge_tree=xml_huge_tree,
+        )
+        self.soap_client = Client(url, transport=self._transport, settings=zeep_settings)
+        self.log.debug('Creating Orchestra RequestHandler...done.')
 
     def list_operations(self):
         print('Namespace: ', self.soap_client.namespaces)
@@ -252,3 +307,48 @@ class OrchestraChangeHandler(GenericChangeHandler):     # has no idea of SOAP
             return self.orchestra.insert_system(payload)
         else:
             return None
+
+
+class OrchestraServiceInfoHandler():
+    def __init__(self, url=None):
+        self.log = logging.getLogger()
+        self.log.debug('Creating OSIH...')
+        if not url:
+            url = os.getenv('ORCHESTRA_SERVICEINFO_URL', None)
+            if not url:
+                self.log.error('Unable to locate ORCHESTRA_SERVICEINFO_URL. Failing...')
+                return None
+        self.url = url
+        self.orchestra = OrchestraRequestHandler(
+            self.url,
+            username=os.getenv('ORCHESTRA_SERVICEINFO_USER', None),
+            password=os.getenv('ORCHESTRA_SERVICEINFO_PASS', None),
+            strict=False,
+            xml_huge_tree=True,
+        )
+        if not self.orchestra.soap_client:
+            self.log.error('Something went wrong creating the SOAP client. Failing...')
+            return None
+
+    def retrieveServicesByName(self, pattern):
+        if not self.orchestra:
+            self.log.error('Called method before successful constructor?!')
+            return False
+
+        results = self.orchestra.soap_client.service.getServicesByName(pattern)
+        if results:
+            results = helpers.serialize_object(results, dict)  # We serialize to a more portable data structure
+        # self.log.debug(f'SOAP Results: {pformat(results)}')
+        return results
+
+    def retrievePersonById(self, id):
+        if not self.orchestra:
+            self.log.error('Called method before successful constructor?!')
+            return False
+
+        results = self.orchestra.soap_client.service.getPersonById(id)
+        if results:
+            results = helpers.serialize_object(results, dict)
+
+        # self.log.debug(f'SOAP Results: {pformat(results)}')
+        return results
