@@ -18,8 +18,6 @@ def update_change(body):
     # Concatinate taskname + description
     sNewDescription = mytaskname + " | " + mydescription
 
-    MyChange = ValuemationHandler()
-
     params = {
         "status": mystatus,
         "description": sNewDescription,
@@ -27,6 +25,7 @@ def update_change(body):
         "changeOwnerGroup": mysupportgroup
     }
 
+    MyChange = ValuemationHandler()
     lRet = MyChange.update_change(params)
 
     retStr = {"ticketno": lRet['data']['ticketno'], "changestatus": lRet['score']}
