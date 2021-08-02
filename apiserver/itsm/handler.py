@@ -40,14 +40,16 @@ class CreateChangeDetails():
 
 class ValuemationHandler():
 
-    def __init__(self, *args):
+    def __init__(self, cParams):
 
-        if isinstance(args[0], dict):
-            print("Args: dict")
-            self.params = args[0]
-        elif isinstance(args[0], CreateChangeDetails):
-            print("Args: class")
-            self.MyCreateChangeDetails = args[0]
+        if isinstance(cParams, dict):
+            print("Params is: dict")
+            self.params = cParams
+        elif isinstance(cParams, CreateChangeDetails):
+            print("Params is: class")
+            self.MyCreateChangeDetails = cParams
+        elif cParams is None:
+            pass
 
         load_dotenv()
         self.logger = get_oim_logger()

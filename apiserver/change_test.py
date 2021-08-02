@@ -6,7 +6,7 @@ from datetime import datetime
 
 
 # Test Update Standard Change
-def updateChange(myChange, ticketNr: str) -> json:
+def updateChange(ticketNr: str) -> json:
     params = {
             "status": "CH_IMPF",
             "description": "Clone | Update by GGR!",
@@ -15,6 +15,7 @@ def updateChange(myChange, ticketNr: str) -> json:
             "changeOwnerGroup": "HCL-Linux"
         }
 
+    myChange = ValuemationHandler(params)
     lRet = myChange.update_change(params)
     # print("Return:[", lRet, "]")
     return lRet
@@ -63,14 +64,13 @@ if __name__ == '__main__':
         format="{asctime} {levelname}: {message}"
     )
 
-    lRet = createChangeObj()
-
-    if lRet == "11":
-        retStr = lRet
-    else:
-        retStr = {"ticketno": lRet['data']['ticketno'], "status": lRet['score']}
+    # lRet = createChangeObj()
+    # if lRet == "11":
+    #     retStr = lRet
+    # else:
+    #     retStr = {"ticketno": lRet['data']['ticketno'], "status": lRet['score']}
 
     # lRet = createChangeList()
-    # lRet = updateChange(myChange, 'CH-0000025')
-    # retStr = {"ticketno": lRet['data']['ticketno'], "changestatus": lRet['score']}
+    lRet = updateChange('CH-0000084')
+    retStr = {"ticketno": lRet['data']['ticketno'], "changestatus": lRet['score']}
     print(retStr)
