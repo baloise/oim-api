@@ -139,7 +139,36 @@ class ValuemationHandler():
         return lRet
 
     def close_change(self, params: dict) -> json:
-        pass
+        body_base = {
+            "accessToken": self.valuemation_access_token,
+            "username": self.valuemation_auth_user,
+            "password": self.valuemation_auth_password,
+            "encrypted": "N",
+            "service": "UpdateBAStandardChange",
+            "params": {
+                "status": "CH_CLD"
+                }
+            }
+
+        body_final = json.loads(json.dumps(body_base))
+        body_final["params"].update(params)
+
+        try:
+            response = requests.post(self.valuemation_baseurl, json=body_final)
+            response.raise_for_status()
+
+        except requests.exceptions.HTTPError as errh:
+            self.logger.error("Valuemation REST Api error(HTTP):[" + errh + "]")
+        except requests.exceptions.ConnectionError as errc:
+            self.logger.error("Valuemation REST Api error(Connection):[" + errc + "]")
+        except requests.exceptions.Timeout as errt:
+            self.logger.error("Valuemation REST Api error(Timeout):[" + errt + "]")
+        except requests.exceptions.RequestException as err:
+            self.logger.error("Valuemation REST Api error(RequestException):[" + err + "]")
+        else:
+            self.logger.info("StandardChange {0} closed".format(response.json()['result']))
+
+        return response.json()['result']
 
     def update_change(self, params: dict) -> json:
 

@@ -27,7 +27,7 @@ def createChangeList() -> json:
             "description": "OIM Testing Standard Change (Georges)",
             "persnoReqBy": "B037158",
             "category": "Linux",
-            "servicesid": "560",
+            "servicesid": "1368",
             "dueDate": "2021-07-29",
             "environmentId": "3"
         }
@@ -44,8 +44,8 @@ def createChangeObj() -> json:
     myChangeDetails.setDescription("OIM Testing Standard Change (Georges)")
     myChangeDetails.setReqPerson("B037158")
     myChangeDetails.setCategory("Linux")
-    myChangeDetails.setServicesId("560")
-    # myChangeDetails.setServicesId("1360")
+    # myChangeDetails.setServicesId("560")
+    myChangeDetails.setServicesId("1368")
     myChangeDetails.setdueDate(datetime.now().strftime("%Y-%m-%d"))
     myChangeDetails.setEnvironmentId("3")
 
