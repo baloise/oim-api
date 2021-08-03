@@ -19,6 +19,12 @@ paths:
             application/json:
               schema:
                 $ref: "#components/schemas/update_change_response"
+        500:
+          description: "Server error"
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/update_change_response"
       requestBody:
         content:
           application/json:

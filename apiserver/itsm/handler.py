@@ -40,7 +40,7 @@ class CreateChangeDetails():
 
 class ValuemationHandler():
 
-    def __init__(self, cParams):
+    def __init__(self, cParams=None):
 
         if isinstance(cParams, dict):
             # print("Params is: dict")
@@ -72,7 +72,7 @@ class ValuemationHandler():
             self.logger.error("No VALUEMATION_AUTH_PASSWORD defined")
 
         if cParams is None:
-            self.logger.error("Call ValuemationHandler without parameters!")
+            self.logger.debug("Call ValuemationHandler without parameters")
 
     def showEnv(self):
         print("URL:[", self.valuemation_baseurl, "]")

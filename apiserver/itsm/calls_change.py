@@ -28,5 +28,9 @@ def update_change(body):
     MyChange = ValuemationHandler()
     lRet = MyChange.update_change(params)
 
-    retStr = {"ticketno": lRet['data']['ticketno'], "changestatus": lRet['score']}
-    return retStr, 200
+    if lRet['score'] == 'success':
+        retStr = {"ticketno": lRet['data']['ticketno'], "changestatus": lRet['score']}
+        return retStr, 200
+    else:
+        retStr = {"ticketno": myticketno, "changestatus": "failed"}
+        return retStr, 500

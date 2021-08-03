@@ -15,7 +15,7 @@ def updateChange(ticketNr: str) -> json:
             "changeOwnerGroup": "HCL-Linux"
         }
 
-    myChange = ValuemationHandler(params)
+    myChange = ValuemationHandler()
     lRet = myChange.update_change(params)
     # print("Return:[", lRet, "]")
     return lRet
