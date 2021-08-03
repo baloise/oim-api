@@ -31,6 +31,8 @@ def update_change(body):
     if lRet['score'] == 'success':
         retStr = {"ticketno": lRet['data']['ticketno'], "changestatus": lRet['score']}
         return retStr, 200
+    elif lRet['score'] == 'danger':
+        retStr = {"ticketno": myticketno, "changestatus": lRet['message']}
     else:
         retStr = {"ticketno": myticketno, "changestatus": "failed"}
         return retStr, 500

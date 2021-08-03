@@ -71,6 +71,16 @@ if __name__ == '__main__':
     #     retStr = {"ticketno": lRet['data']['ticketno'], "status": lRet['score']}
 
     # lRet = createChangeList()
-    lRet = updateChange('CH-0000084')
-    retStr = {"ticketno": lRet['data']['ticketno'], "changestatus": lRet['score']}
+    lChangeNr = 'CH-0000084'
+    lRet = updateChange(lChangeNr)
+
+    if lRet['score'] == 'success':
+        retStr = {"ticketno": lRet['data']['ticketno'], "changestatus": lRet['score']}
+        # return retStr, 200
+    elif lRet['score'] == 'danger':
+        retStr = {"ticketno": lChangeNr, "changestatus": lRet['message']}
+    else:
+        retStr = {"ticketno": lChangeNr, "changestatus": "failed"}
+        # return retStr, 500
+    # retStr = {"ticketno": lRet['data']['ticketno'], "changestatus": lRet['score']}
     print(retStr)
