@@ -113,13 +113,11 @@ class CreateCrStep(AbstractWorkflowStep):
         logger.info(info)
         myRequestor = context.get_requester().username
         myEnv = environment_adapter().translate(self.item.getEnvironment(), TRANSLATE_TARGETS.VAL)
-
-        # env_adapter = environment_adapter()
         myDuedate = datetime.now().strftime("%Y-%m-%d")
-        # myValenv_id = env_adapter.translate(myEnv, TRANSLATE_TARGETS.CMDB)
         myValenv_id = myEnv
         myService_id = self.item.getBusinessServiceId()
-        myCategory = "Linux"
+# ToDo: Not defined and not clear where we can get this, maybe not required
+        myCategory = ""
 
         myChangeDetails = CreateChangeDetails()
         myChangeDetails.setShorttext("OIM Testing Standard Change (Georges)")
@@ -132,9 +130,16 @@ class CreateCrStep(AbstractWorkflowStep):
 
         myChange = ValuemationHandler(myChangeDetails)
         lRet = myChange.create_change()
-        print("lRet:[", lRet, "]")
+        if lRet == "11":
+            logger.error("create of CR is failed:{}".format(lRet))
+        else:
+            try:
+                crnr = lRet['data']['ticketno']
+            except KeyError:
+                logger.error("create of CR is failed:{}".format(lRet))
+                return None
 
-        crnr = self.getRandomChangeNr()
+        # crnr = self.getRandomChangeNr()
         context.add_item(self.item, crnr)
         logger.info("CR {nr} has been created".format(nr=crnr))
 

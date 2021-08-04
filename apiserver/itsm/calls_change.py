@@ -18,8 +18,6 @@ def update_change(body):
     # Concatinate taskname + description
     sNewDescription = mytaskname + " | " + mydescription
 
-    MyChange = ValuemationHandler()
-
     params = {
         "status": mystatus,
         "description": sNewDescription,
@@ -27,7 +25,17 @@ def update_change(body):
         "changeOwnerGroup": mysupportgroup
     }
 
+    MyChange = ValuemationHandler()
     lRet = MyChange.update_change(params)
 
-    retStr = {"ticketno": lRet['data']['ticketno'], "changestatus": lRet['score']}
-    return retStr, 200
+    if lRet is None:
+        return 'internal server error', 500
+    elif lRet['score'] == 'success':
+        retStr = {"ticketno": lRet['data']['ticketno'], "changestatus": lRet['score']}
+        return retStr, 200
+    elif lRet['score'] == 'danger' and lRet['message'] == 'ticket.not.found':
+        retStr = {"ticketno": myticketno, "changestatus": lRet['message']}
+        return retStr, 404
+    else:
+        retStr = {"ticketno": myticketno, "changestatus": "failed"}
+        return retStr, 500
