@@ -58,6 +58,7 @@ def createChangeObj() -> json:
     myChangeDetails.setDescription("OIM Testing Standard Change (Georges)")
     myChangeDetails.setReqPerson("B037158")
     myChangeDetails.setCategory("Linux")
+
     # myChangeDetails.setServicesId("560")
     myChangeDetails.setServicesId("1358")
     myChangeDetails.setdueDate(datetime.now().strftime("%Y-%m-%d"))
