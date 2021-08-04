@@ -6,7 +6,7 @@ import json
 
 
 class CreateChangeDetails():
-    def __init__(self, *args):
+    def __init__(self):
 
         self.tckShorttext = ''
         self.description = ''
@@ -124,12 +124,16 @@ class ValuemationHandler():
 
         except requests.exceptions.HTTPError as errh:
             self.logger.error("Valuemation REST Api error(HTTP):[" + errh + "]")
+            return None
         except requests.exceptions.ConnectionError as errc:
             self.logger.error("Valuemation REST Api error(Connection):[" + errc + "]")
+            return None
         except requests.exceptions.Timeout as errt:
             self.logger.error("Valuemation REST Api error(Timeout):[" + errt + "]")
+            return None
         except requests.exceptions.RequestException as err:
             self.logger.error("Valuemation REST Api error(RequestException):[" + err + "]")
+            return None
         else:
             if response.json()['returnCode'] != '00':
                 self.logger.error("Valuemation Api error:[{0}]".
@@ -143,7 +147,7 @@ class ValuemationHandler():
 
         return lRet
 
-    def close_change(self, params: dict) -> json:
+    def close_change(self, params: dict):
         body_base = {
             "accessToken": self.valuemation_access_token,
             "username": self.valuemation_auth_user,
@@ -164,18 +168,22 @@ class ValuemationHandler():
 
         except requests.exceptions.HTTPError as errh:
             self.logger.error("Valuemation REST Api error(HTTP):[" + errh + "]")
+            return None
         except requests.exceptions.ConnectionError as errc:
             self.logger.error("Valuemation REST Api error(Connection):[" + errc + "]")
+            return None
         except requests.exceptions.Timeout as errt:
             self.logger.error("Valuemation REST Api error(Timeout):[" + errt + "]")
+            return None
         except requests.exceptions.RequestException as err:
             self.logger.error("Valuemation REST Api error(RequestException):[" + err + "]")
+            return None
         else:
             self.logger.info("StandardChange {0} closed".format(response.json()['result']))
 
         return response.json()['result']
 
-    def update_change(self, params: dict) -> json:
+    def update_change(self, params: dict):
 
         body_base = {
             "accessToken": self.valuemation_access_token,
@@ -195,12 +203,16 @@ class ValuemationHandler():
 
         except requests.exceptions.HTTPError as errh:
             self.logger.error("Valuemation REST Api error(HTTP):[" + errh + "]")
+            return None
         except requests.exceptions.ConnectionError as errc:
             self.logger.error("Valuemation REST Api error(Connection):[" + errc + "]")
+            return None
         except requests.exceptions.Timeout as errt:
             self.logger.error("Valuemation REST Api error(Timeout):[" + errt + "]")
+            return None
         except requests.exceptions.RequestException as err:
             self.logger.error("Valuemation REST Api error(RequestException):[" + err + "]")
+            return None
         else:
             self.logger.info("StandardChange {0} updated".format(response.json()['result']))
 
