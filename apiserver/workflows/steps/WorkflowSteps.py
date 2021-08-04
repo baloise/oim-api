@@ -116,8 +116,8 @@ class CreateCrStep(AbstractWorkflowStep):
         myDuedate = datetime.now().strftime("%Y-%m-%d")
         myValenv_id = myEnv
         myService_id = self.item.getBusinessServiceId()
-# ToDo: Not defined and not clear whar and where we can get this
-        myCategory = "Linux"
+# ToDo: Not defined and not clear where we can get this, maybe not required
+        myCategory = ""
 
         myChangeDetails = CreateChangeDetails()
         myChangeDetails.setShorttext("OIM Testing Standard Change (Georges)")
@@ -133,7 +133,11 @@ class CreateCrStep(AbstractWorkflowStep):
         if lRet == "11":
             logger.error("create of CR is failed:{}".format(lRet))
         else:
-            crnr = lRet['data']['ticketno']
+            try:
+                crnr = lRet['data']['ticketno']
+            except KeyError:
+                logger.error("create of CR is failed:{}".format(lRet))
+                return None
 
         # crnr = self.getRandomChangeNr()
         context.add_item(self.item, crnr)
