@@ -123,16 +123,16 @@ class ValuemationHandler():
             response.raise_for_status()
 
         except requests.exceptions.HTTPError as errh:
-            self.logger.error("Valuemation REST Api error(HTTP):[" + errh + "]")
+            self.logger.error("Valuemation REST Api error(HTTP):[" + str(errh) + "]")
             return None
         except requests.exceptions.ConnectionError as errc:
-            self.logger.error("Valuemation REST Api error(Connection):[" + errc + "]")
+            self.logger.error("Valuemation REST Api error(Connection):[" + str(errc) + "]")
             return None
         except requests.exceptions.Timeout as errt:
-            self.logger.error("Valuemation REST Api error(Timeout):[" + errt + "]")
+            self.logger.error("Valuemation REST Api error(Timeout):[" + str(errt) + "]")
             return None
         except requests.exceptions.RequestException as err:
-            self.logger.error("Valuemation REST Api error(RequestException):[" + err + "]")
+            self.logger.error("Valuemation REST Api error(RequestException):[" + str(err) + "]")
             return None
         else:
             if response.json()['returnCode'] != '00':
@@ -167,16 +167,16 @@ class ValuemationHandler():
             response.raise_for_status()
 
         except requests.exceptions.HTTPError as errh:
-            self.logger.error("Valuemation REST Api error(HTTP):[" + errh + "]")
+            self.logger.error("Valuemation REST Api error(HTTP):[" + str(errh) + "]")
             return None
         except requests.exceptions.ConnectionError as errc:
-            self.logger.error("Valuemation REST Api error(Connection):[" + errc + "]")
+            self.logger.error("Valuemation REST Api error(Connection):[" + str(errc) + "]")
             return None
         except requests.exceptions.Timeout as errt:
-            self.logger.error("Valuemation REST Api error(Timeout):[" + errt + "]")
+            self.logger.error("Valuemation REST Api error(Timeout):[" + str(errt) + "]")
             return None
         except requests.exceptions.RequestException as err:
-            self.logger.error("Valuemation REST Api error(RequestException):[" + err + "]")
+            self.logger.error("Valuemation REST Api error(RequestException):[" + str(err) + "]")
             return None
         else:
             self.logger.info("StandardChange {0} closed".format(response.json()['result']))
@@ -202,16 +202,16 @@ class ValuemationHandler():
             response.raise_for_status()
 
         except requests.exceptions.HTTPError as errh:
-            self.logger.error("Valuemation REST Api error(HTTP):[" + errh + "]")
+            self.logger.error("Valuemation REST Api error(HTTP):[" + str(errh) + "]")
             return None
         except requests.exceptions.ConnectionError as errc:
-            self.logger.error("Valuemation REST Api error(Connection):[" + errc + "]")
+            self.logger.error("Valuemation REST Api error(Connection):[" + str(errc) + "]")
             return None
         except requests.exceptions.Timeout as errt:
-            self.logger.error("Valuemation REST Api error(Timeout):[" + errt + "]")
+            self.logger.error("Valuemation REST Api error(Timeout):[" + str(errt) + "]")
             return None
         except requests.exceptions.RequestException as err:
-            self.logger.error("Valuemation REST Api error(RequestException):[" + err + "]")
+            self.logger.error("Valuemation REST Api error(RequestException):[" + str(err) + "]")
             return None
         else:
             self.logger.info("StandardChange {0} updated".format(response.json()['result']))
