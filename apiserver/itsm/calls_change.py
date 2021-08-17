@@ -16,11 +16,12 @@ def update_change(body):
     logger.info(info)
 
     # Concatinate taskname + description
-    sNewDescription = mytaskname + " | " + mydescription
+    # sNewDescription = mytaskname + " | " + mydescription
 
     params = {
         "status": mystatus,
-        "description": sNewDescription,
+        "tckShorttext": mytaskname,
+        "description": mydescription,
         "ticketno": myticketno,
         "changeOwnerGroup": mysupportgroup
     }

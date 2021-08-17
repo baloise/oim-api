@@ -116,9 +116,9 @@ class CreateCrStep(AbstractWorkflowStep):
         myDuedate = datetime.now().strftime("%Y-%m-%d")
         myValenv_id = myEnv
         myService_id = self.item.getBusinessServiceId()
-# ToDo: Not defined and not clear where we can get this, maybe not required
-        myCategory = ""
 
+        # ToDo: Not defined and not clear where we can get this, maybe not required
+        myCategory = ""
         myChangeDetails = CreateChangeDetails()
         myChangeDetails.setShorttext("OIM Testing Standard Change (Georges)")
         myChangeDetails.setDescription("OIM Testing Standard Change (Georges)")
