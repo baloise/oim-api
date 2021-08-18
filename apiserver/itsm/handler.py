@@ -38,8 +38,18 @@ class CreateChangeDetails():
         self.environmentId = param
 
 
-class ValuemationHandler():
+@property
+class CloseChangeDetails():
+    def __init__(self):
 
+        self.changeNr = None
+        self.tckShorttext = None
+        self.description = None
+        self.system = None
+        self.changeOwnerGroup = None
+
+
+class ValuemationHandler():
     def __init__(self, cParams=None):
 
         if isinstance(cParams, dict):
@@ -81,7 +91,6 @@ class ValuemationHandler():
         print("AuthPW:[", self.valuemation_auth_password, "]")
 
     def create_change(self) -> json:
-
         body_base = {
             "accessToken": self.valuemation_access_token,
             "username": self.valuemation_auth_user,

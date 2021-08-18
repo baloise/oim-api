@@ -15,6 +15,7 @@ from ourCloud.OcStaticVars import TRANSLATE_TARGETS
 from adapter.OrchestraAdapters import environment_adapter
 from itsm.handler import ValuemationHandler
 from itsm.handler import CreateChangeDetails
+from itsm.handler import CloseChangeDetails
 
 
 class AbstractWorkflowStep(ABC):
@@ -146,6 +147,41 @@ class CreateCrStep(AbstractWorkflowStep):
     def getRandomChangeNr(self) -> str:
         c = "{s}{i}".format(s="CH-", i=''.join(sample("123456789", 7)))
         return c
+
+
+class CloseCrStep(AbstractWorkflowStep):
+    def __init__(self, item: OrderItem):
+        self.action = "closecr"
+        self.item = item
+
+    def execute(self, context: WorkflowContext):
+        info = "  Execute step: {ac} for item {itm}".format(ac=self.action, itm=self.item.get_cataloguename())
+        logger = get_oim_logger()
+        logger.info(info)
+        myChange = context.get_requester().crnr
+        # mySystem = context.get_requester().system
+        mySystem = "CHZ1-TS-01"
+
+        myChangeDetails = CloseChangeDetails()
+        myChangeDetails.setChangeNr(myChange)
+        myChangeDetails.setSystem(mySystem)
+        myChangeDetails.setShorttext("Close")
+        myChangeDetails.setDescription("OIM Testing Standard Change (Georges)")
+
+        myChange = ValuemationHandler(myChangeDetails)
+        lRet = myChange.close_change()
+        if lRet == "11":
+            logger.error("close of CR is failed:{}".format(lRet))
+        else:
+            try:
+                crnr = lRet['data']['ticketno']
+            except KeyError:
+                logger.error("close of CR is failed:{}".format(lRet))
+                return None
+
+        # crnr = self.getRandomChangeNr()
+        context.add_item(self.item, crnr)
+        logger.info("CR {nr} has been closed".format(nr=crnr))
 
 
 class DeployVmStep(AbstractWorkflowStep):

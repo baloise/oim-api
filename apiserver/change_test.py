@@ -9,7 +9,8 @@ from datetime import datetime
 def updateChange(ticketNr: str) -> json:
     params = {
             "status": "CH_IMPF",
-            "description": "Deploy | Update by GGR!",
+            "tckShorttext": "Deploy",
+            "description": "Update by GGR!",
             "ticketno": ticketNr,
             "system": "CHZ1-TS-01",
             "changeOwnerGroup": "HCL-Linux"
@@ -23,7 +24,8 @@ def updateChange(ticketNr: str) -> json:
 
 def closeChange(ticketNr: str) -> json:
     params = {
-            "description": "Close | Update by GGR!",
+            "description": "Update by GGR!",
+            "tckShorttext": "Close",
             "ticketno": ticketNr,
             "system": "CHZ1-TS-01",
             "changeOwnerGroup": ""
@@ -86,23 +88,9 @@ if __name__ == '__main__':
     # lRet = createChangeList()
 
     # Update Change
-    lChangeNr = 'CH-0000084'
-    lRet = updateChange(lChangeNr)
-
-    if lRet['score'] == 'success':
-        retStr = {"ticketno": lRet['data']['ticketno'], "changestatus": lRet['score']}
-        # return retStr, 200
-    elif lRet['score'] == 'danger':
-        retStr = {"ticketno": lChangeNr, "changestatus": lRet['message']}
-    else:
-        retStr = {"ticketno": lChangeNr, "changestatus": "failed"}
-        # return retStr, 500
-    # retStr = {"ticketno": lRet['data']['ticketno'], "changestatus": lRet['score']}
-    print(retStr)
-
-    # Close Change
     # lChangeNr = 'CH-0000084'
-    # lRet = closeChange(lChangeNr)
+    # lRet = updateChange(lChangeNr)
+
     # if lRet['score'] == 'success':
     #     retStr = {"ticketno": lRet['data']['ticketno'], "changestatus": lRet['score']}
     #     # return retStr, 200
@@ -113,3 +101,17 @@ if __name__ == '__main__':
     #     # return retStr, 500
     # # retStr = {"ticketno": lRet['data']['ticketno'], "changestatus": lRet['score']}
     # print(retStr)
+
+    # Close Change
+    lChangeNr = 'CH-0000084'
+    lRet = closeChange(lChangeNr)
+    if lRet['score'] == 'success':
+        retStr = {"ticketno": lRet['data']['ticketno'], "changestatus": lRet['score']}
+        # return retStr, 200
+    elif lRet['score'] == 'danger':
+        retStr = {"ticketno": lChangeNr, "changestatus": lRet['message']}
+    else:
+        retStr = {"ticketno": lChangeNr, "changestatus": "failed"}
+        # return retStr, 500
+    # retStr = {"ticketno": lRet['data']['ticketno'], "changestatus": lRet['score']}
+    print(retStr)
