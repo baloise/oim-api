@@ -234,7 +234,7 @@ class CreateVmWorkflow(GenericWorkflow):
             super().set_order(order)
             # Batch: verify incoming data for validity
             # WARNING: This may need to be moved away in front of the workflow or
-            #           a state of rejection and according communication needs to 
+            #           a state of rejection and according communication needs to
             #           be introduced somehow.
             vBatch = Batch("verify", OrderStateType.VERIFIED.state, True)
             for item in super().get_order().get_items():
@@ -264,7 +264,12 @@ class CreateVmWorkflow(GenericWorkflow):
             self.add_batch(dBatch)
 
             # Add batch: data retrieval of remaining asset data from mycloud
-            data_retrieval_batch = None
+            data_retrieval_batch = Batch('data_retrieval_from_oc', OrderStateType.CI_RETRIEVED.state, True)
+            for item in super().get_order().get_items():
+                if item.is_Vm():
+                    step = DummyStep()
+                    data_retrieval_batch.add_step(step)
+            self.add_batch(data_retrieval_batch)
 
             # Batch: Run tests
             tBatch = Batch("test", OrderStateType.TEST_SUCCEEDED.state, True)

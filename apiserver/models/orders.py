@@ -37,7 +37,8 @@ class OrderStateType(enum.Enum):
     CR_CREATED = (150, 'CR_CREATED')  # Change Request has been created per item
     BE_PROCESSING = (200, 'BE_PROCESSING')  # Accepted by backends, implementation in progress
     BE_FAILED = (300, 'BE_FAILED')  # Backends reported failure
-    BE_DONE = (400, 'BE_DONE')  # Backend done, tests can start
+    BE_DONE = (400, 'BE_DONE')  # Backend done with deployment
+    CI_RETRIEVED = (450, 'CI_RETRIEVED')  # All new CI data retrieved from Backend
     TESTING = (500, 'TESTING')  # Backends reported success, testing
     TEST_FAILED = (600, 'TEST_FAILED')  # Testing unsuccessful
     TEST_SUCCEEDED = (700, 'TEST_SUCCEEDED')  # Testing successful
