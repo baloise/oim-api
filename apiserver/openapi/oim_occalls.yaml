@@ -135,7 +135,67 @@ paths:
             text/plain:
               schema:
                 type: string
+
+  /oc/ci/:
+    get:
+      summary: Retrieves CI details from ourcloud
+      description: |
+        Retrieves ci details from ourcloud. This can either
+        return all known ci details or be supplied with an optional filter.
+      operationId: api.calls_ocrequests.get_oc_ci_all
+      parameters:
+        - name: filter
+          in: query
+          required: false
+          schema:
+            type: string
+            example: RequestNo = '162'
+      responses:
+        '200':
+          description: Found results
+        '404':
+          $ref: "#components/responses/NotFound"
+
+  /oc/ci/{citype}/{ciname}:
+    get:
+      summary: Retrieves CI details from ourcloud
+      description: |
+        Retrieves ci details from ourcloud. This requires the type 
+        and name of a specific item to retrieve info for.
+      operationId: api.calls_ocrequests.get_oc_ci_specific
+      parameters:
+        - name: citype
+          in: path
+          required: true
+          schema:
+            type: string
+            example: VM
+        - name: ciname
+          in: path
+          required: true
+          schema:
+            type: string
+            example: mycldRHEL78T2
+      responses:
+        '200':
+          description: Found results
+        '404':
+          $ref: "#components/responses/NotFound"
+
 components:
+  responses:
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   securitySchemes:
     api_key:
       type: apiKey
@@ -147,6 +207,16 @@ components:
       scheme: basic
       x-basicInfoFunc: api.demo.basic_auth
   schemas:
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+        - code
+        - message
     create_response:
       type: object
       properties:

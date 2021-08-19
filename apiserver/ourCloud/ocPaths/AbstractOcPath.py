@@ -1,9 +1,29 @@
+from json.decoder import JSONDecodeError
 import os
 from abc import ABC  # abstractmethod
 import json
 import jmespath
 from ourCloud.OcStaticVars import OC_RESPONSEFIELD, OC_REQUESTFIELD, OC_OBJECTTYPE, OC_ACTIONMAME, OC_LANGUAGE, OC_CATALOGOFFERINGS  # noqa F401
 from oim_logging import get_oim_logger
+
+
+def traversing_decoder(obj, key=None):
+    if isinstance(obj, list):
+        for item in obj:
+            traversing_decoder(item)
+    elif isinstance(obj, dict) and not key:
+        for curkey in obj.keys():
+            traversing_decoder(obj, key=curkey)
+    elif isinstance(obj, dict) and key:
+        if type(obj[key]) is str:  # we only get active for string values
+            try:
+                obj[key] = json.loads(obj[key])
+                return
+            except ValueError:
+                return
+            except JSONDecodeError:
+                return
+    return
 
 
 class AbstractOcPath(ABC):
@@ -100,16 +120,28 @@ class AbstractOcPath(ABC):
     def getPlatformEntityId(self):
         return "VMWAR-15CFFB35-7FC6-449C-9F7F-1CF83A8A6237"
 
-    def getResultJson(self, responseRaw, json_query):
+    def getResultJson(self, responseRaw, json_query=None):
         try:
-            jsonString = responseRaw.json()['Result']
-            jsonObj = json.loads(jsonString)
+            jsonResponse = responseRaw.json()
+            #self.log.debug(f'getResultJson processing: {jsonResponse}')
+            jsonResult = jsonResponse.get('Result', '')
+            if type(jsonResult) is str:
+                jsonObj = json.loads(jsonResult)
+            else:
+                jsonObj = jsonResult
         except json.decoder.JSONDecodeError as e:
-            print("JSON parse error: ", e.args[0])
+            self.log.error(f'JSON parse error: {e.args[0]}')
             return None
+        except TypeError as e:
+            self.log.error(f'Type error in getResultJson: {e.args[0]}')
+            return None
+
+        traversing_decoder(jsonObj)  # This goes thru the object and try to decode remaining jsonstrings
+
+        if json_query:
+            return jmespath.search(json_query, jsonObj)
         else:
-            requestStatus = jmespath.search(json_query, jsonObj)
-            return requestStatus
+            return jsonObj
 
 
 class doubleQuoteDict(dict):
