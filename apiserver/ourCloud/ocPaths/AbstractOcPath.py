@@ -123,7 +123,7 @@ class AbstractOcPath(ABC):
     def getResultJson(self, responseRaw, json_query=None):
         try:
             jsonResponse = responseRaw.json()
-            #self.log.debug(f'getResultJson processing: {jsonResponse}')
+            # self.log.debug(f'getResultJson processing: {jsonResponse}')
             jsonResult = jsonResponse.get('Result', '')
             if type(jsonResult) is str:
                 jsonObj = json.loads(jsonResult)
