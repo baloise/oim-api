@@ -8,6 +8,14 @@ from oim_logging import get_oim_logger
 
 
 def traversing_decoder(obj, key=None):
+    """This helper function traverses a given dict (can have nested docts or lists)
+    and when it encounters a string value, it attempts to load it as json.
+    If it succeeds, it replaces the string value with the decoded json object.
+
+    Arguments:
+    obj - Required. dict or list. Object to traverse.
+    key - Optional. Used internally for traversing. Do not fill this.
+    """
     if isinstance(obj, list):
         for item in obj:
             traversing_decoder(item)
@@ -136,7 +144,7 @@ class AbstractOcPath(ABC):
             self.log.error(f'Type error in getResultJson: {e.args[0]}')
             return None
 
-        traversing_decoder(jsonObj)  # This goes thru the object and try to decode remaining jsonstrings
+        traversing_decoder(jsonObj)  # This goes thru the object and tries to decode remaining jsonstrings
 
         if json_query:
             return jmespath.search(json_query, jsonObj)

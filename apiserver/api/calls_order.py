@@ -4,7 +4,7 @@ from api.OrderHandlerTester import OrderHandler
 def add_order(requester_id, bu, order_type, description):
     order = OrderHandler()
     orderno = order.add_order(requester_id, bu, order_type, description)
-    return 'Order '+orderno+' has been added'
+    return 'Order ' + orderno + ' has been added'
 
 
 def get_order_status(id) -> str:

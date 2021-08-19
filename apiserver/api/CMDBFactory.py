@@ -40,7 +40,7 @@ class CMDBFactory:
 
         def make_pretty(data):
             return '\n'.join([
-                line for line in minidom.parseString(data).toprettyxml(indent=' '*2).split('\n') if line.strip()
+                line for line in minidom.parseString(data).toprettyxml(indent=' ' * 2).split('\n') if line.strip()
                 ])    # noqa
 
         xmlfile = open(self.filename, "w")

@@ -124,7 +124,7 @@ def get_oc_ci_all(filter: str = ''):
     ochandler = OurCloudRequestHandler.getInstance()
     ocresult = ochandler.get_all_ci_details(data_filter=filter)
     if not ocresult:
-        return 'Not Found', 404
+        return {'code': '404', 'message': 'Not Found'}, 404
     return ocresult
 
 
@@ -132,5 +132,5 @@ def get_oc_ci_specific(citype: str, ciname: str):
     ochandler = OurCloudRequestHandler.getInstance()
     ocresult = ochandler.get_specific_ci_object_data(ciname, citype)
     if not ocresult:
-        return 'Not Found', 404
+        return {'code': '404', 'message': 'Not Found'}, 404
     return ocresult
