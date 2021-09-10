@@ -2,6 +2,7 @@ import logging
 import json
 from itsm.handler import ValuemationHandler
 from itsm.handler import CreateChangeDetails
+from itsm.handler import CloseChangeDetails
 from datetime import datetime
 
 
@@ -22,17 +23,43 @@ def updateChange(ticketNr: str) -> json:
     return lRet
 
 
-def closeChange(ticketNr: str) -> json:
-    params = {
-            "description": "Update by GGR!",
-            "tckShorttext": "Close",
-            "ticketno": ticketNr,
-            "system": "CHZ1-TS-01",
-            "changeOwnerGroup": ""
-        }
+def precloseChange(ticketNr: str) -> json:
+    # params = {
+    #         "description": "Update by GGR!",
+    #         "tckShorttext": "PreClose",
+    #         "ticketno": ticketNr,
+    #         "system": "CHZ1-TS-01",
+    #         "changeOwnerGroup": ""
+    #     }
 
-    myChange = ValuemationHandler()
-    lRet = myChange.close_change(params)
+    myChangeDetails = CloseChangeDetails()
+    myChangeDetails.setChangeNr(ticketNr)
+    myChangeDetails.setSystem('CHZ1-TS-01')
+    myChangeDetails.setShorttext("PreClose")
+    myChangeDetails.setDescription("OIM Testing Standard Change (Georges)")
+
+    myChange = ValuemationHandler(myChangeDetails)
+    lRet = myChange.close_change()
+    return lRet
+
+
+def closeChange(ticketNr: str) -> json:
+    # params = {
+    #         "description": "Update by GGR!",
+    #         "tckShorttext": "Close",
+    #         "ticketno": ticketNr,
+    #         "system": "CHZ1-TS-01",
+    #         "changeOwnerGroup": ""
+    #     }
+
+    myChangeDetails = CloseChangeDetails()
+    myChangeDetails.setChangeNr(ticketNr)
+    myChangeDetails.setSystem('CHZ1-TS-01')
+    myChangeDetails.setShorttext("Close")
+    myChangeDetails.setDescription("OIM Testing Standard Change (Georges)")
+
+    myChange = ValuemationHandler(myChangeDetails)
+    lRet = myChange.close_change()
     return lRet
 
 
@@ -101,6 +128,20 @@ if __name__ == '__main__':
     #     # return retStr, 500
     # # retStr = {"ticketno": lRet['data']['ticketno'], "changestatus": lRet['score']}
     # print(retStr)
+
+    # PreClose Change
+    lChangeNr = 'CH-0000084'
+    lRet = precloseChange(lChangeNr)
+    if lRet['score'] == 'success':
+        retStr = {"ticketno": lRet['data']['ticketno'], "changestatus": lRet['score']}
+        # return retStr, 200
+    elif lRet['score'] == 'danger':
+        retStr = {"ticketno": lChangeNr, "changestatus": lRet['message']}
+    else:
+        retStr = {"ticketno": lChangeNr, "changestatus": "failed"}
+        # return retStr, 500
+    # retStr = {"ticketno": lRet['data']['ticketno'], "changestatus": lRet['score']}
+    print(retStr)
 
     # Close Change
     lChangeNr = 'CH-0000084'

@@ -165,7 +165,8 @@ class CloseCrStep(AbstractWorkflowStep):
         myChangeDetails = CloseChangeDetails()
         myChangeDetails.setChangeNr(myChange)
         myChangeDetails.setSystem(mySystem)
-        myChangeDetails.setShorttext("Close")
+        myChangeDetails.setStatus("CH_REVD")
+        myChangeDetails.setShorttext("PreClose")
         myChangeDetails.setDescription("OIM Testing Standard Change (Georges)")
 
         myChange = ValuemationHandler(myChangeDetails)

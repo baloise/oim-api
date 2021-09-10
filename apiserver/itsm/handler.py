@@ -46,6 +46,7 @@ class CloseChangeDetails():
         self.tckShorttext = None
         self.description = None
         self.system = None
+        self.status = None
         self.changeOwnerGroup = None
 
 
@@ -58,6 +59,8 @@ class ValuemationHandler():
         elif isinstance(cParams, CreateChangeDetails):
             # print("Params is: class")
             self.MyCreateChangeDetails = cParams
+        elif isinstance(cParams, CloseChangeDetails):
+            self.MyCloseChangeDetails = cParams
         elif cParams is None:
             pass
 
@@ -156,7 +159,8 @@ class ValuemationHandler():
 
         return lRet
 
-    def close_change(self, params: dict):
+    def close_change(self):
+        # Final close a change is CH_REVD -> CH_CLD
         body_base = {
             "accessToken": self.valuemation_access_token,
             "username": self.valuemation_auth_user,
@@ -164,12 +168,24 @@ class ValuemationHandler():
             "encrypted": "N",
             "service": "UpdateBAStandardChange",
             "params": {
-                "status": "CH_CLD"
                 }
             }
 
-        body_final = json.loads(json.dumps(body_base))
-        body_final["params"].update(params)
+        if hasattr(self, 'CloseChangeDetails'):
+            params = {
+                "changeNr": self.CloseChangeDetails.changeNr,
+                "tckShorttext": self.CloseChangeDetails.tckShorttext,
+                "description": self.CloseChangeDetails.description,
+                "system": self.CloseChangeDetails.system,
+                "status": self.CloseChangeDetails.status,
+                "changeOwnerGroup": self.CloseChangeDetails.changeOwnerGroup
+            }
+
+            body_final = json.loads(json.dumps(body_base))
+            body_final["params"].update(params)
+        else:
+            body_final = json.loads(json.dumps(body_base))
+            body_final["params"].update(self.params)
 
         try:
             response = requests.post(self.valuemation_baseurl, json=body_final)
