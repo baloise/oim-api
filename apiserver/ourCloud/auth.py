@@ -1,4 +1,5 @@
 import requests
+import os
 from time import time
 from urllib.parse import quote
 from diskcache import Cache
@@ -16,6 +17,10 @@ class TokenAuthHandler(object):
         self._expirytime = 0
         self._url_suffix_token = url_suffix
         self._base_url = parent.get_base_url()
+        if os.getenv('TLS_NO_VERIFY', 'FALSE').lower() == 'true':
+            self._verify = False
+        else:
+            self._verify = True
         # Safety timespan in seconds to reduce expiry time by
         self._expiration_safety = expiration_safety
 
@@ -63,7 +68,7 @@ class TokenAuthHandler(object):
         }
         # Send the request to the backend
         # response = requests.request("GET", url, headers=headers, data=payload)
-        response = requests.get(url, headers=headers, data=payload)
+        response = requests.get(url, headers=headers, data=payload, verify=self._verify)
 
         # Ensure response looks valid
         if not response.status_code == 200:

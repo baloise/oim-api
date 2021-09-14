@@ -1,3 +1,4 @@
+
 import urllib3
 from ourCloud.auth import TokenAuthHandler
 import json
@@ -5,6 +6,8 @@ from .ocPaths.CreateVmPath import CreateVmPath
 from .ocPaths.DeleteVmPath import DeleteVmPath
 from .ocPaths.GetExtendedParametersPath import GetExtendedParametersPath
 from .ocPaths.GetRequestStatusPath import GetRequestStatusPath
+from .ocPaths.GetAllCiDetailsPath import GetAllCiDetailsPath
+from .ocPaths.GetCiMasterDataPath import GetCiMasterDataPath
 from .ocPaths.AbstractOcPath import AbstractOcPath
 from models.orders import OrderItem, Person
 from oim_logging import get_oim_logger
@@ -68,6 +71,18 @@ class OurCloudRequestHandler:
 
     def get_request_status(self, requestno) -> str:
         path = GetRequestStatusPath(requestno)
+        path.set_auth_token_handler(self.auth)
+        res = path.send_request()
+        return res
+
+    def get_all_ci_details(self, data_filter=''):
+        path = GetAllCiDetailsPath(data_filter=data_filter)
+        path.set_auth_token_handler(self.auth)
+        res = path.send_request()
+        return res
+
+    def get_specific_ci_object_data(self, object_name, object_type='VM'):
+        path = GetCiMasterDataPath(object_name=object_name, object_type=object_type)
         path.set_auth_token_handler(self.auth)
         res = path.send_request()
         return res

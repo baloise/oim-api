@@ -232,6 +232,10 @@ class CreateVmWorkflow(GenericWorkflow):
     def set_order(self, order: Order):
         if order.get_type() == OrderType.CREATE_ORDER:
             super().set_order(order)
+            # Batch: verify incoming data for validity
+            # WARNING: This may need to be moved away in front of the workflow or
+            #           a state of rejection and according communication needs to
+            #           be introduced somehow.
             vBatch = Batch("verify", OrderStateType.VERIFIED.state, True)
             for item in super().get_order().get_items():
                 if item.is_Vm():
@@ -239,6 +243,7 @@ class CreateVmWorkflow(GenericWorkflow):
                     vBatch.add_step(step)
             self.add_batch(vBatch)
 
+            # Batch: open change
             croBatch = Batch("crcopen", OrderStateType.CR_CREATED.state, False)
             for item in super().get_order().get_items():
                 if item.is_Vm():
@@ -246,6 +251,7 @@ class CreateVmWorkflow(GenericWorkflow):
                     croBatch.add_step(stepCr)
             self.add_batch(croBatch)
 
+            # Batch: Trigger deployment on MyCloud
             dBatch = Batch("deploy", OrderStateType.BE_DONE.state, False)
             for item in super().get_order().get_items():
                 if item.is_Vm():
@@ -257,6 +263,15 @@ class CreateVmWorkflow(GenericWorkflow):
                     dBatch.add_step(closeCrStep)
             self.add_batch(dBatch)
 
+            # Add batch: data retrieval of remaining asset data from mycloud
+            data_retrieval_batch = Batch('data_retrieval_from_oc', OrderStateType.CI_RETRIEVED.state, True)
+            for item in super().get_order().get_items():
+                if item.is_Vm():
+                    step = DummyStep()
+                    data_retrieval_batch.add_step(step)
+            self.add_batch(data_retrieval_batch)
+
+            # Batch: Run tests
             tBatch = Batch("test", OrderStateType.TEST_SUCCEEDED.state, True)
             for item in super().get_order().get_items():
                 if item.is_Vm():
@@ -264,13 +279,14 @@ class CreateVmWorkflow(GenericWorkflow):
                     tBatch.add_step(step)
             self.add_batch(tBatch)
 
+            # Batch: Add/update entry in CMDB
             cBatch = Batch("cmdb", OrderStateType.CMDB_DONE.state, False)
             for item in super().get_order().get_items():
                 if item.is_Vm():
                     cmdbStep = DummyStep("update cmdb")
                     cBatch.add_step(cmdbStep)
             self.add_batch(cBatch)
-
+            # Batch: Mark the CR as closed.
             crcBatch = Batch("crclose", OrderStateType.CR_CLOSED.state, False)
             for item in super().get_order().get_items():
                 if item.is_Vm():
@@ -278,6 +294,7 @@ class CreateVmWorkflow(GenericWorkflow):
                     crcBatch.add_step(crStep)
             self.add_batch(crcBatch)
 
+            # Batch: Handover to customer... create templates, mail them, or trigger customer hooks.
             hBatch = Batch("handover", OrderStateType.HANDOVER_DONE.state, False)
             for item in super().get_order().get_items():
                 if item.is_Vm():
@@ -285,6 +302,7 @@ class CreateVmWorkflow(GenericWorkflow):
                     hBatch.add_step(step)
             self.add_batch(hBatch)
 
+            # Batch: end of workflow
             fBatch = Batch("done", OrderStateType.DONE.state, False)
             for item in super().get_order().get_items():
                 if item.is_Vm():

@@ -118,3 +118,19 @@ def get_request_details(requestno: int, attributes: Param) -> str:
         return info
     else:
         return 'Requestno invalid'
+
+
+def get_oc_ci_all(filter: str = ''):
+    ochandler = OurCloudRequestHandler.getInstance()
+    ocresult = ochandler.get_all_ci_details(data_filter=filter)
+    if not ocresult:
+        return {'code': '404', 'message': 'Not Found'}, 404
+    return ocresult
+
+
+def get_oc_ci_specific(citype: str, ciname: str):
+    ochandler = OurCloudRequestHandler.getInstance()
+    ocresult = ochandler.get_specific_ci_object_data(ciname, citype)
+    if not ocresult:
+        return {'code': '404', 'message': 'Not Found'}, 404
+    return ocresult

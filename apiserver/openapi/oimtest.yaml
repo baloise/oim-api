@@ -3,6 +3,10 @@ openapi: "3.0.0"
 info:
   title: "OIM API"
   version: "0.2"
+  description: |
+    These endpoints are used for developent testing purposes. DO NOT call them unless
+    you're certain that that you know what they do. The name isn't always indicative
+    of what's inside these calls!
 servers:
   - url: /oim/v0.2
 
