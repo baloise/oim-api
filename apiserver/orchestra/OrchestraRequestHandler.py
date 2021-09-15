@@ -167,9 +167,9 @@ class OrchestraCmdbHandler(GenericCmdbHandler):     # has no idea of SOAP
     def __init__(self):
         self.url = 'https://localhost:8843/oim_cmdb_soap?wsdl' # noqa E501
         self.orchestra = OrchestraRequestHandler(self.url)
-        self.cmdb_perf = cmdb_performance_adapter().translate(STORAGE_PERFORMANCE_LEVEL.HIGH, TRANSLATE_TARGETS.CMDB)  # noqa E501
-        self.cmdb_env_id = environment_adapter().translate(ENVIRONMENT.TEST, TRANSLATE_TARGETS.CMDB)    # noqa E501
-        self.cmdb_sla_brz = provider_sla_adapter().translate(SERVICE_LEVEL.PREMIUM)
+        self.cmdb_perf = cmdb_performance_adapter().translate(STORAGE_PERFORMANCE_LEVEL.HIGH, TRANSLATE_TARGETS.CMDB)  # noqa E501 KILLME
+        self.cmdb_env_id = environment_adapter().translate(ENVIRONMENT.TEST, TRANSLATE_TARGETS.CMDB)    # noqa E501 KILLME
+        self.cmdb_sla_brz = provider_sla_adapter().translate(SERVICE_LEVEL.PREMIUM) # KILLME
 
     def select_system(self, field, pattern):
         xml_filter = {'field': field, 'pattern': pattern}
@@ -208,9 +208,9 @@ class OrchestraCmdbHandler(GenericCmdbHandler):     # has no idea of SOAP
         return self.orchestra.delete_component(xml_filter)
 
     def update_system(self, payload):
-        payload.update(self.cmdb_env_id)
-        payload.update(self.cmdb_sla_brz)
-        payload.update(self.cmdb_perf)
+        payload.update(self.cmdb_env_id)    # /!\ hardcoded
+        payload.update(self.cmdb_sla_brz)   # /!\ hardcoded
+        payload.update(self.cmdb_perf)      # /!\ hardcoded
         payload = {'AMA_SYSTEM': payload}
         print("[DBG] payload: {}".format(payload))
         return self.orchestra.update_system(payload)
@@ -229,9 +229,7 @@ class OrchestraCmdbHandler(GenericCmdbHandler):     # has no idea of SOAP
             return None
 
     def insert_system_full(self, payload=None):  # payload must be a dictionnary # noqa E501
-        payload.update(self.cmdb_env_id)
-        payload.update(self.cmdb_sla_brz)
-        payload.update(self.cmdb_perf)
+        # Encapsulate data to produce the correct message type for ORCA
         payload = {'AMA_SYSTEM': payload}
         print("[DBG] payload: {}".format(payload))
         if payload is not None:  # exits
@@ -290,17 +288,17 @@ class OrchestraChangeHandler(GenericChangeHandler):     # has no idea of SOAP
         return self.orchestra.delete_system(xml_filter)
 
     def update_change(self, payload):
-        payload.update(self.cmdb_env_id)
-        payload.update(self.cmdb_sla_brz)
-        payload.update(self.cmdb_perf)
+        payload.update(self.cmdb_env_id)    # /!\ hardcoded
+        payload.update(self.cmdb_sla_brz)   # /!\ hardcoded
+        payload.update(self.cmdb_perf)      # /!\ hardcoded
         payload = {'AMS_TICKET': payload}
         print("[DBG] payload: {}".format(payload))
         return self.orchestra.update_system(payload)
 
     def insert_change(self, payload=None):  # payload must be a dictionnary
-        payload.update(self.cmdb_env_id)
-        payload.update(self.cmdb_sla_brz)
-        payload.update(self.cmdb_perf)
+        payload.update(self.cmdb_env_id)    # /!\ hardcoded
+        payload.update(self.cmdb_sla_brz)   # /!\ hardcoded
+        payload.update(self.cmdb_perf)      # /!\ hardcoded
         payload = {'AMA_SYSTEM': payload}
         print("[DBG] payload: {}".format(payload))
         if payload is not None:  # exits

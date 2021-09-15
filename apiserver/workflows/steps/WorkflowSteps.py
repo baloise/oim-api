@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from models.orders import OrderItem
 from ourCloud.OurCloudHandler import OurCloudRequestHandler
-from orchestra.OrchestraRequestHandler import OrchestraChangeHandler
+from orchestra.OrchestraRequestHandler import OrchestraChangeHandler, OrchestraCmdbHandler
 from workflows.WorkflowContext import WorkflowContext
 from oim_logging import get_oim_logger
 from exceptions.WorkflowExceptions import StepException, RequestHandlerException, TransmitException
@@ -12,7 +12,7 @@ import time
 from datetime import datetime
 import os
 from ourCloud.OcStaticVars import TRANSLATE_TARGETS
-from adapter.OrchestraAdapters import environment_adapter
+from adapter.OrchestraAdapters import cmdb_adapter, environment_adapter, cmdb_performance_adapter, provider_sla_adapter 
 from itsm.handler import ValuemationHandler
 from itsm.handler import CreateChangeDetails
 
@@ -207,3 +207,59 @@ class VerifyItemStep(AbstractWorkflowStep):
                                                                             context.get_requester().email)
         logger = get_oim_logger()
         logger.info(infoStr)
+
+
+class InsertSystemCMDBStep(AbstractWorkflowStep):
+    def __init__(self, item: OrderItem):
+        self.action = "insertsystemcmdb"
+        self.item = item
+
+    def execute(self, context: WorkflowContext):
+        info = "  Execute step: {ac} for item {itm}".format(ac=self.action, itm=self.item.get_cataloguename()) # noqa E501
+        logger = get_oim_logger()
+        logger.info(info)
+
+        payload = {
+                "SYSTEM_ID": 0, # Must have it in order to prevent message type error in ORCA # noqa E501
+                "AMA_COMPONENT": {
+                        "AMA_COMPSYSTEM": {
+
+                            }
+                        }
+                }
+        payload.update("NAME", self.item.get_cataloguename())
+        payload.update("STATUS", "ACT")
+        payload.update("DOMAIN_ID", self.item.getDomainId())  # 8
+        payload.update("OIM_TSHIRT_SIZE", self.item.get_size())
+        payload.update("SYSTEMTYPE_ID", self.item.getDomainId())  # 100162
+        payload.update("OIM_CID", self.item.getDomainId())  # "NO CID"
+        payload.update("OIM_INTERNAL_AUDIT", self.item.getDomainId())  # ""
+        payload.update("OIM_MIRRORING", self.item.getDomainId())  # "Not Mirrored" # noqa E501
+        payload.update("SHORTTEXT", "Added by OIM API - Workflow")
+        payload.update("BUSINESSPART_ID", self.item.getDomainId())  # 100233   self.item.getBusinessServiceId() # noqa E501
+        payload.update("OIM_PATCH_WINDOW", self.item.getDomainId())  #  "H-SERVER-SCCM-BCH-LV33-03-MI-2100" # noqa E501
+        payload.update("OIM_PROVIDER_SERVICELINE", "Server")
+        payload.update("VALIDFROM", datetime.now().strftime("%Y-%m-%dT00:00:00"))  # noqa E501
+        payload.update("VALIDTO", datetime.now().replace(year = datetime.now().year+1).strftime("%Y-%m-%dT00:00:00"))  # noqa E501
+
+        payload["AMA_COMPONENT"]["TYPE_ID"] = 100436
+        payload["AMA_COMPONENT"]["STATUS"] = "ACT"
+        payload["AMA_COMPONENT"]["OIM_STORAGE_CLASS"] = "HIGH M"
+        payload["AMA_COMPONENT"]["OIM_TSHIRT_SIZE"] = "M1"
+        payload["AMA_COMPONENT"]["AMA_COMPSYSTEM"]["IS_MAINC"] = "Y"
+        payload["AMA_COMPONENT"]["AMA_COMPSYSTEM"]["VALIDFROM"] = payload["VALIDFROM"]  # noqa E501
+        payload["AMA_COMPONENT"]["AMA_COMPSYSTEM"]["VALIDTO"] = payload["VALIDTO"]  # noqa E501
+
+        # Translate to match CMDB Standards
+        payload.update(cmdb_performance_adapter().translate(self.item.getPerformance(), TRANSLATE_TARGETS.CMDB)) # noqa E501
+        payload.update(environment_adapter().translate(self.item.getEnvironment(), TRANSLATE_TARGETS.CMDB)) # noqa E501
+        payload.update(provider_sla_adapter().translate(self.item.getSla(), TRANSLATE_TARGETS.CMDB)) # noqa E501
+
+        cmdb_h = OrchestraCmdbHandler()
+        # Try , except stuff
+        rc = cmdb_h.insert_system_full(payload)
+
+        if rc is None:
+            logger.error("insert system in cmdb failed")
+        else:
+            logger.info("System has been inserted in cmdb")
