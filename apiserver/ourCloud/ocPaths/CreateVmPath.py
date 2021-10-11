@@ -1,7 +1,7 @@
 from ourCloud.ocPaths.AbstractOcPath import doubleQuoteDict, AbstractOcPath
 import requests
 import json
-from models.orders import OrderItem, Person
+from models.orders import VmOrderItem, Person
 from unittest.mock import Mock
 from exceptions.WorkflowExceptions import TransmitException
 from datetime import datetime
@@ -13,7 +13,7 @@ from ourCloud.OcStaticVars import TRANSLATE_TARGETS
 class CreateVmPath(AbstractOcPath):
     # 3.4.80
 
-    def __init__(self, item: OrderItem):
+    def __init__(self, item: VmOrderItem):
         super().__init__()
         self.item = item
         self.requester = None
@@ -44,7 +44,7 @@ class CreateVmPath(AbstractOcPath):
         now_string = now.strftime("%d/%m/%Y %H:%M:%S")
         sbu = self.get_requester().get_sbu()
         offering = self.item.get_cataloguename()
-        self.log.info("Append items {sb}".format(sb=sbu))
+        self.log.info("Building OC path json: append item details")
         bodyJson["items"].append(
             {
                 self.OC_REQUESTFIELD.SBUCODE.value: {
@@ -134,7 +134,9 @@ class CreateVmPath(AbstractOcPath):
 
             response_mock = Mock()
             response_mock.status_code = 200     # simulate error by changing to != 200
-            response_mock.text = "{\"Status\": \"Success\", \"Result\": \"99\", \"ErrorMessage\": \"something went wrong\", \"Message\": \"mess\"}"   # noqa 501
+            # requestId = 171  # existing oc request id with all relevant attributes (CustomField9 filled)
+            response_mock.text = "{\"Status\": \"Success\", \"Result\": \"171\", \"ErrorMessage\": \"something went wrong\", \"Message\": \"mess\"}"   # noqa 501
+            #response_mock.text = f'{"Status": "Success", "Result": "{requestId}", "ErrorMessage": "something went wrong", "Message": "mess"}'   # noqa 501
             response = response_mock
         else:
             self.log.info("url: {url}, body: {body}".format(url=self.get_url(), body=self.get_body()))

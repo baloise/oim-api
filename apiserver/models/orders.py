@@ -61,6 +61,8 @@ class OrderStateType(enum.Enum):
             return cls.BE_FAILED.value
         elif state == 'BE_DONE':
             return cls.BE_DONE.value
+        elif state == 'CI_RETRIEVED':
+            return cls.CI_RETRIEVED.value
         elif state == 'TESTING':
             return cls.TESTING.value
         elif state == 'TEST_FAILED':
@@ -100,6 +102,9 @@ class Person(db.Model):
 
     def get_id(self):
         return self.id
+
+    def setId(self, id: int):
+        self.id = id
 
     def get_sbu(self):
         return self.sbu
@@ -164,6 +169,9 @@ class OrderItem(db.Model):
         return self.cataloguename in (OC_CATALOGOFFERINGS.WINS2019.cataloguename,
                                       OC_CATALOGOFFERINGS.RHEL7.cataloguename)
 
+    def get_servicelevel(self):
+        pass
+
     def get_size(self) -> OC_CATALOGOFFERING_SIZES:
         sz = OC_CATALOGOFFERING_SIZES.from_str(self.size)
         return sz
@@ -171,6 +179,9 @@ class OrderItem(db.Model):
     def getEnvironment(self) -> ENVIRONMENT:
         env = ENVIRONMENT.from_str(self.environment)
         return env
+
+    def getBackendRequestId(self) -> int:
+        return self.backend_request_id
 
     def getBusinessServiceId(self) -> int:
         if self.businessServiceId is None:
@@ -197,8 +208,10 @@ class VmOrderItem(OrderItem):
         'with_polymorphic': '*'
     }
 
-    def __init__(self, name: OC_CATALOGOFFERINGS, size: OC_CATALOGOFFERING_SIZES, environment: ENVIRONMENT):
+    def __init__(self, name: OC_CATALOGOFFERINGS, size: OC_CATALOGOFFERING_SIZES,
+                 environment: ENVIRONMENT, level: SERVICE_LEVEL):
         super().__init__(name, size, environment)
+        self.set_servicelevel(level)
 
     def set_appcode(self, appcode: APPLICATIONS):
         self.appcode = appcode

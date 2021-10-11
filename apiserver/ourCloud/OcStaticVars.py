@@ -113,6 +113,29 @@ class OC_CATALOGOFFERING_SIZES(bytes, enum.Enum):
         else:
             raise NotImplementedError
 
+    @classmethod
+    def from_id(cls, catalogueid):
+        if catalogueid == 'S1':
+            return cls.S1
+        elif catalogueid == 'S2':
+            return cls.S2
+        elif catalogueid == 'M1':
+            return cls.M1
+        elif catalogueid == 'M2':
+            return cls.M2
+        elif catalogueid == 'L1':
+            return cls.L1
+        elif catalogueid == 'L2':
+            return cls.L2
+        elif catalogueid == 'L3':
+            return cls.L3
+        elif catalogueid == 'X1':
+            return cls.X1
+        elif catalogueid == 'X2':
+            return cls.X2
+        else:
+            raise NotImplementedError
+
 
 class OC_CATALOGOFFERINGS(bytes, enum.Enum):
 

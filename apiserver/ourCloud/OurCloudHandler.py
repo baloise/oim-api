@@ -9,7 +9,7 @@ from .ocPaths.GetRequestStatusPath import GetRequestStatusPath
 from .ocPaths.GetAllCiDetailsPath import GetAllCiDetailsPath
 from .ocPaths.GetCiMasterDataPath import GetCiMasterDataPath
 from .ocPaths.AbstractOcPath import AbstractOcPath
-from models.orders import OrderItem, Person
+from models.orders import VmOrderItem, Person
 from oim_logging import get_oim_logger
 
 
@@ -43,7 +43,7 @@ class OurCloudRequestHandler:
             self.auth = TokenAuthHandler(abstractPath)
             urllib3.disable_warnings()
 
-    def create_vm(self, item: OrderItem, requester: Person, changeno: str):
+    def create_vm(self, item: VmOrderItem, requester: Person, changeno: str):
         path = CreateVmPath(item)
         path.set_requester(requester)
         path.set_changeno(changeno)

@@ -1,4 +1,5 @@
-from adapter.OrchestraAdapters import environment_adapter, cmdb_performance_adapter, provider_sla_adapter
+from adapter.OrchestraAdapters import cmdb_performance_adapter, provider_sla_adapter
+from adapter.GenericAdapters import environment_adapter
 import zeep
 from ourCloud.OcStaticVars import ENVIRONMENT, TRANSLATE_TARGETS, METAL_CLASS, STORAGE_PERFORMANCE_LEVEL
 
