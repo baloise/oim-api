@@ -21,7 +21,7 @@ pipeline {
                 script {
                     currentBuild.description = GIT_COMMIT
                 }
-                containerBuild(path: 'apiserver', dockerFileName: 'Dockerfile', repository: 'devops/oim-api-apiserver', tags: ['latest', GIT_COMMIT])
+                containerBuild(path: 'apiserver', dockerFileName: 'Dockerfile', repository: 'devops/oim-api-apiserver', tags: ['latest', GIT_COMMIT, BRANCH_NAME])
             }
         }
 
