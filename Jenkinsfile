@@ -3,7 +3,7 @@
 pipeline {
 
     agent {
-        label 'podman'
+        label 'buildah'
     }
 
     options {
