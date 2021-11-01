@@ -9,7 +9,7 @@ RUN \
   touch /tmp/.env.build && \
   export $(grep -v '^#' /tmp/.env.build | xargs -0) && \
   apk update && \
-  apk add g++ gcc libxml2 libxslt-dev
+  apk add g++ gcc libxml2 libxslt libxslt-dev
 
 # Create a user and group to use within the container
 RUN addgroup -S apiserver && adduser -S apiserver -G apiserver
