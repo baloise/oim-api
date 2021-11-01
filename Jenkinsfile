@@ -20,8 +20,9 @@ pipeline {
                 notifyBitbucket state: "INPROGRESS"
                 script {
                     currentBuild.description = GIT_COMMIT
+                    String branch_name_slug = BRANCH_NAME.replaceAll('[^a-zA-Z0-9._-]+','')
                 }
-                containerBuild(path: 'apiserver', dockerFileName: 'Dockerfile', repository: 'devops/oim-api-apiserver', tags: ['latest', GIT_COMMIT, BRANCH_NAME])
+                containerBuild(path: 'apiserver', dockerFileName: 'Dockerfile', repository: 'devops/oim-api-apiserver', tags: ['latest', GIT_COMMIT, branch_name_slug])
             }
         }
 
