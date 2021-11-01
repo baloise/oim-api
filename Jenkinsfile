@@ -40,13 +40,13 @@ pipeline {
             notifyBitbucket state: "SUCCESSFUL"
         }
 
-        fixed {
-            mailTo status: "SUCCESS", actuator: true, recipients: [], logExtract: true
-        }
+        // fixed {
+        //     mailTo status: "SUCCESS", actuator: true, recipients: [], logExtract: true
+        // }
 
         unsuccessful {
             notifyBitbucket state: "FAILED"
-            mailTo status: "FAILURE", actuator: true, recipients: [], logExtract: true
+            // mailTo status: "FAILURE", actuator: true, recipients: [], logExtract: true
         }
     }
 }
