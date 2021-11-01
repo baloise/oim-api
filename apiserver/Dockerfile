@@ -3,7 +3,7 @@
 # Setting the base container
 FROM python:3.8-alpine
 
-ADD ./.env.build /tmp/.env.build
+ADD ./.env.build* /tmp/
 
 RUN \
   touch /tmp/.env.build && \
