@@ -15,7 +15,6 @@ pipeline {
     }
 
     stages {
-        // Dummy text, remove me for demo
         stage("Build and Push") {
             steps {
                 notifyBitbucket state: "INPROGRESS"
