@@ -7,7 +7,8 @@ FROM quay.balgroupit.com/baloise-base-images/python:3.9.1-slim-buster
 ADD ./.env.build* /tmp/
 
 # Create a user and group to use within the container
-RUN groupadd -r apiserver && useradd --no-log-init -r -g apiserver apiserver
+RUN groupadd --gid 1000 apiserver \
+    && useradd --uid 1000 --gid apiserver --no-log-init apiserver
 
 # Copy all of the current (and sub) dir into the container during build
 ADD . /code
