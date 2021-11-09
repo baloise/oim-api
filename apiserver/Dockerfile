@@ -1,7 +1,7 @@
 # This Dockerfile creates a compact development-only server
 
 # Setting the base container
-FROM python:3.8
+FROM baloise-base-images/python:3.7-buster
 
 # Allows to specify build-time envvars for specific build networks
 ADD ./.env.build* /tmp/
