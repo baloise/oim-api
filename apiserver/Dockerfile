@@ -1,18 +1,17 @@
 # This Dockerfile creates a compact development-only server
 
 # Setting the base container
-FROM quay.balgroupit.com/baloise-base-images/python:3.9.1-slim-buster
+FROM quay.balgroupit.com/baloise-base-images/python:3.8-buster
 
 # Allows to specify build-time envvars for specific build networks
 ADD ./.env.build* /tmp/
 
-RUN id
-
+# Needed to work around a buildah bug
 USER root
 
 # Create a user and group to use within the container
-RUN groupadd --gid 1000 apiserver
-RUN useradd --uid 1000 --gid apiserver --no-log-init --no-create-home apiserver
+RUN groupadd --gid 1000 apiserver && \
+    useradd --uid 1000 --gid apiserver --no-log-init --no-create-home apiserver
 
 # Copy all of the current (and sub) dir into the container during build
 ADD . /code
@@ -35,9 +34,6 @@ EXPOSE ${SERVER_PORT}
 
 # Define the user to be used inside when running the container
 USER apiserver:apiserver
-
-RUN id
-
 
 # This defines the command that will run the actual starting process within the container
 CMD ["python", "app.py"]
