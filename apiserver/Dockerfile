@@ -6,6 +6,8 @@ FROM quay.balgroupit.com/baloise-base-images/python:3.9.1-slim-buster
 # Allows to specify build-time envvars for specific build networks
 ADD ./.env.build* /tmp/
 
+USER root
+
 # Create a user and group to use within the container
 RUN groupadd --gid 1000 apiserver
 RUN useradd --uid 1000 --gid apiserver --no-log-init --no-create-home apiserver
