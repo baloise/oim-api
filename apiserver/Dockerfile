@@ -6,6 +6,8 @@ FROM quay.balgroupit.com/baloise-base-images/python:3.9.1-slim-buster
 # Allows to specify build-time envvars for specific build networks
 ADD ./.env.build* /tmp/
 
+RUN id
+
 USER root
 
 # Create a user and group to use within the container
@@ -33,6 +35,9 @@ EXPOSE ${SERVER_PORT}
 
 # Define the user to be used inside when running the container
 USER apiserver:apiserver
+
+RUN id
+
 
 # This defines the command that will run the actual starting process within the container
 CMD ["python", "app.py"]
