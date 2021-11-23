@@ -7,3 +7,5 @@ jmespath
 zeep
 requests
 ldap3
+psycopg2-binary
+flake8
