@@ -27,14 +27,14 @@ pipeline {
             }
         }
 
-        stage("Deploy to TEST") {
+        //stage("Deploy to TEST") {
         //    when {
         //        branch 'master'
         //     }
-             steps {
-                 containerDeploy(organization: 'DPLCAASD01', repositoryName: 'bizdevops-non-prod', file: 'bizdevops-oim-api-test/values.yaml', yamlPatches: ["oim-api.image.tag": "${GIT_COMMIT}"])
-             }
-         }
+        //     steps {
+        //         containerDeploy(organization: 'DPLCAASD01', repositoryName: 'bizdevops-non-prod', file: 'bizdevops-oim-api-test/values.yaml', yamlPatches: ["oim-api.image.tag": "${GIT_COMMIT}"])
+        //     }
+        // }
     }
 
     post {
