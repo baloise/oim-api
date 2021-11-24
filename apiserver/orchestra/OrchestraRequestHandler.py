@@ -166,7 +166,7 @@ class GenericCmdbHandler(ABC):
 
 class OrchestraCmdbHandler(GenericCmdbHandler):     # has no idea of SOAP
     def __init__(self):
-        self.url = 'https://svw-orcht003.balgroupit.com:8443/oim_cmdb_soap?wsdl' # noqa E501
+        self.url = 'https://localhost:8443/oim_cmdb_soap?wsdl' # noqa E501
         self.orchestra = OrchestraRequestHandler(self.url)
         self.cmdb_perf = cmdb_performance_adapter().translate(STORAGE_PERFORMANCE_LEVEL.HIGH, TRANSLATE_TARGETS.CMDB)  # noqa E501
         self.cmdb_env_id = environment_adapter().translate(ENVIRONMENT.TEST, TRANSLATE_TARGETS.CMDB)    # noqa E501
