@@ -17,8 +17,7 @@ cmdb_sla_brz = prosla_adapter.translate(METAL_CLASS.GOLD)
 print("SLA: {}".format(cmdb_sla_brz))
 print("XXXX")
 
-# wsdl = 'http://x10037275.balgroupit.com:8819/mini_action?wsdl'
-wsdl = 'http://x10037275.balgroupit.com:8819/Orchestra/48dbe175-f1fa-4e60-ad8c-4db85ffc036f/83/PortSoapBinding_0/sp_cmdb_soap?wsdl'  # noqa E501
+wsdl = 'http://read.the.code:8819/and/correct/me?wsdl'  # noqa E501
 client = zeep.Client(wsdl=wsdl)
 # service = client.bind('sp_cmdb_mini', 'PortSoapBinding_0')
 service = client.bind('sp_cmdb_soap', 'PortSoapBinding_0')
