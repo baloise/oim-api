@@ -42,18 +42,18 @@ This is intended to give an easier start but is in no way a complete and detaile
 
 * [Visual Studio Code](https://code.visualstudio.com) (or another IDE of your choice)
   * Recommended vscode extensions:
-    * Python
-    * Markdown All in One
-    * YAML
-    * OpenAPI (Swagger) Editor
-    * openapi-lint
-    * gitignore
-    * DotENV
-    * Python Test Explorer for Visual Studio Code
-    * Docker (if you have docker running locally)
-    * GitLens (optional)
-    * Rewrap (optional)
-    * _For VSCode on Windows/DWP only: Remote - SSH_
+    * [Python](vscode:extension/ms-python.python)
+    * [Markdown All in One](vscode:extension/yzhang.markdown-all-in-one)
+    * [YAML](vscode:extension/redhat.vscode-yaml)
+    * [OpenAPI (Swagger) Editor](vscode:extension/42Crunch.vscode-openapi)
+    * [openapi-lint](vscode:extension/mermade.openapi-lint)
+    * [gitignore](vscode:extension/codezombiech.gitignore)
+    * [DotENV](vscode:extension/mikestead.dotenv)
+    * [Python Test Explorer for Visual Studio Code](vscode:extension/LittleFoxTeam.vscode-python-test-adapter)
+    * [Docker](vscode:extension/ms-azuretools.vscode-docker) (if you have docker running locally)
+    * [GitLens](vscode:extension/eamodio.gitlens) (optional)
+    * [Rewrap](vscode:extension/stkb.rewrap) (optional)
+    * _For VSCode on Windows/DWP only_: [Remote - SSH](vscode:extension/ms-vscode-remote.remote-ssh)
 
 * Optional: [Docker](https://www.docker.com/get-started)
   
