@@ -1,7 +1,6 @@
 import unittest
 import flask_unittest
 from app import create_flask_app
-import re
 from unittest import mock
 from dotenv import load_dotenv
 from tests.model_statuspayload import TestModelStatuspayload
@@ -10,7 +9,6 @@ from tests.db_testdata import TestDbData  # noqa: F401
 
 # Force overwrite envvars with mock values from .env.unittests
 load_dotenv(dotenv_path='.env.unittests', override=True)
-
 
 
 # This method will be used by the mock to replace requests.get
