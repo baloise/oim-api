@@ -11,35 +11,26 @@ db = SQLAlchemy()
 
 def load_openapis(connexion_app):
     # We tell it to load our API specs
-    connexion_app.add_api('demoapi.yaml')
+    connexion_app.add_api('demoapi-v1.yaml')
 
     # add_api() pipes the yaml spec thru the Jinja2 template engine before loading,
     # you can specify variables to be filled as shown with the arguments parameter below
     # connexion_app.add_api('olddemo.yaml', arguments={'title': 'OpenAPI Demo of an older API version'})
 
     # Authentication api
-    connexion_app.add_api('oim_auth.yaml')
-
-    # Add the oim test api spec
-    connexion_app.add_api('oimtest.yaml')
-
-    # Add the Baloise OIM API specs
-    # app.add_api('oimapi-v0.1.yaml')
-
-    # API spec used for testing the order and cmdb classes
-    connexion_app.add_api('oimtest_manu.yaml')
+    connexion_app.add_api('auth-v1.yaml')
 
     # API spec used for oc calls
-    connexion_app.add_api('oim_occalls.yaml')
+    connexion_app.add_api('oc-v0.1.yaml')
 
     # API parts not intended for customer use
-    connexion_app.add_api('oimapi-private.yaml')
+    connexion_app.add_api('private-v0.1.yaml')
 
     # Add the oim itsm api spec
-    connexion_app.add_api('oim_itsm.yaml')
+    connexion_app.add_api('itsm-v0.1.yaml')
 
     # Customer-facing API
-    connexion_app.add_api('oimapi-v0.8.yaml')
+    connexion_app.add_api('v0.8.yaml')
 
 
 def create_connexion_app(config_name=None, dotenv_path=None,
@@ -62,8 +53,7 @@ def create_connexion_app(config_name=None, dotenv_path=None,
     connexion_app = connexion.FlaskApp(__name__, port=server_port,
                                        specification_dir=specdir)
 
-    connexion_app.app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(
-                             'SQLALCHEMY_DATABASE_URI') or 'sqlite:///:memory:'
+    connexion_app.app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI') or 'sqlite:///:memory:'
     connexion_app.app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # This reduces warnings
 
     log.debug('Initializing DB to Flaskapp')

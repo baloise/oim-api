@@ -1,7 +1,6 @@
 import unittest
 import flask_unittest
 from app import create_flask_app
-import re
 from unittest import mock
 from dotenv import load_dotenv
 from tests.model_statuspayload import TestModelStatuspayload
@@ -10,39 +9,6 @@ from tests.db_testdata import TestDbData  # noqa: F401
 
 # Force overwrite envvars with mock values from .env.unittests
 load_dotenv(dotenv_path='.env.unittests', override=True)
-
-
-class DemoTests(flask_unittest.ClientTestCase):
-    url_base = '/demoapi/v1'
-    app = create_flask_app(config_name='unittests')  # Required by the parent class
-
-    def test_1_hello(self, client):
-        response = client.get(self.url_base + '/hello')
-        self.assertEqual(response.status_code, 200)
-        self.assertIn('text/plain', response.content_type)
-        self.assertInResponse(b'Hello World', response)
-
-    def test_2_greet(self, client):
-        response = client.get(self.url_base + '/greeting/Peter')
-        self.assertStatus(response, 200)
-        self.assertInResponse(b'Hello Peter!', response)
-
-    def test_3_increment(self, client):
-        url = self.url_base + '/persistance'
-        regex = re.compile(b'^[0-9]+$')
-
-        res1 = client.get(url)
-        self.assertStatus(res1, 200)
-        # Theoretically we could use str.isnumeric() but since regex are more interesting for a demo...
-        self.assertRegex(res1.data, regex, 'First response is not a number')
-        num1 = int(res1.data)
-
-        res2 = client.get(url)
-        self.assertStatus(res2, 200)
-        self.assertRegex(res2.data, regex, 'Second response is not a number')
-        num2 = int(res2.data)
-
-        self.assertGreater(num2, num1)
 
 
 # This method will be used by the mock to replace requests.get
@@ -70,7 +36,7 @@ def mocked_requests_get(*args, **kwargs):
 
 
 class oimTests(flask_unittest.ClientTestCase):
-    url_base = '/oim/v0.2'
+    url_base = '/oc/v0.1'
     app = create_flask_app(config_name='unittests')  # Required by the parent class
 
     @mock.patch('requests.get', side_effect=mocked_requests_get)
@@ -82,6 +48,7 @@ class oimTests(flask_unittest.ClientTestCase):
         self.assertInResponse(b'MOCK123roflcopter', response)
 
 
+# keep pep8 happy ;-)
 test_model_order = TestModelOrder()
 # add for test data sets
 test_model_status_payload = TestModelStatuspayload()
