@@ -14,3 +14,4 @@ apiserver/oclogging.log
 apiserver/foo.py
 /.pydevproject
 /.project
+/.settings
