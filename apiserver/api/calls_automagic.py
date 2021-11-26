@@ -1,15 +1,19 @@
 import yaml
 from pprint import pprint
+from oim_logging import get_oim_logger
 
 
 def validateYML(body):
+    log = get_oim_logger()
+    log.debug(f'Initial type of body is {type(body)}')
     try:
-        parsed_yaml = yaml.safe_load(body)
+        parsed_yaml = yaml.load(body)
+        pprint(parsed_yaml)
     except BaseException:
-        return 400, 'Bad yaml syntax'
+        return 'Bad yaml syntax', 400
 
     if not parsed_yaml.get('apiVersion', None):
-        return 422, 'Missing apiVersion'
+        return 'Missing apiVersion', 422
     if not parsed_yaml.get('kind', None):
-        return 422, 'Missing kind'
-    return 200, 'Validation OK'
+        return 'Missing kind', 422
+    return 'Validation OK', 200

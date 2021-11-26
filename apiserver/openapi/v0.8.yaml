@@ -295,12 +295,6 @@ paths:
 
   /automagic/validateYAML:
     post:
-      parameters:
-        - in: body
-          name: body
-          schema:
-            type: string
-          required: true
       summary: Validate automagic.yaml file
       description: returns TBD 
       operationId: api.calls_automagic.validateYML
@@ -317,25 +311,25 @@ paths:
         content:
           text/plain:
             schema: 
-                type: string
-                example: |
-                  apiVersion: v1alpha1
-                  kind: VirtualMachine
-                  metadata:
-                    name: corellia
-                    serviceOwner: b023667
-                    labels:
-                      environment: test
-                  spec:
-                    status: active # one of active / decommissioned / deleted
-                    id: 28f5a2fb-ecce-4dd6-9b89-bc2319da9634
-                    adminRole: F-AAD-APP-OS1-SH-T-BizDevOps-Engineer
-                    ServerSizeCode: S1
-                    DriveSize : 5
-                    operatingSystem:
-                      kind: RHEL
-                      version: 8
-              
+              type: string
+            example: |
+              apiVersion: v1alpha1
+              kind: VirtualMachine
+              metadata:
+                name: corellia
+                serviceOwner: b023667
+                labels:
+                  environment: test
+              spec:
+                status: active # one of active / decommissioned / deleted
+                id: 28f5a2fb-ecce-4dd6-9b89-bc2319da9634
+                adminRole: F-AAD-APP-OS1-SH-T-BizDevOps-Engineer
+                ServerSizeCode: S1
+                DriveSize : 5
+                operatingSystem:
+                  kind: RHEL
+                  version: 8
+
 components:
   schemas:
     orderdatabase:
