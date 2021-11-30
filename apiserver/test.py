@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from tests.model_statuspayload import TestModelStatuspayload
 from tests.model_orders import TestModelOrder  # noqa: F401
 from tests.db_testdata import TestDbData  # noqa: F401
+from tests.calls_automagic import TestValidateYML
 
 # Force overwrite envvars with mock values from .env.unittests
 load_dotenv(dotenv_path='.env.unittests', override=True)
@@ -53,6 +54,7 @@ test_model_order = TestModelOrder()
 # add for test data sets
 test_model_status_payload = TestModelStatuspayload()
 test_db_order = TestDbData()
+test_calls_automagic = TestValidateYML
 
 
 if __name__ == '__main__':
