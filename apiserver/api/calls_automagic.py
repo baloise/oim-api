@@ -74,7 +74,7 @@ def validateYML(body):
         validate(instance=parsed_yaml, schema=validation_schema)
     except ValidationError as e:
         output_buffer = ''
-        #for error in errors:
+        # for error in errors:
         #    for suberror in sorted(error.context, key=lambda e: e.schema_path):
         #        output_buffer = list(suberror.schema_path), suberror.message, sep=", ") + "\n"
         output_buffer += f"{e.path!r}, {e.message}\n"
