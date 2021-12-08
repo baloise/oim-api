@@ -23,23 +23,25 @@ spec:
     version: 8
     """
 
-    def toYaml(self, the_object):
+    def obj_to_yaml(self, the_object):
         return yaml.dump(the_object)
 
-    def setUp(self):
-        self.body = self.valid_yaml_vm
-        self.obj = yaml.load(self.valid_yaml_vm, Loader=yaml.FullLoader)
+    def yaml_to_obj(self, payload):
+        return yaml.load(payload, Loader=yaml.FullLoader)
 
-    def tearDown(self):
-        self.body = ''
-        self.obj = None
-
-    def test_1_validvm(self):
-        _, return_code = validateYML(self.body)
+    def test_1_valid_ampgdb(self):
+        with open('schemas/yamlvalidation/references/postgres-db-yaml.yml') as f:
+            body = f.read()
+        return_message, return_code = validateYML(body)
+        print(return_message)
         assert return_code == 200
 
     def test_2_nokind(self):
-        del self.obj['kind']
-        body = self.toYaml(self.obj)
+        with open('schemas/yamlvalidation/references/postgres-db-yaml.yml') as f:
+            body = f.read()
+            obj = self.yaml_to_obj(body)
+        del obj['kind']
+        body = self.obj_to_yaml(obj)
+        print("Corrupt no-kind yaml: \n" + body)
         _, return_code = validateYML(body)
         assert return_code == 422

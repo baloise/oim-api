@@ -1,0 +1,22 @@
+# based on: https://bitbucket.balgroupit.com/projects/EEAM/repos/cornelia-template/raw/.automagic/int/postgres-db.yaml
+apiVersion: automagic/v1
+kind: DB
+spec:
+  template:
+    metadata:
+      labels:
+        active: false                       # set this to true to activate the VMs
+        sbu: CH-BCH                         # your organisation: BE, CH-BCH, DE, LU-RED, LU-YELLOW
+        application-code: xxx               # unique code of your application: exactly 3 characters
+        department-code: xxx                # your department code, e.g. sales-ch
+        environment: INT                    # the environment where the VM is created: TEST, INT, ACC, PROD
+    spec:
+      vm:
+        service-level-type: ADVANCED        # pick one of BASIC , ADVANCED, PREMIUM, ELITE
+        server-size: SMALL1                 # pick one of SMALL1, MEDIUM1, MEDIUM2, LARGE1, LARGE2, LARGE3, EXTRALARGE1, EXTRALARGE2
+        stoarge-type: HIGH-PERFORMANCE      # pick one of LOW-PERFORMANCE, HIGH-PERFORMANCE
+      db:
+        db-version: PGSQL125C               # pick one of PGSQL125C, PGSQL125E
+        db-name: xxx                        # name of your database
+        db-size: 10                         # size of your database in GB
+        db-user: xxxxxxx                    # user that gets admin access to your database: L123456 (L-Key)
