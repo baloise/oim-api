@@ -29,19 +29,30 @@ spec:
     def yaml_to_obj(self, payload):
         return yaml.load(payload, Loader=yaml.FullLoader)
 
-    def test_1_valid_ampgdb(self):
+    def test_100_valid_ampgdb(self):
         with open('schemas/yamlvalidation/references/postgres-db-yaml.yml') as f:
             body = f.read()
         return_message, return_code = validateYML(body)
-        print(return_message)
+        # print(return_message)
         assert return_code == 200
 
-    def test_2_nokind(self):
+    def test_200_nokind(self):
+        # kind attrib missing
         with open('schemas/yamlvalidation/references/postgres-db-yaml.yml') as f:
             body = f.read()
             obj = self.yaml_to_obj(body)
         del obj['kind']
         body = self.obj_to_yaml(obj)
-        print("Corrupt no-kind yaml: \n" + body)
+        # print("Corrupt no-kind yaml: \n" + body)
+        _, return_code = validateYML(body)
+        assert return_code == 422
+
+    def test_201_unknown_kind(self):
+        # kind points to something we have no schemahints for
+        with open('schemas/yamlvalidation/references/postgres-db-yaml.yml') as f:
+            body = f.read()
+            obj = self.yaml_to_obj(body)
+        obj['kind'] = 'FakeKindUnitTests'
+        body = self.obj_to_yaml(obj)
         _, return_code = validateYML(body)
         assert return_code == 422

@@ -1,3 +1,4 @@
+from json.decoder import JSONDecodeError
 import yaml
 # import re
 import json
@@ -6,14 +7,49 @@ from jsonschema import validate, ValidationError
 from oim_logging import get_oim_logger
 
 
+# This may eventually be autodetected but for now, we have these decision hints
+known_schemas = {
+    'schemas/yamlvalidation/am_postgres_schema.json': {  # the path to the schema file
+        # all key/values in here need to match for this schema to take effect
+        'apiVersion': 'automagic/v1',
+        'kind': 'DB',
+    }
+}
+
+
 def decide_validation_schema(inspection_object):
-    # This is a dummy function for now while the validation is being worked on
-    # Eventually it will return the necessary schema object depending on the given inspection object
+    # This function takes the known schema hints (above) and tries to find a matching schema
+    # It will either return a loaded schema object or None on error.
+    log = get_oim_logger()
+    if not inspection_object or not isinstance(inspection_object, dict):
+        log.error(f'Given object is false or not a dict: {type(inspection_object)}')
+        return None
+
+    schema_to_load = None
+
+    for schema_file, schema_hints in known_schemas.items():
+        is_match = True
+        for current_hint_key, current_hint_value in schema_hints.items():
+            if inspection_object.get(current_hint_key, None) != current_hint_value:
+                is_match = False
+
+        if is_match:  # if we reach this point and it's still true, the current shema is a hit!
+            schema_to_load = schema_file
+            break
+
+    if not schema_to_load:
+        log.warn('Went thru all hints, did not find a match.')
+        return None
+
     try:
-        with open('schemas/yamlvalidation/am_postgres_schema.json', 'r') as f:
+        with open(schema_to_load, 'r') as f:
             data = json.load(f)
         return data
-    except FileNotFoundError:
+    except OSError as e:
+        log.critical(f'Error reading file ({schema_to_load!r}): {e.strerror}')
+        return None
+    except JSONDecodeError:
+        log.critical(f'Error decoding json schema in file {schema_to_load!r}')
         return None
 
 
