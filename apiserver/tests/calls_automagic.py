@@ -30,7 +30,7 @@ spec:
         return yaml.load(payload, Loader=yaml.FullLoader)
 
     def test_100_valid_ampgdb(self):
-        with open('schemas/yamlvalidation/references/postgres-db-yaml.yml') as f:
+        with open('schemas/yamlvalidation/references/postgres-db-yaml.yaml') as f:
             body = f.read()
         return_message, return_code = validateYML(body)
         # print(return_message)

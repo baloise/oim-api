@@ -13,7 +13,12 @@ known_schemas = {
         # all key/values in here need to match for this schema to take effect
         'apiVersion': 'automagic/v1',
         'kind': 'DB',
-    }
+    },
+    'schemas/yamlvalidation/am_vm_v1alpha1_schema.json': {  # the path to the schema file
+        # all key/values in here need to match for this schema to take effect
+        'apiVersion': 'v1alpha1',
+        'kind': 'VirtualMachine',
+    },
 }
 
 
