@@ -1,4 +1,4 @@
-# based on: https://bitbucket.balgroupit.com/projects/EEAM/repos/cornelia-template/raw/.automagic/int/postgres-db.yaml
+# based on: https://bitbucket/projects/EEAM/repos/cornelia-template/raw/.automagic/int/postgres-db.yaml
 apiVersion: automagic/v1
 kind: DB
 spec:
