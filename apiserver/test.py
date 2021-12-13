@@ -3,9 +3,10 @@ import flask_unittest
 from app import create_flask_app
 from unittest import mock
 from dotenv import load_dotenv
-from tests.model_statuspayload import TestModelStatuspayload
+from tests.model_statuspayload import TestModelStatuspayload  # noqa: F401
 from tests.model_orders import TestModelOrder  # noqa: F401
 from tests.db_testdata import TestDbData  # noqa: F401
+from tests.calls_automagic import TestValidateYML  # noqa: F401
 
 # Force overwrite envvars with mock values from .env.unittests
 load_dotenv(dotenv_path='.env.unittests', override=True)
@@ -48,12 +49,12 @@ class oimTests(flask_unittest.ClientTestCase):
         self.assertInResponse(b'MOCK123roflcopter', response)
 
 
-# keep pep8 happy ;-)
-test_model_order = TestModelOrder()
-# add for test data sets
-test_model_status_payload = TestModelStatuspayload()
-test_db_order = TestDbData()
+# # keep pep8 happy ;-)
+# test_model_order = TestModelOrder()
+# # add for test data sets
+# test_model_status_payload = TestModelStatuspayload()
+# test_db_order = TestDbData()
 
 
 if __name__ == '__main__':
-    unittest.main()
+    unittest.main(verbosity=2)

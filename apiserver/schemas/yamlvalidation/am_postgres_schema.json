@@ -1,0 +1,210 @@
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "$ref": "#/definitions/Root",
+    "definitions": {
+        "Root": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "apiVersion": {
+                    "type": "string",
+                    "pattern": "^automagic/v1$"
+                },
+                "kind": {
+                    "type": "string",
+                    "pattern": "^DB$"
+                },
+                "spec": {
+                    "$ref": "#/definitions/RootSpec"
+                }
+            },
+            "required": [
+                "apiVersion",
+                "kind",
+                "spec"
+            ],
+            "title": "Root"
+        },
+        "RootSpec": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "template": {
+                    "$ref": "#/definitions/Template"
+                }
+            },
+            "required": [
+                "template"
+            ],
+            "title": "RootSpec"
+        },
+        "Template": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "metadata": {
+                    "$ref": "#/definitions/Metadata"
+                },
+                "spec": {
+                    "$ref": "#/definitions/TemplateSpec"
+                }
+            },
+            "required": [
+                "metadata",
+                "spec"
+            ],
+            "title": "Template"
+        },
+        "Metadata": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "labels": {
+                    "$ref": "#/definitions/Labels"
+                }
+            },
+            "required": [
+                "labels"
+            ],
+            "title": "Metadata"
+        },
+        "Labels": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "active": {
+                    "type": "boolean"
+                },
+                "sbu": {
+                    "type": "string",
+                    "enum": [
+                        "BE",
+                        "CH-BCH",
+                        "DE",
+                        "LU-RED",
+                        "LU-YELLOW"
+                    ]
+                },
+                "application-code": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9]{3,4}$"
+                },
+                "department-code": {
+                    "type": "string"
+                },
+                "environment": {
+                    "type": "string",
+                    "enum": [
+                        "TEST",
+                        "INT",
+                        "ACC",
+                        "PROD"
+                    ]
+                }
+            },
+            "required": [
+                "active",
+                "application-code",
+                "department-code",
+                "environment",
+                "sbu"
+            ],
+            "title": "Labels"
+        },
+        "TemplateSpec": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "vm": {
+                    "$ref": "#/definitions/VM"
+                },
+                "db": {
+                    "$ref": "#/definitions/DB"
+                }
+            },
+            "required": [
+                "db",
+                "vm"
+            ],
+            "title": "TemplateSpec"
+        },
+        "DB": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "db-version": {
+                    "type": "string",
+                    "enum": [
+                        "PGSQL125C",
+                        "PGSQL125E"
+                    ],
+                    "default": "PGSQL125C"
+                },
+                "db-name": {
+                    "type": "string"
+                },
+                "db-size": {
+                    "description": "Size in GB",
+                    "type": "integer",
+                    "default": 10,
+                    "minimum": 2,
+                    "maximum": 999
+                },
+                "db-user": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "db-name",
+                "db-size",
+                "db-user",
+                "db-version"
+            ],
+            "title": "DB"
+        },
+        "VM": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "service-level-type": {
+                    "type": "string",
+                    "enum": [
+                        "BASIC",
+                        "ADVANCED",
+                        "PREMIUM",
+                        "ELITE"
+                    ],
+                    "default": "BASIC"
+                },
+                "server-size": {
+                    "type": "string",
+                    "enum": [
+                        "SMALL1",
+                        "MEDIUM1",
+                        "MEDIUM2",
+                        "LARGE1",
+                        "LARGE2",
+                        "LARGE3",
+                        "EXTRALARGE1",
+                        "EXTRALARGE2",
+                        "EXTRALARGE3"
+                    ],
+                    "default": "SMALL1"
+                },
+                "stoarge-type": {
+                    "type": "string",
+                    "enum": [
+                        "LOW-PERFORMANCE",
+                        "HIGH-PERFORMANCE"
+                    ]
+                }
+            },
+            "required": [
+                "server-size",
+                "service-level-type",
+                "stoarge-type"
+            ],
+            "title": "VM"
+        }
+    }
+}

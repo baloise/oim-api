@@ -1,0 +1,154 @@
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "$ref": "#/definitions/Root",
+    "definitions": {
+        "Root": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "apiVersion": {
+                    "type": "string",
+                    "enum": [
+                        "v1alpha1"
+                    ]
+                },
+                "kind": {
+                    "type": "string",
+                    "pattern": "VirtualMachine"
+                },
+                "metadata": {
+                    "$ref": "#/definitions/Metadata"
+                },
+                "spec": {
+                    "$ref": "#/definitions/Spec"
+                }
+            },
+            "required": [
+                "apiVersion",
+                "kind",
+                "metadata",
+                "spec"
+            ],
+            "title": "Root"
+        },
+        "Metadata": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "serviceOwner": {
+                    "type": "string"
+                },
+                "labels": {
+                    "$ref": "#/definitions/Labels"
+                }
+            },
+            "required": [
+                "labels",
+                "name",
+                "serviceOwner"
+            ],
+            "title": "Metadata"
+        },
+        "Labels": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "environment": {
+                    "type": "string",
+                    "enum": [
+                        "test",
+                        "integration",
+                        "acceptance",
+                        "production"
+                    ]
+                }
+            },
+            "required": [
+                "environment"
+            ],
+            "title": "Labels"
+        },
+        "Spec": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "enum": [
+                        "active",
+                        "decommissioned",
+                        "deleted"
+                    ]
+                },
+                "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+                },
+                "adminRole": {
+                    "type": "string",
+                    "pattern": "^[Ff]-[A-Za-z0-9_-]+$"
+                },
+                "ServerSizeCode": {
+                    "type": "string",
+                    "enum": [
+                        "S1",
+                        "M1",
+                        "M2",
+                        "L1",
+                        "L2",
+                        "L3",
+                        "XL1",
+                        "XL2",
+                        "XL3"
+                    ]
+                },
+                "DriveSize": {
+                    "type": "integer",
+                    "description": "Size in GB",
+                    "default": 10,
+                    "minimum": 2,
+                    "maximum": 999
+                },
+                "operatingSystem": {
+                    "$ref": "#/definitions/OperatingSystem"
+                }
+            },
+            "required": [
+                "DriveSize",
+                "ServerSizeCode",
+                "adminRole",
+                "id",
+                "operatingSystem",
+                "status"
+            ],
+            "title": "Spec"
+        },
+        "OperatingSystem": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "kind": {
+                    "type": "string",
+                    "enum": [
+                        "RHEL"
+                    ]
+                },
+                "version": {
+                    "type": "integer",
+                    "minimum": 7,
+                    "maximum": 8,
+                    "default": 8
+                }
+            },
+            "required": [
+                "kind",
+                "version"
+            ],
+            "title": "OperatingSystem"
+        }
+    }
+}
