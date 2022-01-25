@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from models.orders import OrderItem
+from models.orders import OrderItem, VmOrderItem
 from ourCloud.OurCloudHandler import OurCloudRequestHandler
 from orchestra.OrchestraRequestHandler import OrchestraChangeHandler
 from workflows.WorkflowContext import WorkflowContext
@@ -12,9 +12,10 @@ import time
 from datetime import datetime
 import os
 from ourCloud.OcStaticVars import TRANSLATE_TARGETS
-from adapter.OrchestraAdapters import environment_adapter
+from adapter.GenericAdapters import environment_adapter
 from itsm.handler import ValuemationHandler
 from itsm.handler import CreateChangeDetails
+from itsm.ConfigItems import SystemConfigItem
 
 
 class AbstractWorkflowStep(ABC):
@@ -41,6 +42,55 @@ class DummyStep(AbstractWorkflowStep):
         info = "  Execute step {} for user {}: {ms}".format(self.action, context.get_requester().email, ms=self.message)
         logger = get_oim_logger()
         logger.info(info)
+
+
+class DummyReadItemDetailsStep(AbstractWorkflowStep):
+    def __init__(self, item: OrderItem):
+        self.action = "dummyreaddetails"
+        self.item = item
+
+    def execute(self, context: WorkflowContext):
+        info = "  Execute step {} for user {}".format(self.action, context.get_requester().email)
+        logger = get_oim_logger()
+        logger.info(info)
+
+        cfg = context.getItemDetails(self.item)
+        logger.info(f"Read details of item {self.item.id} from context: {cfg}")
+
+
+class FetchRequestDetailsStep(AbstractWorkflowStep):
+    def __init__(self, item: OrderItem):
+        self.action = "fetchreqdetails"
+        self.item = item
+
+    def execute(self, context: WorkflowContext):
+        info = "  Execute step {} for user {}".format(self.action, context.get_requester().email)
+        logger = get_oim_logger()
+        logger.info(info)
+
+        requestId = self.item.getBackendRequestId()
+        if requestId < 171:
+            logger.error("Skip parsing of request details because OC request IDs below 171 don't contain all necessary data.")   # noqa E501
+            return None
+        filter = "RequestNo = '{rid}'".format(rid=requestId)
+
+        ochandler = OurCloudRequestHandler.getInstance()
+        ocresult = ochandler.get_all_ci_details(data_filter=filter)
+        if not ocresult:
+            logger.info(f"OC didn't return CI details of request ID {requestId}")  # probably an error?
+            return None
+        # extract relevant data from json here and add it to the OrderItem in the workflow
+        logger.info(ocresult)
+
+        sysCfgItem = SystemConfigItem(requestId)
+        try:
+            sysCfgItem.fromJson(ocresult[0])
+
+            context.updateItemDetails(self.item, sysCfgItem)
+            logger.info(f"Successfully parsed system from oc json: {sysCfgItem}")
+        except Exception as e:
+            logger.error(f"Exception while parsing of request {requestId} from details json: {e.args[0]}")
+            return None
 
 
 class AwaitDeployStep(AbstractWorkflowStep):
@@ -106,11 +156,11 @@ class CreateCrStep(AbstractWorkflowStep):
     def __init__(self, item: OrderItem):
         self.action = "createcr"
         self.item = item
+        self.logger = get_oim_logger()
 
     def execute(self, context: WorkflowContext):
         info = "  Execute step: {ac} for item {itm}".format(ac=self.action, itm=self.item.get_cataloguename())
-        logger = get_oim_logger()
-        logger.info(info)
+        self.logger.info(info)
         myRequestor = context.get_requester().username
         myEnv = environment_adapter().translate(self.item.getEnvironment(), TRANSLATE_TARGETS.VAL)
         myDuedate = datetime.now().strftime("%Y-%m-%d")
@@ -128,28 +178,43 @@ class CreateCrStep(AbstractWorkflowStep):
         myChangeDetails.setdueDate(myDuedate)
         myChangeDetails.setEnvironmentId(myValenv_id)
 
-        myChange = ValuemationHandler(myChangeDetails)
-        lRet = myChange.create_change()
-        if lRet == "11":
-            logger.error("create of CR is failed:{}".format(lRet))
+        if self.do_simulate():
+            self.logger.info("Simulate creation of CR")
+            crnr = self.getRandomChangeNr()
         else:
-            try:
-                crnr = lRet['data']['ticketno']
-            except KeyError:
-                logger.error("create of CR is failed:{}".format(lRet))
-                return None
+            myChange = ValuemationHandler(myChangeDetails)
+            lRet = myChange.create_change()
+            if lRet == "11":
+                self.logger.error("create of CR is failed:{}".format(lRet))
+            else:
+                try:
+                    crnr = lRet['data']['ticketno']
+                except KeyError:
+                    self.logger.error("create of CR is failed:{}".format(lRet))
+                    return None
 
-        # crnr = self.getRandomChangeNr()
         context.add_item(self.item, crnr)
-        logger.info("CR {nr} has been created".format(nr=crnr))
+        self.logger.info("CR {nr} has been created".format(nr=crnr))
 
     def getRandomChangeNr(self) -> str:
         c = "{s}{i}".format(s="CH-", i=''.join(sample("123456789", 7)))
         return c
 
+    def do_simulate(self) -> bool:
+        mystring = os.getenv('VM_SIMULATE', "True")
+        doSimulate = True
+        if mystring.lower() == 'false':
+            doSimulate = False
+        if doSimulate:
+            self.logger.info("Simulation enabled, requests will NOT be sent do VM ({})".format(doSimulate))
+            return True
+        else:
+            self.logger.info("Simulation disabled, requests will be sent do VM ({})".format(doSimulate))
+            return False
+
 
 class DeployVmStep(AbstractWorkflowStep):
-    def __init__(self, item: OrderItem):
+    def __init__(self, item: VmOrderItem):
         self.item = item
         self.action = "deploy"
 

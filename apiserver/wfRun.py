@@ -1,17 +1,20 @@
 # from workflows.steps.WorkflowSteps import DeployItemStep, DummyStep, VerifyItemStep
 import collections
-from models.orders import Person, SbuType, OrderStateType, OrderItem, OrderStatus, Order, BackendType, OrderType  # noqa: F401,E501
+from models.orders import Person, SbuType, OrderStateType, OrderStatus, Order, BackendType, OrderType  # noqa: F401,E501
+from models.orders import VmOrderItem
 from workflows.Factory import WorkflowFactory, OrderFactory
 from workflows.Workflows import WorkflowTypes
 from workflows.WorkflowContext import WorkflowContext
 # from models.orderTypes.OrderTypes import OrderType
-from ourCloud.OcStaticVars import ENVIRONMENT, OC_CATALOGOFFERINGS, OC_CATALOGOFFERING_SIZES  # noqa F401
+from ourCloud.OcStaticVars import ENVIRONMENT, OC_CATALOGOFFERINGS, OC_CATALOGOFFERING_SIZES, SERVICE_LEVEL  # noqa F401
 import logging
 from dotenv import load_dotenv
 from api.calls_status import create_status
 from app import create_flask_app, db
 from flask_sqlalchemy import SQLAlchemy
 import json
+from orchestra.OrchestraRequestHandler import OrchestraServiceInfoHandler
+from ourCloud.OcStaticVars import APPLICATIONS
 
 
 load_dotenv()
@@ -30,6 +33,23 @@ app_context = app.app_context()
 app_context.push()
 SQLAlchemy(app)
 
+# business service
+retval = {}
+serviceinfo = OrchestraServiceInfoHandler()
+results = serviceinfo.retrieveServicesByName(pattern="SIAM-SID (Test)")
+error = results.get('error', False)
+# log.debug(f'Error is {error} of type {type(error)}')
+if not results or error:
+    # log.debug(f'Results is: {results}')
+    logger.error('retrieveServicesByName yielded error')
+if results.get('result', None):
+    resJson = results.get('result', {})
+    oneS = resJson.get("Services")[0]
+    sId = oneS.get('servicesId')
+    sUs = oneS.get('servicesId')
+    # print(sId)
+
+
 off = OC_CATALOGOFFERINGS.from_str('Windows 2019')
 # off = OC_CATALOGOFFERINGS.WINS2019
 print("Offering {}".format(off.name))
@@ -39,12 +59,15 @@ personPeter = Person(
             email='peter.parker@test.fake',
             sbu=SbuType.BITS
         )
+personPeter.setId(33)
 workflowFactory = WorkflowFactory()
 orderFactory = OrderFactory()
 
 # init order item and create order
-rhel_item = OrderItem(off, OC_CATALOGOFFERING_SIZES.S2, ENVIRONMENT.TEST)
+db.create_all()
+rhel_item = VmOrderItem(off, OC_CATALOGOFFERING_SIZES.S2, ENVIRONMENT.TEST, SERVICE_LEVEL.BASIC)
 rhel_item.set_reference("ref")
+rhel_item.set_appcode(APPLICATIONS.VALUEMATION)
 items = [rhel_item]
 new_order = orderFactory.get_order(OrderType.CREATE_ORDER, items, personPeter)
 new_order.set_requester(personPeter)
@@ -56,7 +79,7 @@ wf.set_context(context)
 wf.set_order(new_order)
 
 # app prep
-db.create_all()
+# db.create_all()
 
 db.session.add(personPeter)
 db.session.commit()
@@ -164,7 +187,7 @@ map = DeepChainMap(di1)
 map = map.new_child(di2)
 map.maps = reversed(map.maps)
 print("..................")
-print("List Batches&their Actions {}".format(wf.get_name()))
+print(f"List batches & actions of workflow '{wf.get_name()}'")
 for batch in wf.get_batches():
     print(" Batch {}".format(batch))
     for step in batch:

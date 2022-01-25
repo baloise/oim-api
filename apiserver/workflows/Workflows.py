@@ -1,9 +1,8 @@
 from typing import List
 import collections
 import enum
-from workflows.steps.WorkflowSteps import AbstractWorkflowStep, CreateCrStep, AwaitDeployStep
 from models.orders import Order, OrderStateType, OrderType, BackendType
-from workflows.steps.WorkflowSteps import DeployVmStep, DummyStep
+from workflows.steps.WorkflowSteps import DeployVmStep, DummyStep, FetchRequestDetailsStep, AbstractWorkflowStep, CreateCrStep, AwaitDeployStep, DummyReadItemDetailsStep  # noqa E501
 from workflows.WorkflowContext import WorkflowContext
 from oim_logging import get_oim_logger
 from api.util_status import create_status
@@ -196,7 +195,7 @@ class GenericWorkflow:
                 statusJson = self.get_json(batch.get_target_state(), BackendType.OURCLOUD.name, currentOrder)
                 create_status(statusJson)
             except Exception as e:
-                error = "Error while executing batch: {} item ".format(e)
+                error = f"Error while executing batch '{batch}' with message: {e}"
                 logger.error(error)
                 statusJson = self.get_json(batch.get_fail_state(), BackendType.OURCLOUD.name, currentOrder)
                 create_status(statusJson)
@@ -267,7 +266,7 @@ class CreateVmWorkflow(GenericWorkflow):
             data_retrieval_batch = Batch('data_retrieval_from_oc', OrderStateType.CI_RETRIEVED.state, True)
             for item in super().get_order().get_items():
                 if item.is_Vm():
-                    step = DummyStep()
+                    step = FetchRequestDetailsStep(item)
                     data_retrieval_batch.add_step(step)
             self.add_batch(data_retrieval_batch)
 
@@ -283,7 +282,7 @@ class CreateVmWorkflow(GenericWorkflow):
             cBatch = Batch("cmdb", OrderStateType.CMDB_DONE.state, False)
             for item in super().get_order().get_items():
                 if item.is_Vm():
-                    cmdbStep = DummyStep("update cmdb")
+                    cmdbStep = DummyReadItemDetailsStep(item)
                     cBatch.add_step(cmdbStep)
             self.add_batch(cBatch)
             # Batch: Mark the CR as closed.

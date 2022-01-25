@@ -1,0 +1,248 @@
+{
+  "issues": [
+    { "description": "db size not visible in Zabbix monitoring",
+      "status": "DIS-15387",
+      "measures": [
+        "allow access (trust) of user zabbix from 10.64.9.22/32 in pg_hba.conf on the affected system"
+      ],
+      "system": "svx-bitbuckt001",
+      "component": "",
+      "service": "PostgreSQL dezentrale Server nonprod",
+      "orderteam": "Database Services (Oracle, MSSQL, Postgre, MYSQL, DB2 LUW)"
+    },
+    { "description": "Zabbix templates 'Bal Template APP PostgreSQL', 'Basler_Template_linux_POSTGRES' not assigned to system",
+      "status": "DIS-15389",
+      "measures": [
+        "apply&configure postgres templates 'Bal Template APP PostgreSQL', 'Basler_Template_linux_POSTGRES' to system in Zabbix",
+        "add system details to odbc.ini on Zabbix server",
+        "verify if postgres parameters like DB size are displayed in Zabbix monitoring"
+      ],
+      "system": "svx-cfdbt003",
+      "component": "",
+      "service": "PostgreSQL dezentrale Server nonprod",
+      "orderteam": "Database Services (Oracle, MSSQL, Postgre, MYSQL, DB2 LUW)"
+    },
+    { "description": "incomplete postgres instance documentation: dbs, roles, contact details missing",
+      "status": "DIS-15390",
+      "measures": [
+        "update the postgres instance documentation in Confluence below https://confluence.baloisenet.com/atlassian/x/MIFMb",
+        "hostname violates the Baloise naming convention: don't change the system's hostname!"
+      ],
+      "system": "svx-ch-pg1almbast001",
+      "component": "",
+      "service": "PostgreSQL dezentrale Server nonprod",
+      "orderteam": "Database Services (Oracle, MSSQL, Postgre, MYSQL, DB2 LUW)"
+    },
+    { "description": "Zabbix templates 'Bal Template APP PostgreSQL', 'Basler_Template_linux_POSTGRES' not assigned to system",
+      "status": "DIS-15605",
+      "measures": [
+        "apply&configure postgres templates 'Bal Template APP PostgreSQL', 'Basler_Template_linux_POSTGRES' to system in Zabbix",
+        "add system details to odbc.ini on Zabbix server",
+        "update the postgres instance documentation in Confluence below https://confluence.baloisenet.com/atlassian/x/MIFMb",
+        "hostname violates the Baloise naming convention: don't change the system's hostname!"
+      ],
+      "system": "svx-ch-svx-ch-pgalmbasp001",
+      "component": "",
+      "service": "PostgreSQL dezentrale Server prod",
+      "orderteam": "Database Services (Oracle, MSSQL, Postgre, MYSQL, DB2 LUW)"
+    },
+    { "description": "Zabbix templates 'Bal Template APP PostgreSQL', 'Basler_Template_linux_POSTGRES' not assigned to system",
+      "status": "DIS-15606",
+      "measures": [
+        "apply&configure postgres templates 'Bal Template APP PostgreSQL', 'Basler_Template_linux_POSTGRES' to system in Zabbix",
+        "add system details to odbc.ini on Zabbix server",
+        "update the postgres instance documentation in Confluence below https://confluence.baloisenet.com/atlassian/x/MIFMb",
+        "hostname violates the Baloise naming convention: don't change the system's hostname!"
+      ],
+      "system": "svx-ch-pg1datalabp001",
+      "component": "",
+      "service": "PostgreSQL dezentrale Server prod",
+      "orderteam": "Database Services (Oracle, MSSQL, Postgre, MYSQL, DB2 LUW)"
+    },
+    { "description": "incomplete postgres instance documentation: dbs, roles, contact details missing",
+      "status": "DIS-15607",
+      "measures": [
+        "update the postgres instance documentation in Confluence below https://confluence.baloisenet.com/atlassian/x/MIFMb",
+        "hostname violates the Baloise naming convention: don't change the system's hostname!"
+      ],
+      "system": "svx-ch-pg1parsysp001",
+      "component": "",
+      "service": "PostgreSQL dezentrale Server prod",
+      "orderteam": "Database Services (Oracle, MSSQL, Postgre, MYSQL, DB2 LUW)"
+    },
+    { "description": "incomplete postgres instance documentation: dbs, roles, contact details missing",
+      "status": "DIS-15608",
+      "measures": [
+        "update the postgres instance documentation in Confluence below https://confluence.baloisenet.com/atlassian/x/MIFMb",
+        "hostname violates the Baloise naming convention: don't change the system's hostname!"
+      ],
+      "system": "svx-ch-pg1parsyst001",
+      "component": "",
+      "service": "PostgreSQL dezentrale Server nonprod",
+      "orderteam": "Database Services (Oracle, MSSQL, Postgre, MYSQL, DB2 LUW)"
+    },
+    { "description": "incomplete postgres instance documentation: dbs, roles, contact details missing",
+      "status": "DIS-15609",
+      "measures": [
+        "update the postgres instance documentation in Confluence below https://confluence.baloisenet.com/atlassian/x/MIFMb",
+        "hostname violates the Baloise naming convention: don't change the system's hostname!"
+      ],
+      "system": "svx-ch-pg1sctappp001",
+      "component": "",
+      "service": "PostgreSQL dezentrale Server prod",
+      "orderteam": "Database Services (Oracle, MSSQL, Postgre, MYSQL, DB2 LUW)"
+    },
+    { "description": "incomplete postgres instance documentation: dbs, roles, contact details missing",
+      "status": "DIS-15610",
+      "measures": [
+        "update the postgres instance documentation in Confluence below https://confluence.baloisenet.com/atlassian/x/MIFMb",
+        "hostname violates the Baloise naming convention: don't change the system's hostname!"
+      ],
+      "system": "svx-ch-pg1sctappt001",
+      "component": "",
+      "service": "PostgreSQL dezentrale Server nonprod",
+      "orderteam": "Database Services (Oracle, MSSQL, Postgre, MYSQL, DB2 LUW)"
+    },
+    { "description": "Zabbix templates 'Bal Template APP PostgreSQL', 'Basler_Template_linux_POSTGRES' not assigned to system",
+      "status": "DIS-15611",
+      "measures": [
+        "apply&configure postgres templates 'Bal Template APP PostgreSQL', 'Basler_Template_linux_POSTGRES' to system in Zabbix"
+      ],
+      "system": "svx-ch-pgeasyaskp001",
+      "component": "",
+      "service": "PostgreSQL dezentrale Server prod",
+      "orderteam": "Database Services (Oracle, MSSQL, Postgre, MYSQL, DB2 LUW)"
+    },
+    { "description": "Adjust CMDB record of DB component",
+      "status": "DIS-15612",
+      "measures": [
+        "remove space from component name in CMDB",
+        "update the postgres instance documentation in Confluence below https://confluence.baloisenet.com/atlassian/x/MIFMb"
+      ],
+      "system": "svx-ch-pgitacp001",
+      "component": "",
+      "service": "PostgreSQL dezentrale Server prod",
+      "orderteam": "Database Services (Oracle, MSSQL, Postgre, MYSQL, DB2 LUW)"
+    },
+    { "description": "Zabbix templates 'Bal Template APP PostgreSQL', 'Basler_Template_linux_POSTGRES' not assigned to system",
+      "status": "DIS-15613",
+      "measures": [
+        "verify and adjust DB component pablo01a on this system in CMDB",
+        "apply&configure postgres templates 'Bal Template APP PostgreSQL', 'Basler_Template_linux_POSTGRES' to system in Zabbix",
+        "verify if postgres parameters like DB size are displayed in Zabbix monitoring"
+      ],
+      "system": "svx-ch-pgpablot001",
+      "component": "",
+      "service": "PostgreSQL dezentrale Server nonprod",
+      "orderteam": "Database Services (Oracle, MSSQL, Postgre, MYSQL, DB2 LUW)"
+    },
+    { "description": "Zabbix templates 'Bal Template APP PostgreSQL', 'Basler_Template_linux_POSTGRES' not assigned to system",
+      "status": "DIS-15614",
+      "measures": [
+        "apply&configure postgres templates 'Bal Template APP PostgreSQL', 'Basler_Template_linux_POSTGRES' to system in Zabbix",
+        "verify if postgres parameters like DB size are displayed in Zabbix monitoring"
+      ],
+      "system": "svx-de-pgoiv8p001",
+      "component": "",
+      "service": "PostgreSQL dezentrale Server prod",
+      "orderteam": "Database Services (Oracle, MSSQL, Postgre, MYSQL, DB2 LUW)"
+    },
+    { "description": "Zabbix templates 'Bal Template APP PostgreSQL', 'Basler_Template_linux_POSTGRES' not assigned to system",
+      "status": "DIS-16146",
+      "measures": [
+        "apply&configure postgres templates 'Bal Template APP PostgreSQL', 'Basler_Template_linux_POSTGRES' to system in Zabbix",
+        "add to odbc.ini on Zabbix server",
+        "verify if postgres parameters like DB size are displayed in Zabbix monitoring",
+        "update the postgres instance documentation in Confluence below https://confluence.baloisenet.com/atlassian/x/MIFMb"
+      ],
+      "system": "svx-ch-pgprovt001",
+      "component": "",
+      "service": "PostgreSQL dezentrale Server nonprod",
+      "orderteam": "Database Services (Oracle, MSSQL, Postgre, MYSQL, DB2 LUW)"
+    },
+    { "description": "Zabbix templates 'Bal Template APP PostgreSQL', 'Basler_Template_linux_POSTGRES' not assigned to system",
+      "status": "DIS-16146",
+      "measures": [
+        
+      ],
+      "system": "svx-ch-pgprovp001",
+      "component": "",
+      "service": "PostgreSQL dezentrale Server nonprod",
+      "orderteam": "Database Services (Oracle, MSSQL, Postgre, MYSQL, DB2 LUW)"
+    },
+    { "description": "Add Zabbix graphs for database size",
+      "status": "DIS-20348",
+      "measures": [
+        "Graph 'PostgreSQL databases discovery: PostgreSQL: database size' is not displayed in Zabbix, please add."
+      ],
+      "system": "svx-de-awap001",
+      "component": "",
+      "service": "PostgreSQL dezentrale Server prod",
+      "orderteam": "Database Services (Oracle, MSSQL, Postgre, MYSQL, DB2 LUW)"
+    },
+    { "description": "Zabbix templates 'Bal Template APP PostgreSQL', 'Basler_Template_linux_POSTGRES' not assigned to system",
+      "status": "DIS-20366",
+      "measures": [
+        "apply&configure postgres templates 'Bal Template APP PostgreSQL', 'Basler_Template_linux_POSTGRES' to system in Zabbix",
+        "add to odbc.ini on Zabbix server",
+        "verify if postgres parameters like DB size are displayed in Zabbix monitoring"
+      ],
+      "system": "svx-ch-pgitact001",
+      "component": "",
+      "service": "PostgreSQL dezentrale Server nonprod",
+      "orderteam": "Database Services (Oracle, MSSQL, Postgre, MYSQL, DB2 LUW)"
+    },
+    { "description": "Adjust CMDB record of DB component",
+      "status": "DIS-21392",
+      "measures": [
+        "Adjust DB component on this system in CMDB for DBs: gnfh01t, gwch01t, lernreise01i"
+      ],
+      "system": "svx-postgrest001",
+      "component": "",
+      "service": "PostgreSQL dezentrale Server nonprod",
+      "orderteam": "Database Services (Oracle, MSSQL, Postgre, MYSQL, DB2 LUW)"
+    },
+    { "description": "incomplete postgres instance documentation: DB, user/roles, netapp hostname/IP",
+      "status": "DIS-21403",
+      "measures": [
+        "update the postgres instance documentation in Confluence below https://confluence.baloisenet.com/atlassian/x/8oneZg"
+      ],
+      "system": "svx-de-awap001",
+      "component": "",
+      "service": "PostgreSQL dezentrale Server prod",
+      "orderteam": "Database Services (Oracle, MSSQL, Postgre, MYSQL, DB2 LUW)"
+    },
+    { "description": "Zabbix templates 'Bal Template APP PostgreSQL', 'Basler_Template_linux_POSTGRES' not assigned to system",
+      "status": "DIS-21405",
+      "measures": [
+        "apply&configure postgres templates 'Bal Template APP PostgreSQL', 'Basler_Template_linux_POSTGRES' to system in Zabbix",
+        "add to odbc.ini on Zabbix server",
+        "verify if postgres parameters like DB size are displayed in Zabbix monitoring"
+      ],
+      "system": "svx-ch-pgitact001",
+      "component": "",
+      "service": "PostgreSQL dezentrale Server nonprod",
+      "orderteam": "Database Services (Oracle, MSSQL, Postgre, MYSQL, DB2 LUW)"
+    },
+    { "description": "Adjust CMDB record of DB component",
+      "status": "DIS-24104",
+      "measures": [
+        "Adjust DB component on this system in CMDB for DBs: eis01a, eis01i, eis01t"
+      ],
+      "system": "svx-ch-pgprovt001",
+      "component": "",
+      "service": "PostgreSQL dezentrale Server nonprod",
+      "orderteam": "Database Services (Oracle, MSSQL, Postgre, MYSQL, DB2 LUW)"
+    },
+    { "description": "Adjust CMDB record of DB component",
+      "status": "DIS-24105",
+      "measures": [
+        "Adjust DB component on this system in CMDB for DBs: eis01p"
+      ],
+      "system": "svx-ch-pgprovp001",
+      "component": "",
+      "service": "PostgreSQL dezentrale Server prod",
+      "orderteam": "Database Services (Oracle, MSSQL, Postgre, MYSQL, DB2 LUW)"
+    }
+  ]
+}

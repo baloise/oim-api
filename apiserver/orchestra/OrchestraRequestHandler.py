@@ -12,7 +12,8 @@ from requests.auth import HTTPBasicAuth
 from zeep import Client, Settings, helpers
 from zeep.cache import InMemoryCache, SqliteCache
 from zeep.transports import Transport
-from adapter.OrchestraAdapters import cmdb_adapter, environment_adapter, cmdb_performance_adapter, provider_sla_adapter  # noqa E501
+from adapter.OrchestraAdapters import cmdb_performance_adapter, provider_sla_adapter  # noqa E501
+from adapter.GenericAdapters import environment_adapter
 from ourCloud.OcStaticVars import ENVIRONMENT, TRANSLATE_TARGETS, SERVICE_LEVEL, STORAGE_PERFORMANCE_LEVEL  # noqa E501
 from oim_logging import get_oim_logger
 # from pprint import pformat
@@ -165,11 +166,11 @@ class GenericCmdbHandler(ABC):
 
 class OrchestraCmdbHandler(GenericCmdbHandler):     # has no idea of SOAP
     def __init__(self):
-        self.url = 'https://localhost:8843/oim_cmdb_soap?wsdl' # noqa E501
+        self.url = 'https://localhost:8443/oim_cmdb_soap?wsdl' # noqa E501
         self.orchestra = OrchestraRequestHandler(self.url)
         self.cmdb_perf = cmdb_performance_adapter().translate(STORAGE_PERFORMANCE_LEVEL.HIGH, TRANSLATE_TARGETS.CMDB)  # noqa E501
         self.cmdb_env_id = environment_adapter().translate(ENVIRONMENT.TEST, TRANSLATE_TARGETS.CMDB)    # noqa E501
-        self.cmdb_sla_brz = provider_sla_adapter().translate(SERVICE_LEVEL.PREMIUM)
+        self.cmdb_sla_brz = provider_sla_adapter().translate(SERVICE_LEVEL.PREMIUM, TRANSLATE_TARGETS.CMDB)
 
     def select_system(self, field, pattern):
         xml_filter = {'field': field, 'pattern': pattern}
@@ -331,11 +332,13 @@ class OrchestraServiceInfoHandler():
             return None
 
     def retrieveServicesByName(self, pattern):
-        if not self.orchestra:
-            self.log.error('Called method before successful constructor?!')
-            return False
-
-        results = self.orchestra.soap_client.service.getServicesByName(pattern)
+        results = {'error': None}
+        try:
+            results = self.orchestra.soap_client.service.getServicesByName(pattern)
+        except AttributeError:
+            errMsg = 'Called method before successful constructor?!'
+            self.log.error(errMsg)
+            return {'error': errMsg}
         if results:
             results = helpers.serialize_object(results, dict)  # We serialize to a more portable data structure
         # self.log.debug(f'SOAP Results: {pformat(results)}')

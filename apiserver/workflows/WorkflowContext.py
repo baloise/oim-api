@@ -1,6 +1,7 @@
 from models.orders import Person
 from models.orders import OrderItem
 from typing import List
+from itsm.ConfigItems import SystemConfigItem
 
 
 class WorkflowContextItem:
@@ -19,6 +20,7 @@ class WorkflowContext:
         self.requester = requester
         self.changeno = None
         self.items = []
+        self.itemDetails = {}
 
     def get_requester(self):
         return self.requester
@@ -42,3 +44,9 @@ class WorkflowContext:
             if oid == item.id:
                 return itm.getItemChangeno()
         return None
+
+    def updateItemDetails(self, item: OrderItem, details: SystemConfigItem):
+        self.itemDetails.update({item.id: details})
+
+    def getItemDetails(self, item: OrderItem) -> SystemConfigItem:
+        return self.itemDetails.get(item.id, None)
