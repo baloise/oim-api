@@ -1,18 +1,17 @@
 # This Dockerfile creates a compact development-only server
 
 # Setting the base container
-FROM python:3.8-alpine
+FROM quay.balgroupit.com/baloise-base-images/python:3.8-buster
 
-ADD ./.env.build /tmp/.env.build
+# Allows to specify build-time envvars for specific build networks
+ADD ./.env.build* /tmp/
 
-RUN \
-  touch /tmp/.env.build && \
-  export $(grep -v '^#' /tmp/.env.build | xargs -0) && \
-  apk update && \
-  apk add g++ gcc libxml2 libxslt-dev
+# Needed to work around a buildah bug
+USER root
 
 # Create a user and group to use within the container
-RUN addgroup -S apiserver && adduser -S apiserver -G apiserver
+RUN groupadd --gid 1000 apiserver && \
+    useradd --uid 1000 --gid apiserver --no-log-init --no-create-home apiserver
 
 # Copy all of the current (and sub) dir into the container during build
 ADD . /code

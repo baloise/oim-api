@@ -12,3 +12,5 @@ old/
 *_data.xml
 apiserver/oclogging.log
 apiserver/foo.py
+/.pydevproject
+/.project
